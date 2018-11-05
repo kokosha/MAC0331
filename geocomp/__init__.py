@@ -10,9 +10,7 @@ Sub-modulos:
 - gui:        implementacoes das operacoes graficas
 """
 
-from . import convexhull
-from . import farthest
-from . import robot
+from . import point_robot
 from .common.guicontrol import init_display
 from .common.guicontrol import config_canvas
 from .common.guicontrol import run_algorithm
@@ -20,9 +18,8 @@ from .common.io import open_file
 from .common.prim import get_count
 from .common.prim import reset_count
 
-children = (   ( 'convexhull', None, 'Fecho Convexo' ),
-		( 'farthest',  None, 'Par Mais Distante' ),
-		( 'robot',  None, 'Plano de Locomação de Robos' )
+children = (   ( 'point_robot', None, 'Plano de Locomação de Robos' ),
+		( 'point_robot',  None, 'Plano de Locomação de Robos V2' ),
 	)
 
 __all__ = [p[0] for p in children]

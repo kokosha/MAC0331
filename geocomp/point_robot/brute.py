@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Algoritmo forca-bruta"""
+""" Dado um conjunto de pontos de poligonos disjuntos, achar o mapa trapezoidal"""
 
 from geocomp.common.segment import Segment
 from geocomp.common import control
