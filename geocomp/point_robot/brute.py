@@ -9,11 +9,29 @@ from geocomp.common import control
 from geocomp.common.guiprim import *
 import math
 
+from geocomp.point_robot.structure import *
+
 #def Trap(trapezio):
 	#Desenha o trapézio com o delay
 
-def Brute (l):
 
+
+# Código extra da Parte 1.1
+def Generate(l):
+	# Dado a lista de pontos iniciais gerar todos os segmentos de retas
+	lsegments = []
+
+	for i in range(len(l) - 1):
+		lsegments.append(Segmento(Pointo(l[i].x, l[i].y), Pointo(l[i+1].x, l[i+1].y)))
+
+	return lsegments
+
+
+
+
+def Brute (l):
+	if len(l) < 1:
+		return 0
 	#criando e printando o polígono inicial
 	blocked = Polygon(l)
 		#print
@@ -47,5 +65,24 @@ def Brute (l):
 	control.sleep()
 	control.sleep()
 	ext.plot()
+
+
+	# Achando o espaço livre de locomoção em mapa de trapezoidação
+
+	# Parte 1.1 - Transformando os polígonos iniciais em arestas(segmentos de retas)
+	lsegments = Generate(l)
+
+	# Parte 1.2 - Criando o mapa de trapezoidação
+	mapa = TrapezoidoMapo(lsegments)
+
+	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
+
+
+	# Achando o grafo de locomoção
+
+	# Parte 2.1 - Transformando em grafo
+
+	# Parte 2.2 - Fazendo a query dos ponto inicial e ponto final
+
 
 	return 1
