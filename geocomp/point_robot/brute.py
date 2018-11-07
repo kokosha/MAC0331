@@ -18,7 +18,7 @@ from geocomp.point_robot.structure import *
 
 # Código extra da Parte 1.1
 def Generate(l):
-	# Dado a lista de pontos iniciais gerar todos os segmentos de retas
+	# Dado a lista de pontos do poligono e gera todos os segmentos de retas
 	lsegments = []
 
 	for i in range(len(l) - 1):
@@ -32,15 +32,8 @@ def Generate(l):
 def Brute (l):
 	if len(l) < 1:
 		return 0
-	#criando e printando o polígono inicial
-	blocked = Polygon(l)
-		#print
-	blocked.hilight()
-	control.sleep()
-	control.sleep()
-	blocked.plot()
 
-	#criando e printando o retangulo externo
+	# Criando e printando o retangulo externo
 	oeste = l[0].x
 	leste = l[0].x
 	norte = l[0].y
@@ -67,10 +60,38 @@ def Brute (l):
 	ext.plot()
 
 
+	# Achando o conjunto de polígonos simples
+	Lpolygon = []
+	at = []
+	pt = 0
+	while pt < len(l):
+		while len(at) == 0 or (pt < len(l) and at[0] != l[pt]):
+			if len(at) != 0 and at[0].x == l[pt].x and at[0].y == l[pt].y:
+				break
+			at.append(l[pt])
+			pt = pt + 1
+		pt = pt + 1
+		Lpolygon.append(at)
+		at = []
+
+	print(len(Lpolygon))
+	for x in Lpolygon:
+		# Criando e printando o polígono simples
+		blocked = Polygon(x)
+		#print
+		blocked.hilight()
+		control.sleep()
+		control.sleep()
+		blocked.plot()
+
 	# Achando o espaço livre de locomoção em mapa de trapezoidação
 
 	# Parte 1.1 - Transformando os polígonos iniciais em arestas(segmentos de retas)
-	lsegments = Generate(l)
+	lsegments = []
+	for l in Lpolygon:
+		foo = Generate(l)
+		for x in foo:
+			lsegments.append(x)
 
 	# Parte 1.2 - Criando o mapa de trapezoidação
 	mapa = TrapezoidoMapo(lsegments)

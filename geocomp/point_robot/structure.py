@@ -18,6 +18,12 @@ class Trapezoido():
         self.stop = stop
         self.sbottom = sbottom
 
+class Nodeo():
+    def __init__ (self, left = None, right = None):
+        self.left = left
+        self.right = right
+
+
 class TrapezoidoMapo():
     def __init__(self, segments):
         self.segments = segments
@@ -46,3 +52,6 @@ class TrapezoidoMapo():
 
         """ Random SHUFFLING """
         random.shuffle(segments)
+
+        #for seg in segments:
+            # findTrapezoid(seg)
