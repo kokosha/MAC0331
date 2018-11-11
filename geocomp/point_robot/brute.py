@@ -27,7 +27,7 @@ def Generate(l):
 
 
 def Brute (l):
-	'''
+	
 	# Criando e printando o retangulo externo
 	oeste = l[0].x
 	leste = l[0].x
@@ -91,9 +91,10 @@ def Brute (l):
 
 	# Parte 2.2 - Fazendo a query dos ponto inicial e ponto final
 
+	'''
+
 	# TESTE DO GRAFO
 
-	'''
 	grafo = Graph()
 	condition = 0
 
@@ -119,7 +120,7 @@ def Brute (l):
 	grafo.findNeighbor(grafo.newVertex(12, 16))
 	grafo.findNeighbor(grafo.newVertex(12, 16))
 
-	#grafo.DFS(grafo.findVertex(16, 4), grafo.findVertex(16, 16))
+	grafo.DFS(grafo.findVertex(16, 4), grafo.findVertex(16, 16))
 	
-	
+	'''
 	return 1
