@@ -2,8 +2,7 @@ class Vertex:
 	def __init__(self, x, y):
 		self.x = x
 		self.y = y
-		self.visited = false
-		self.prev = None
+		self.visited = False
 
 	def getVisited(self):
 		return self.visited
@@ -20,5 +19,5 @@ class Vertex:
 	def getPrev(self):
 		return self.prev
 
-	def setPrev(self, v)
+	def setPrev(self, v):
 		self.prev = v

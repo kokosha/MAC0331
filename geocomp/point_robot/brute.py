@@ -5,15 +5,13 @@
 from geocomp.common.point import Point
 from geocomp.common.polygon import Polygon
 from geocomp.common.segment import Segment
+from geocomp.common.graph import Graph
+from geocomp.common.vertex import Vertex
 from geocomp.common import control
 from geocomp.common.guiprim import *
 import math
 
 from geocomp.point_robot.structure import *
-
-#def Trap(trapezio):
-	#Desenha o trapézio com o delay
-
 
 
 # Código extra da Parte 1.1
@@ -28,11 +26,8 @@ def Generate(l):
 
 
 
-
 def Brute (l):
-	if len(l) < 1:
-		return 0
-
+	'''
 	# Criando e printando o retangulo externo
 	oeste = l[0].x
 	leste = l[0].x
@@ -53,11 +48,7 @@ def Brute (l):
 	exterior.append(Point(oeste-1, norte+1))
 
 	ext = Polygon(exterior)
-
-	ext.hilight()
-	control.sleep()
-	control.sleep()
-	ext.plot()
+	Printo(ext)
 
 
 	# Achando o conjunto de polígonos simples
@@ -74,15 +65,10 @@ def Brute (l):
 		Lpolygon.append(at)
 		at = []
 
-	print(len(Lpolygon))
+		#printando os polígonos simples
 	for x in Lpolygon:
-		# Criando e printando o polígono simples
 		blocked = Polygon(x)
-		#print
-		blocked.hilight()
-		control.sleep()
-		control.sleep()
-		blocked.plot()
+		Printo(blocked)
 
 	# Achando o espaço livre de locomoção em mapa de trapezoidação
 
@@ -105,5 +91,35 @@ def Brute (l):
 
 	# Parte 2.2 - Fazendo a query dos ponto inicial e ponto final
 
+	# TESTE DO GRAFO
 
+	'''
+	grafo = Graph()
+	condition = 0
+
+	grafo.newVertex(12, 16)
+	grafo.newVertex(16, 12)
+	grafo.newVertex(12, 12)
+	grafo.newVertex(16, 16)
+
+	grafo.newEdge(grafo.findVertex(12, 16), grafo.findVertex(12, 12))
+	grafo.newEdge(grafo.findVertex(12, 16), grafo.findVertex(16, 16))
+	grafo.newEdge(grafo.findVertex(12, 16), grafo.findVertex(16, 12))
+
+	grafo.newVertex(16, 8)
+	grafo.newEdge(grafo.findVertex(16, 12), grafo.findVertex(16, 8))
+	grafo.newVertex(16, 4)
+	grafo.newEdge(grafo.findVertex(16, 8), grafo.findVertex(16, 4))
+
+	grafo.newVertex(8, 16)
+	grafo.newEdge(grafo.findVertex(12, 16), grafo.findVertex(8, 16))
+
+	grafo.findNeighbor(grafo.newVertex(12, 16))
+	grafo.findNeighbor(grafo.newVertex(12, 16))
+	grafo.findNeighbor(grafo.newVertex(12, 16))
+	grafo.findNeighbor(grafo.newVertex(12, 16))
+
+	#grafo.DFS(grafo.findVertex(16, 4), grafo.findVertex(16, 16))
+	
+	
 	return 1
