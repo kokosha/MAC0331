@@ -3,11 +3,24 @@ class SPoint():
     def __init__ (self, x = None, y = None):
         self.x = x
         self.y = y
+    def is_left(point):
+        return (self.x < point.x)
+
+
+def cross(p1, p2):
+    return p1.x * p2.y - p2.x * p1.y;
+
+def ccw(p1, p2, p3):
+    return cross(SPoint(p2.x-p1.x, p2.y-p1.y), SPoint(p3.x-p1.x, p3.y - p1.y));
 
 class SSegment():
     def __init__ (self, p_left = None, p_right = None):
         self.p_left = p_left
         self.p_right = p_right
+
+    def is_above(point):
+        # NEED TO RECHECK
+        return ccw(self.p_left, self.p_right, p) > 0; 
 
 class STrapezoid():
     def __init__ (self, p_left = None, p_right = None, s_top = None, s_bottom = None):
@@ -31,12 +44,22 @@ class SNode():
         self.info = info
     def query(p_p):
         at = self
-        while self.node_type != 0 :
-            if self.node_type == 1:
+        while at.node_type != 0 :
+            if at.node_type == 1:
+                if(at.info.is_left(p_p)) {
+                    at = at.left
+                } else {
+                    at = at.right
+                }
                 # checar cima e embaixo
             else:
                 # checar esquerda e direita
-
+                if(at.info.is_above(p_p)) {
+                    at = at.left
+                } else {
+                    at = at.right
+                }
+        return at.info
 
 class STrapezoidMap():
     def __init__(self, segments):
