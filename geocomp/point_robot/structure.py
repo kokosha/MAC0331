@@ -135,7 +135,10 @@ class STrapezoidMap():
             # Note também que se existir um segmento que está contido em outro segmento
             # Então pode acontecer de ter 1 trapezios
 
+            t = node.info
 
+            # Trecho 1 - Atualizar o mapa trapezoidal
+            # Trecho 1.1 - Parte de botar os segmentos e pontos dos trapézios no lugar certo
             # FUTURO CORNER CASE
             t_left = node.info
             t_left.pright = segment.s_left
@@ -155,6 +158,55 @@ class STrapezoidMap():
             t_top.p_left = segment.s_right
 
 
+            # Trecho 1.2 - Parte de botar as relações dos trapézios no lugar certo
+
+            t_left.t_upper_left = t.t_upper_left
+            t_left.t_lower_left = t.t_lower_left
+            t_left.t_upper_right = t_top
+            t_left.t_lower_right = t_bottom
+
+            t_right.t_upper_left = t_top
+            t_right.t_lower_left = t_bottom
+            t_right.t_upper_right = t.t_upper_right
+            t_right.t_lower_right = t.t_lower_right
+
+            t_bottom.t_upper_left = t_left
+            t_bottom.t_lower_left = t_left
+            t_bottom.t_upper_right = t_right
+            t_bottom.t_lower_right = t_right
+
+            t_top.t_upper_left = t_left
+            t_top.t_lower_left = t_left
+            t_top.t_upper_right = t_right
+            t_top.t_lower_right = t_right
+
+            # Trecho 1.3 - Adicionar a relação inversa
+            if t.t_upper_left != None :
+                if t.t_upper_left.upper_right == t:
+                    t.t_upper_left.upper_right = t_left
+                if t.t_upper_left.lower_right == t:
+                    t.t_upper_left.lower_right = t_left
+
+            if t.t_lower_left != None :
+                if t.t_lower_left.upper_right == t:
+                    t.t_lower_left.upper_right = t_left
+                 if t.t_lower_left.lower_right == t:
+                    t.t_lower_left.lower_right = t_left
+
+            if t.t_upper_right != None :
+                if t.t_upper_right.upper_left == t:
+                    t.t_upper_right.upper_left = t_right
+                if t.t_upper_right.lower_left == t:
+                    t.t_upper_right.lower_left = t_right
+
+            if t.t_lower_right != None :
+                if t.t_lower_right.upper_left == t:
+                    t.t_lower_right.upper_left = t_right
+                 if t.t_lower_right.lower_left == t:                 
+                    t.t_lower_right.lower_left = t_right 
+
+            # Trecho 2 - Atualizar a estrutura de busca
+            
 
         else:
             assert(1)
