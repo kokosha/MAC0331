@@ -35,6 +35,8 @@ class STrapezoid():
         self.t_upper_right = None
 
 
+
+
 class SNode():
     def __init__ (self, left = None, right = None, node_type = None, info = None):
         self.left = left
@@ -46,19 +48,20 @@ class SNode():
         at = self
         while at.node_type != 0 :
             if at.node_type == 1:
-                if(at.info.is_left(p_p)) {
-                    at = at.left
-                } else {
-                    at = at.right
-                }
                 # checar cima e embaixo
-            else:
-                # checar esquerda e direita
                 if(at.info.is_above(p_p)) {
                     at = at.left
                 } else {
                     at = at.right
                 }
+            else:
+                # checar esquerda e direita
+                if(at.info.is_left(p_p)) {
+                    at = at.left
+                } else {
+                    at = at.right
+                }
+
         return at.info
 
 class STrapezoidMap():
