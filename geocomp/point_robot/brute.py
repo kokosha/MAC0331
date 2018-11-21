@@ -13,6 +13,11 @@ import math
 
 from geocomp.point_robot.structure import *
 
+# Código extra para printar
+def Printo(pol):
+	pol.hilight()
+	control.sleep()
+	pol.plot('magenta')
 
 # Código extra da Parte 1.1
 def Generate(l):
@@ -27,7 +32,7 @@ def Generate(l):
 
 
 def Brute (l):
-	
+	'''
 	# Criando e printando o retangulo externo
 	oeste = l[0].x
 	leste = l[0].x
@@ -115,12 +120,6 @@ def Brute (l):
 	grafo.newVertex(8, 16)
 	grafo.newEdge(grafo.findVertex(12, 16), grafo.findVertex(8, 16))
 
-	grafo.findNeighbor(grafo.newVertex(12, 16))
-	grafo.findNeighbor(grafo.newVertex(12, 16))
-	grafo.findNeighbor(grafo.newVertex(12, 16))
-	grafo.findNeighbor(grafo.newVertex(12, 16))
-
 	grafo.DFS(grafo.findVertex(16, 4), grafo.findVertex(16, 16))
 	
-	'''
 	return 1

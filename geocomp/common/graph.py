@@ -15,11 +15,14 @@ class Graph:
 	def __init__(self):
 		self.allVertex = []
 		self.allEdge   = []
+		self.solved    = False
 
+	# Cria um vertex no grafo
 	def newVertex(self, x, y):
 		self.allVertex.append(Vertex(x, y))
 		Printo(Point(x, y))
-		
+	
+	# Procura um vertex do grafo
 	def findVertex(self, x, y):
 		for i in self.allVertex:
 			if (i.getX() == x) and (i.getY() == y):
@@ -27,6 +30,7 @@ class Graph:
 		else:
 			return None
 
+	# Cria uma aresta no grafo
 	def newEdge(self, vertex1, vertex2):
 		if (vertex1 != None) and (vertex2 != None):
 			self.allEdge.append(Edge(vertex1, vertex2))
@@ -34,46 +38,36 @@ class Graph:
 			point2 = Point(vertex2.getX(), vertex2.getY())
 			Printo(Segment(point1, point2))
 		else:
-			print ("Falhou em newEdge -- vertices errados!")
+			print("Falhou em newEdge -- vertices errados!")
 
-	# ESTA COM BUG - Procura um vértice que ainda não foi visitado
+	# Procura um vértice que ainda não foi visitado
 	def findNeighbor(self, v):
 		for i in range(len(self.allEdge)):
-			print(self.allEdge[i])
 			start = self.allEdge[i].getStart()
 			end   = self.allEdge[i].getEnd()
 			if (v.getX() == start.getX()) and (v.getY() == start.getY()) and (end.getVisited() == False):
 				end.setVisited(True)
-				#debug
-				print(end.x)
-				print(end.y)
-				print("---")
-				#
 				return end
 			if (v.getX()==end.getX()) and (v.getY()==end.getY()) and (start.getVisited()==False):
 				start.setVisited(True)
-				#debug
-				print(start.x)
-				print(start.y)
-				print("---")
-				#
 				return start
-		return print("Falhou em findNeighbor -- não tem mais vizinhos!")
+		return None
 
 	# Algoritmo base do DFS
 	def DFS(self, target, start):
 		for v in self.allVertex:
 			v.setVisited(False)
 		if (self.visit(start, target) == 1):
-			print("O robô chegou no destino!")
+			print("O robô chegou ao destino!")
 		else:
 			print("Falhou em visit -- não achou o caminho :(")
 
-
+	# Funcao auxiliar do DFS
 	def visit(self, u, target):
 		u.setVisited(True)
 		v = self.findNeighbor(u)
 		while v is not None:
+
 			# Printando o segmento atual do grafo
 			seg = Segment(Point(u.x, u.y), Point(v.x, v.y))
 			seg.plot('cyan')
@@ -81,8 +75,13 @@ class Graph:
 
 			# Continuar o DFS
 			if (v == target):
+				self.solved = True
 				return 1
-			return self.visit(v, target)
+			self.visit(v, target)
+
+			# Condicao de parada do DFS
+			if(self.solved):
+				return 1
 
 			# Retirando o print do segmento
 			seg.hide()
@@ -90,4 +89,3 @@ class Graph:
 
 			# Pegar o próximo vizinho
 			v = self.findNeighbor(u)
-		return 0

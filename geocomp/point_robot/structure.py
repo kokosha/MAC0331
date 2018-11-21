@@ -49,18 +49,16 @@ class SNode():
         while at.node_type != 0 :
             if at.node_type == 1:
                 # checar cima e embaixo
-                if(at.info.is_above(p_p)) {
+                if(at.info.is_above(p_p)):
                     at = at.left
-                } else {
+                else:
                     at = at.right
-                }
             else:
                 # checar esquerda e direita
-                if(at.info.is_left(p_p)) {
+                if(at.info.is_left(p_p)):
                     at = at.left
-                } else {
+                else:
                     at = at.right
-                }
 
         return at.info
 
@@ -190,7 +188,7 @@ class STrapezoidMap():
             if t.t_lower_left != None :
                 if t.t_lower_left.upper_right == t:
                     t.t_lower_left.upper_right = t_left
-                 if t.t_lower_left.lower_right == t:
+                if t.t_lower_left.lower_right == t:
                     t.t_lower_left.lower_right = t_left
 
             if t.t_upper_right != None :
@@ -202,7 +200,7 @@ class STrapezoidMap():
             if t.t_lower_right != None :
                 if t.t_lower_right.upper_left == t:
                     t.t_lower_right.upper_left = t_right
-                 if t.t_lower_right.lower_left == t:                 
+                if t.t_lower_right.lower_left == t:                 
                     t.t_lower_right.lower_left = t_right 
 
             # Trecho 2 - Atualizar a estrutura de busca
@@ -211,4 +209,4 @@ class STrapezoidMap():
         else:
             assert(1)
 
-    def hard_case(node, segment):
+    #def hard_case(node, segment):
