@@ -100,7 +100,7 @@ class STrapezoidMap():
 
         # Posicao de guardar
         self.trapezoid_list = [t_start]
-        self.trapezoid_number++;
+        self.trapezoid_number += 1;
 
 
         random.shuffle(segments)
@@ -235,7 +235,7 @@ class STrapezoidMap():
             
             
 
-
+'''
     def hard_case(node, segment):
          # Trecho 1 - Atualizar o mapa trapezoidal
          for x in node:
@@ -243,4 +243,4 @@ class STrapezoidMap():
 
         else:
             assert(1)
-
+'''

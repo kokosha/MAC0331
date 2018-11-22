@@ -25,14 +25,14 @@ def Generate(l):
 	lsegments = []
 
 	for i in range(len(l) - 1):
-		lsegments.append(Segmento(Pointo(l[i].x, l[i].y), Pointo(l[i+1].x, l[i+1].y)))
+		lsegments.append(Segment(Point(l[i].x, l[i].y), Point(l[i+1].x, l[i+1].y)))
 
 	return lsegments
 
 
 
 def Brute (l):
-	'''
+
 	# Criando e printando o retangulo externo
 	oeste = l[0].x
 	leste = l[0].x
@@ -85,7 +85,6 @@ def Brute (l):
 			lsegments.append(x)
 
 	# Parte 1.2 - Criando o mapa de trapezoidação
-	mapa = TrapezoidoMapo(lsegments)
 
 	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
 
@@ -96,7 +95,6 @@ def Brute (l):
 
 	# Parte 2.2 - Fazendo a query dos ponto inicial e ponto final
 
-	'''
 
 	# TESTE DO GRAFO
 
