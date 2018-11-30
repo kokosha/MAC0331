@@ -25,7 +25,7 @@ def Generate(l):
 	lsegments = []
 
 	for i in range(len(l) - 1):
-		lsegments.append(Segment(Point(l[i].x, l[i].y), Point(l[i+1].x, l[i+1].y)))
+		lsegments.append(SSegment(SPoint(l[i].x, l[i].y), SPoint(l[i+1].x, l[i+1].y)))
 
 	return lsegments
 
@@ -70,7 +70,7 @@ def Brute (l):
 		Lpolygon.append(at)
 		at = []
 
-		#printando os polígonos simples
+	# Printando os polígonos simples
 	for x in Lpolygon:
 		blocked = Polygon(x)
 		Printo(blocked)
@@ -86,6 +86,70 @@ def Brute (l):
 
 	# Parte 1.2 - Criando o mapa de trapezoidação
 
+	print("lsegments size is " + str(len(lsegments)))
+	mapa = STrapezoidMap(lsegments)
+	mapa.construct()
+	# PRINT TRAPEZODATIO
+
+	control_cnt = 0
+	for trapezio in mapa.trapezoid_list:
+
+		s_top = trapezio.s_top
+		s_bottom = trapezio.s_bottom
+		p_left = trapezio.p_left
+		p_right = trapezio.p_right
+
+		print("")
+		print("Trapezio " + str(control_cnt))
+		trapezio.debug()
+		# Encontra equacao de reta de s_top e s_bottom ax+by+c = 0
+
+		# y = (-c-a*x)/b
+		At = s_top.p_right
+		Bt = s_top.p_left
+		at = Bt.y - At.y
+		bt = At.x - Bt.x
+		ct = - (at * At.x + bt * At.y)
+		print ("top equation")
+		print (at, bt, ct)
+
+
+		# FUTURO CORNER CASE BT = 0
+		yt_left = (-ct-at*p_left.x)/(bt)
+		yt_right = (-ct-at*p_right.x)/(bt)
+
+		Ab = s_bottom.p_right
+		Bb = s_bottom.p_left
+		ab = Bb.y - Ab.y
+		bb = Ab.x - Bb.x
+		cb = - (ab * Ab.x + bb * Ab.y)
+
+
+		print ("bottom equation")
+		print (ab, bb, cb)
+
+
+		# CORNER CASE BT = 0
+		yb_left = 1.0*(-cb - ab * p_left.x)/(bb)
+		yb_right = 1.0*(-cb - ab * p_right.x)/(bb)
+
+
+		linha1 = []
+		linha1.append(Point(p_left.x, yt_left))
+		linha1.append(Point(p_left.x, yb_left))
+		linha1.append(Point(p_left.x, yt_left))		
+
+		Printo(Polygon(linha1))		
+
+		linha2 = []
+		linha2.append(Point(p_right.x, yt_right))
+		linha2.append(Point(p_right.x, yb_right))	
+		linha2.append(Point(p_right.x, yt_right))
+
+		Printo(Polygon(linha2))	
+
+		control_cnt = control_cnt + 1
+
 	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
 
 
@@ -96,8 +160,11 @@ def Brute (l):
 	# Parte 2.2 - Fazendo a query dos ponto inicial e ponto final
 
 
-	# TESTE DO GRAFO
 
+
+
+	# TESTE DO GRAFO
+	'''
 	grafo = Graph()
 	condition = 0
 
@@ -121,3 +188,8 @@ def Brute (l):
 	grafo.DFS(grafo.findVertex(16, 4), grafo.findVertex(16, 16))
 	
 	return 1
+	'''
+
+
+
+
