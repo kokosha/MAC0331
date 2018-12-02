@@ -181,24 +181,7 @@ class SNode():
         self.info = info
         self.pid = pid
 
-    def query(self, p_p):
-        at = self
-        while at.node_type != 0 :
-            print ("q "+ str(at.node_type))
-            if at.node_type == 1:
-                # checar cima e embaixo
-                if(at.info.is_above(p_p)):
-                    at = at.left
-                else:
-                    at = at.right
-            else:
-                # checar esquerda e direita
-                if(at.info.is_left(p_p)):
-                    at = at.left
-                else:
-                    at = at.right
 
-        return at
 
 
 # Estrutura STrapezoidMap guarda as informações 
@@ -254,14 +237,30 @@ class STrapezoidMap():
         self.removed_node_list = []
         self.removed_trapezoid_list = []
     
+    def query(self, at, p_p):
+        while at.node_type != 0 :
+            print ("q "+ str(at.node_type))
+            if at.node_type == 1:
+                # checar cima e embaixo
+                if(at.info.is_above(p_p)):
+                    at = self.node_list[at.left]
+                else:
+                    at = self.node_list[at.right]
+            else:
+                # checar esquerda e direita
+                if(at.info.is_left(p_p)):
+                    at = self.node_list[at.left]
+                else:
+                    at = self.node_list[at.right]
 
+        return at
     
     def follow_segment(self, node, segment):
         # Let p and q be the left and right endpoint of si.
         p_p = segment.p_left
         p_q = segment.p_right
         # Search with p and q in the search structure D to find D0.
-        t_d0 = node.query(p_p)
+        t_d0 = self.query(node, p_p)
         print ("follow " + str(t_d0.info.tid))
         t_list = []
         if t_d0 == None : 
@@ -273,7 +272,6 @@ class STrapezoidMap():
         # then Let Dj+1 be the lower right neighbor of Dj lies.
         # else Let Dj+1 be the upper right neighbor of Dj lies.
         j = t_d0.info
-        print("WAR " + str(j.pid))
 
 
         while j != None and (j.p_right != None and p_q.is_left(j.p_right)):
@@ -346,7 +344,6 @@ class STrapezoidMap():
 
         print("Simple Case")
         node = self.node_list[l_node[0]]
-        print("l_node "+str(l_node[0]))
         if (node.node_type == 0) :
             # Criando os novos trapezios podem ter 2, 3, 4 trapezios
             # Vamos primeiro supor que não existe coordenada x igual.
@@ -451,20 +448,19 @@ class STrapezoidMap():
             b = SNode(None, None, 0, t_right)
             c = SNode(None, None, 0, t_top)
             d = SNode(None, None, 0, t_bottom)
-            s = SNode(c, d, 1, segment);
-            q = SNode(s, b, 2, segment.p_right)
-            p = SNode(a, q, 2, segment.p_left)
-
+            id_a = self.add_node(a)
+            id_b = self.add_node(b)
+            id_c = self.add_node(c)
+            id_d = self.add_node(d)
+            s = SNode(id_c, id_d, 1, segment);
+            id_s = self.add_node(s)
+            q = SNode(id_s, id_b, 2, segment.p_right)
+            id_q = self.add_node(q)
+            p = SNode(id_a, id_q, 2, segment.p_left)
             self.node_list[node.pid] = p
-            self.add_node(a)
-            self.add_node(b)
-            self.add_node(c)
-            self.add_node(d)
-            self.add_node(s)
-            self.add_node(q)
 
 
-    def hard_case(node, l_node, segment):
+    def hard_case(self, l_node, segment):
 
 
         # Parte 4
@@ -558,9 +554,12 @@ class STrapezoidMap():
     def construct(self):
         segments = self.segments
         random.shuffle(segments)
+        val = 0
         for seg in segments:
+            print("Segmento " + str(val) + " inserido!")
             seg.show()
             self.add(self.node_list[0], seg)
             seg.hide()
+            val = val + 1
 
    

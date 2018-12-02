@@ -26,9 +26,9 @@ def Hide(pol):
 def Generate(l):
 	# Dado a lista de pontos do poligono e gera todos os segmentos de retas
 	lsegments = []
-
-	for i in range(len(l) - 1):
-		lsegments.append(SSegment(SPoint(l[i].x, l[i].y), SPoint(l[i+1].x, l[i+1].y)))
+	n = len(l)
+	for i in range(n):
+		lsegments.append(SSegment(SPoint(l[i%n].x, l[i%n].y), SPoint(l[(i+1)%n].x, l[(i+1)%n].y)))
 
 	return lsegments
 
