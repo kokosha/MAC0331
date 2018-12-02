@@ -15,7 +15,7 @@ from geocomp.point_robot.structure import *
 
 # Código extra para printar
 def Printo(pol):
-	pol.hilight()
+	pol.plot('green')
 	control.sleep()
 	pol.plot('magenta')
 

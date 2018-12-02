@@ -33,10 +33,27 @@ class SSegment():
         self.p_left = p_left
         self.p_right = p_right
 
-    def is_above(point):
+        self.linha = None
+
+    def is_above(self, point):
         # NEED TO RECHECK
         return ccw(self.p_left, self.p_right, p) > 0
 
+    def show(self):
+        p_left = self.p_left
+        p_right = self.p_right
+        linha = []
+        linha.append(Point(p_left.x, p_left.y))
+        linha.append(Point(p_right.x, p_right.y))
+        linha.append(Point(p_left.x, p_left.y)) 
+
+        self.linha = Polygon(linha)
+        self.linha.plot('white')
+        control.sleep()
+        self.linha.plot('yellow')
+
+    def hide(self):
+        self.linha.hide()
 
 # Estrutura STrapezoid - Guarda o trapezio baseado em quatro informacoes 
 # O ponto mais a esquerda e o ponto mais a direita
@@ -107,9 +124,10 @@ class STrapezoid():
         linha1.append(Point(p_left.x, yt_left))     
 
         self.linha1 = Polygon(linha1)
-        self.linha1.hilight()
+        self.linha1.plot('red')
         control.sleep()
         self.linha1.plot('blue')
+
 
         linha2 = []
         linha2.append(Point(p_right.x, yt_right))
@@ -117,7 +135,7 @@ class STrapezoid():
         linha2.append(Point(p_right.x, yt_right))
 
         self.linha2 = Polygon(linha2)
-        self.linha2.hilight()
+        self.linha2.plot('red')
         control.sleep()
         self.linha2.plot('blue')
 
@@ -390,7 +408,6 @@ class STrapezoidMap():
             q = SNode(s, b, 2, segment.p_right)
             p = SNode(a, q, 2, segment.p_left)
 
-                
             self.node_list[node.pid] = a
             self.add_node(b)
             self.add_node(c)
@@ -398,6 +415,7 @@ class STrapezoidMap():
             self.add_node(s)
             self.add_node(q)
             self.add_node(p)
+
 
     def hard_case(node, l_node, segment):
 
@@ -493,6 +511,8 @@ class STrapezoidMap():
         segments = self.segments
         random.shuffle(segments)
         for seg in segments:
+            seg.show()
             self.add(self.node_list[0], seg)
+            seg.hide()
 
 
