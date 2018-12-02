@@ -12,8 +12,8 @@ class SPoint():
     def __init__ (self, x = None, y = None):
         self.x = x
         self.y = y
-    def is_left(point):
-        return (self.x < point.x)
+    def is_left(self, point):
+        return (self.x > point.x)
 
 # Faz o produto vetorial de dois vetores p1 e p2
 
@@ -37,7 +37,7 @@ class SSegment():
 
     def is_above(self, point):
         # NEED TO RECHECK
-        return ccw(self.p_left, self.p_right, p) > 0
+        return ccw(self.p_left, self.p_right, point) > 0
 
     def show(self):
         p_left = self.p_left
@@ -68,6 +68,7 @@ class STrapezoid():
         self.s_top = s_top
         self.s_bottom = s_bottom
         self.pid = pid
+        self.tid = 0
 
         self.t_upper_left = None
         self.t_upper_right = None
@@ -85,7 +86,7 @@ class STrapezoid():
         p_right = trapezio.p_right
 
 
-        trapezio.debug()
+        #trapezio.debug()
         # Encontra equacao de reta de s_top e s_bottom ax+by+c = 0
 
         # y = (-c-a*x)/b
@@ -94,8 +95,8 @@ class STrapezoid():
         at = Bt.y - At.y
         bt = At.x - Bt.x
         ct = - (at * At.x + bt * At.y)
-        print ("top equation")
-        print (at, bt, ct)
+        #print ("top equation")
+        #print (at, bt, ct)
 
 
         # FUTURO CORNER CASE BT = 0
@@ -109,8 +110,8 @@ class STrapezoid():
         cb = - (ab * Ab.x + bb * Ab.y)
 
 
-        print ("bottom equation")
-        print (ab, bb, cb)
+        #print ("bottom equation")
+        #print (ab, bb, cb)
 
 
         # CORNER CASE BT = 0
@@ -187,7 +188,7 @@ class SNode():
                 else:
                     at = at.right
 
-        return at.info.pid
+        return at
 
 
 # Estrutura STrapezoidMap guarda as informações 
@@ -251,16 +252,28 @@ class STrapezoidMap():
         p_q = segment.p_right
         # Search with p and q in the search structure D to find D0.
         t_d0 = node.query(p_p)
+        print ("follow " + str(t_d0.info.tid))
         t_list = []
         if t_d0 == None : 
             return t_list
-        t_list.append(t_d0)
+        t_list.append(t_d0.info.tid)
 
         # while q lies to the right of rightp(Dj)
         # do if rightp(Dj) lies above si
         # then Let Dj+1 be the lower right neighbor of Dj lies.
         # else Let Dj+1 be the upper right neighbor of Dj lies.
-        j = t_d0
+        j = t_d0.info
+        while j != None and (j.p_right != None and p_q.is_left(j.p_right) == False) :
+            if segment.is_above(j.p_right):
+                j = j.t_lower_right
+            else:
+                j = j.t_upper_right
+
+            if j != None :
+                t_list.append(j.tid)
+            
+
+
         return t_list
 
     def add_node(self, node):
@@ -273,6 +286,8 @@ class STrapezoidMap():
             self.node_list.append(SNode())
         # Mudando o posicao do trapezio e adicionando na lista
         node.pid = v
+        if node.node_type == 0:
+            node.info.tid = v
         self.node_list[v] = node
         return v
 
@@ -297,9 +312,11 @@ class STrapezoidMap():
 
         
     def simple_case(self, l_node, segment):
-
         # Parte 3
+
+        print("Simple Case")
         node = self.node_list[l_node[0]]
+        print("l_node "+str(l_node[0]))
         if (node.node_type == 0) :
             # Criando os novos trapezios podem ter 2, 3, 4 trapezios
             # Vamos primeiro supor que não existe coordenada x igual.
@@ -408,13 +425,13 @@ class STrapezoidMap():
             q = SNode(s, b, 2, segment.p_right)
             p = SNode(a, q, 2, segment.p_left)
 
-            self.node_list[node.pid] = a
+            self.node_list[node.pid] = p
+            self.add_node(a)
             self.add_node(b)
             self.add_node(c)
             self.add_node(d)
             self.add_node(s)
             self.add_node(q)
-            self.add_node(p)
 
 
     def hard_case(node, l_node, segment):
@@ -426,13 +443,13 @@ class STrapezoidMap():
 
         # Os cantos sao aqueles que mudam
 
-        
-        tot = len(node)
+        print("Hard Case")
+        tot = len(l_node)
         cnt = 0
 
         upper_trap = []
         lower_trap = []
-        for x in node:
+        for x in l_node:
             at = self.node_list[x].info
             if cnt == 0:
                 # QUEBRA O TRAPEZIO EM TRES PEDACOS
@@ -499,6 +516,7 @@ class STrapezoidMap():
 
         # Parte 2
         t_list = self.follow_segment(node, segment)
+        print("Add "+ str(len(t_list)))
         if len(t_list) == 1:
             self.simple_case(t_list, segment)
         else:
@@ -515,4 +533,4 @@ class STrapezoidMap():
             self.add(self.node_list[0], seg)
             seg.hide()
 
-
+   

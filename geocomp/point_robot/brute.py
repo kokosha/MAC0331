@@ -86,6 +86,13 @@ def Brute (l):
 	for l in Lpolygon:
 		foo = Generate(l)
 		for x in foo:
+			p1 = x.p_left
+			p2 = x.p_right
+
+			if p1.x > p2.x:
+				x.p_left = p2
+				x.p_right = p1
+
 			lsegments.append(x)
 
 	# Parte 1.2 - Criando o mapa de trapezoidação
