@@ -53,7 +53,6 @@ class Polygon:
 		self.cid[p] = p.lineto (p.next, color)
 		control.update ()
 
-	
 	def hide (self):
 		"Apaga o poligono na tela"
 		p = self.pts

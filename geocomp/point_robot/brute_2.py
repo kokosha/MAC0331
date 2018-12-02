@@ -19,9 +19,6 @@ def Printo(pol):
 	control.sleep()
 	pol.plot('magenta')
 
-def Hide(pol):
-	pol.hide()
-
 # Código extra da Parte 1.1
 def Generate(l):
 	# Dado a lista de pontos do poligono e gera todos os segmentos de retas
@@ -78,7 +75,6 @@ def Brute (l):
 		blocked = Polygon(x)
 		Printo(blocked)
 
-
 	# Achando o espaço livre de locomoção em mapa de trapezoidação
 
 	# Parte 1.1 - Transformando os polígonos iniciais em arestas(segmentos de retas)
@@ -93,6 +89,66 @@ def Brute (l):
 	print("lsegments size is " + str(len(lsegments)))
 	mapa = STrapezoidMap(lsegments)
 	mapa.construct()
+	# PRINT TRAPEZODATIO
+
+	control_cnt = 0
+	for trapezio in mapa.trapezoid_list:
+
+		s_top = trapezio.s_top
+		s_bottom = trapezio.s_bottom
+		p_left = trapezio.p_left
+		p_right = trapezio.p_right
+
+		print("")
+		print("Trapezio " + str(control_cnt))
+		trapezio.debug()
+		# Encontra equacao de reta de s_top e s_bottom ax+by+c = 0
+
+		# y = (-c-a*x)/b
+		At = s_top.p_right
+		Bt = s_top.p_left
+		at = Bt.y - At.y
+		bt = At.x - Bt.x
+		ct = - (at * At.x + bt * At.y)
+		print ("top equation")
+		print (at, bt, ct)
+
+
+		# FUTURO CORNER CASE BT = 0
+		yt_left = (-ct-at*p_left.x)/(bt)
+		yt_right = (-ct-at*p_right.x)/(bt)
+
+		Ab = s_bottom.p_right
+		Bb = s_bottom.p_left
+		ab = Bb.y - Ab.y
+		bb = Ab.x - Bb.x
+		cb = - (ab * Ab.x + bb * Ab.y)
+
+
+		print ("bottom equation")
+		print (ab, bb, cb)
+
+
+		# CORNER CASE BT = 0
+		yb_left = 1.0*(-cb - ab * p_left.x)/(bb)
+		yb_right = 1.0*(-cb - ab * p_right.x)/(bb)
+
+
+		linha1 = []
+		linha1.append(Point(p_left.x, yt_left))
+		linha1.append(Point(p_left.x, yb_left))
+		linha1.append(Point(p_left.x, yt_left))		
+
+		Printo(Polygon(linha1))		
+
+		linha2 = []
+		linha2.append(Point(p_right.x, yt_right))
+		linha2.append(Point(p_right.x, yb_right))	
+		linha2.append(Point(p_right.x, yt_right))
+
+		Printo(Polygon(linha2))	
+
+		control_cnt = control_cnt + 1
 
 	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
 

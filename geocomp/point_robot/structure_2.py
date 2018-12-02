@@ -1,8 +1,5 @@
 import random
 import copy
-from geocomp.common.polygon import Polygon
-from geocomp.common.point import Point
-from geocomp.common import control
 
 # SHALLOW COPY - orz
 
@@ -53,78 +50,11 @@ class STrapezoid():
         self.pid = pid
 
         self.t_upper_left = None
-        self.t_upper_right = None
         self.t_lower_left = None
+        self.t_upper_right = None
         self.t_lower_right = None
 
-        self.linha1 = None
-        self.linha2 = None
 
-    def show(self):
-        trapezio = self
-        s_top = trapezio.s_top
-        s_bottom = trapezio.s_bottom
-        p_left = trapezio.p_left
-        p_right = trapezio.p_right
-
-
-        trapezio.debug()
-        # Encontra equacao de reta de s_top e s_bottom ax+by+c = 0
-
-        # y = (-c-a*x)/b
-        At = s_top.p_right
-        Bt = s_top.p_left
-        at = Bt.y - At.y
-        bt = At.x - Bt.x
-        ct = - (at * At.x + bt * At.y)
-        print ("top equation")
-        print (at, bt, ct)
-
-
-        # FUTURO CORNER CASE BT = 0
-        yt_left = (-ct-at*p_left.x)/(bt)
-        yt_right = (-ct-at*p_right.x)/(bt)
-
-        Ab = s_bottom.p_right
-        Bb = s_bottom.p_left
-        ab = Bb.y - Ab.y
-        bb = Ab.x - Bb.x
-        cb = - (ab * Ab.x + bb * Ab.y)
-
-
-        print ("bottom equation")
-        print (ab, bb, cb)
-
-
-        # CORNER CASE BT = 0
-        yb_left = 1.0*(-cb - ab * p_left.x)/(bb)
-        yb_right = 1.0*(-cb - ab * p_right.x)/(bb)
-
-
-        linha1 = []
-        linha1.append(Point(p_left.x, yt_left))
-        linha1.append(Point(p_left.x, yb_left))
-        linha1.append(Point(p_left.x, yt_left))     
-
-        self.linha1 = Polygon(linha1)
-        self.linha1.hilight()
-        control.sleep()
-        self.linha1.plot('blue')
-
-        linha2 = []
-        linha2.append(Point(p_right.x, yt_right))
-        linha2.append(Point(p_right.x, yb_right))   
-        linha2.append(Point(p_right.x, yt_right))
-
-        self.linha2 = Polygon(linha2)
-        self.linha2.hilight()
-        control.sleep()
-        self.linha2.plot('blue')
-
-    def hide(self):
-        self.linha1.hide()
-        self.linha2.hide()
-    
     def debug(self):
         print ("s_top")
         print(self.s_top.p_left.x, self.s_top.p_left.y, self.s_top.p_right.x, self.s_top.p_right.y)
@@ -213,7 +143,6 @@ class STrapezoidMap():
 
         # Criando o trapezio
         t_start = STrapezoid(p_left, p_right, s_top, s_bottom, 0)
-        t_start.show()
 
 
         # A estrutura de busca
@@ -276,6 +205,7 @@ class STrapezoidMap():
         return v
 
 
+    
 
         
     def simple_case(self, l_node, segment):
@@ -291,39 +221,33 @@ class STrapezoidMap():
             # Note também que se existir um segmento que está contido em outro segmento
             # Então pode acontecer de ter 1 trapezios
 
-
-            # Remover t
             t = node.info
-            t.hide()
-            # Adicionar t_top, t_bottom, t_left, t_right
+
+            # Trecho 1 - Atualizar o mapa trapezoidal
+            # Trecho 1.1 - Parte de botar os segmentos e pontos dos trapézios no lugar certo
                 
             # FUTURO CORNER CASE
             t_left = copy.copy(node.info)
             t_left.p_right = segment.p_left
-            t_left.show()
-
 
             # FUTURO CORNER CASE
             t_right = copy.copy(node.info)
             t_right.p_left = segment.p_right
-            t_right.show()
-
 
             t_bottom = copy.copy(node.info)
             t_bottom.s_top = segment
             t_bottom.p_right = segment.p_left
             t_bottom.p_left = segment.p_right
-            t_bottom.show()
 
             t_top = copy.copy(node.info)
             t_top.s_bottom = segment
             t_top.p_right = segment.p_left
             t_top.p_left = segment.p_right
-            t_top.show()
 
 
 
             # Trecho 1.2 - Parte de botar as relações dos trapézios no lugar certo
+
             t_left.t_upper_left = t.t_upper_left
             t_left.t_lower_left = t.t_lower_left
             t_left.t_upper_right = t_top
@@ -346,28 +270,28 @@ class STrapezoidMap():
 
             # Trecho 1.3 - Adicionar a relação inversa
             if t.t_upper_left != None :
-                if t.t_upper_left.t_upper_right == t:
-                    t.t_upper_left.t_upper_right = t_left
-                if t.t_upper_left.t_lower_right == t:
-                    t.t_upper_left.t_lower_right = t_left
+                if t.t_upper_left.upper_right == t:
+                    t.t_upper_left.upper_right = t_left
+                if t.t_upper_left.lower_right == t:
+                    t.t_upper_left.lower_right = t_left
 
             if t.t_lower_left != None :
-                if t.t_lower_left.t_upper_right == t:
-                    t.t_lower_left.t_upper_right = t_left
-                if t.t_lower_left.t_lower_right == t:
-                    t.t_lower_left.t_lower_right = t_left
+                if t.t_lower_left.upper_right == t:
+                    t.t_lower_left.upper_right = t_left
+                if t.t_lower_left.lower_right == t:
+                    t.t_lower_left.lower_right = t_left
 
             if t.t_upper_right != None :
-                if t.t_upper_right.t_upper_left == t:
-                    t.t_upper_right.t_upper_left = t_right
-                if t.t_upper_right.t_lower_left == t:
-                    t.t_upper_right.t_lower_left = t_right
+                if t.t_upper_right.upper_left == t:
+                    t.t_upper_right.upper_left = t_right
+                if t.t_upper_right.lower_left == t:
+                    t.t_upper_right.lower_left = t_right
 
             if t.t_lower_right != None :
-                if t.t_lower_right.t_upper_left == t:
-                    t.t_lower_right.t_upper_left = t_right
-                if t.t_lower_right.t_lower_left == t:                 
-                    t.t_lower_right.t_lower_left = t_right
+                if t.t_lower_right.upper_left == t:
+                    t.t_lower_right.upper_left = t_right
+                if t.t_lower_right.lower_left == t:                 
+                    t.t_lower_right.lower_left = t_right
 
             pid_left = self.add_trapezoid(t_left)
             pid_right = self.add_trapezoid(t_right)
@@ -411,70 +335,19 @@ class STrapezoidMap():
         
         tot = len(node)
         cnt = 0
-
-        upper_trap = []
-        lower_trap = []
         for x in node:
-            at = self.node_list[x].info
             if cnt == 0:
-                # QUEBRA O TRAPEZIO EM TRES PEDACOS
-                t_left = copy.copy(at)
-                t_left.p_right = segment.p_left
-
-                t_bottom = copy.copy(at)
-                t_bottom.s_top = segment
-                t_bottom.p_right = segment.p_left
-                t_bottom.p_left = segment.p_right
-
-                t_top = copy.copy(at)
-                t_top.s_bottom = segment
-                t_top.p_right = segment.p_left
-                t_top.p_left = segment.p_right
-
-
-
-                upper_trap.append(t_top)
-                lower_trap.append(t_bottom)
-
+                cnt = cnt
                     
             elif cnt == tot - 1:
-                # QUEBRA O TRAPEZIO EM TRES PEDACOS
-                t_left = copy.copy(at)
-                t_left.p_left = segment.p_right
-
-                t_bottom = copy.copy(at)
-                t_bottom.s_top = segment
-                t_bottom.p_right = segment.p_left
-                t_bottom.p_left = segment.p_right
-
-                t_top = copy.copy(at)
-                t_top.s_bottom = segment
-                t_top.p_right = segment.p_left
-                t_top.p_left = segment.p_right
-
-                upper_trap.append(t_top)
-                lower_trap.append(t_bottom)
-
+                cnt = cnt
 
             else:
-                # QUEBRA O TRAPEZIO EM DOIS PEDACOS
-                t_bottom = copy.copy(at)
-                t_bottom.s_top = segment
-                t_bottom.p_right = segment.p_left
-                t_bottom.p_left = segment.p_right
-
-                t_top = copy.copy(at)
-                t_top.s_bottom = segment
-                t_top.p_right = segment.p_left
-                t_top.p_left = segment.p_right
-
-                upper_trap.append(t_top)
-                lower_trap.append(t_bottom)
+                cnt = cnt
 
             cnt = cnt + 1
 
-        merge(upper_trap)
-        merge(lower_trap)
+
 
 
     def add(self, node, segment):
