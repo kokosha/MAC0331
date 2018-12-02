@@ -12,6 +12,11 @@ class SPoint():
     def __init__ (self, x = None, y = None):
         self.x = x
         self.y = y
+
+    def debug(self):
+        print("SPoint")
+        print(self.x, self.y)
+
     def is_left(self, point):
         return (self.x > point.x)
 
@@ -38,6 +43,10 @@ class SSegment():
     def is_above(self, point):
         # NEED TO RECHECK
         return ccw(self.p_left, self.p_right, point) > 0
+
+    def debug(self):
+        print("SSegment")
+        print(self.p_left.x, self.p_left.y, self.p_right.x, self.p_right.y)
 
     def show(self):
         p_left = self.p_left
@@ -175,6 +184,7 @@ class SNode():
     def query(self, p_p):
         at = self
         while at.node_type != 0 :
+            print ("q "+ str(at.node_type))
             if at.node_type == 1:
                 # checar cima e embaixo
                 if(at.info.is_above(p_p)):
@@ -263,7 +273,13 @@ class STrapezoidMap():
         # then Let Dj+1 be the lower right neighbor of Dj lies.
         # else Let Dj+1 be the upper right neighbor of Dj lies.
         j = t_d0.info
-        while j != None and (j.p_right != None and p_q.is_left(j.p_right) == False) :
+        print("WAR " + str(j.pid))
+
+
+        while j != None and (j.p_right != None and p_q.is_left(j.p_right)):
+            #print(j.t_upper_left.pid, j.t_lower_left.pid)
+            p_q.debug()
+            j.p_right.debug()
             if segment.is_above(j.p_right):
                 j = j.t_lower_right
             else:
@@ -292,6 +308,17 @@ class STrapezoidMap():
         return v
 
 
+    def get_trapezoid(self):
+        v = -1
+        # Achando a posicao do trapezio na lista
+        if len(self.removed_trapezoid_list) > 0:
+            v = self.removed_trapezoid_list[-1]
+            self.removed_trapezoid_list.pop()
+        else :
+            v = len(self.trapezoid_list)
+            self.trapezoid_list.append(STrapezoid())
+        return v
+        ''''
     def add_trapezoid(self, trap):
         v = -1
         # Achando a posicao do trapezio na lista
@@ -304,11 +331,14 @@ class STrapezoidMap():
 
         # Mudando o posicao do trapezio e adicionando na lista
         trap.pid = v
+        print("rs "+str(trap.pid))
+        print(str(trap.t_upper_right.pid))
+        print(str(trap.t_lower_right.pid))      
         self.trapezoid_list[v] = trap
 
         return v
 
-
+    '''
 
         
     def simple_case(self, l_node, segment):
@@ -336,33 +366,34 @@ class STrapezoidMap():
             t_left = copy.copy(node.info)
             t_left.p_right = segment.p_left
             t_left.show()
-
+            t_left.pid = self.get_trapezoid()
 
             # FUTURO CORNER CASE
             t_right = copy.copy(node.info)
             t_right.p_left = segment.p_right
             t_right.show()
-
+            t_right.pid = self.get_trapezoid()
 
             t_bottom = copy.copy(node.info)
             t_bottom.s_top = segment
-            t_bottom.p_right = segment.p_left
-            t_bottom.p_left = segment.p_right
+            t_bottom.p_right = segment.p_right
+            t_bottom.p_left = segment.p_left
             t_bottom.show()
+            t_bottom.pid = self.get_trapezoid()
 
             t_top = copy.copy(node.info)
             t_top.s_bottom = segment
-            t_top.p_right = segment.p_left
-            t_top.p_left = segment.p_right
+            t_top.p_right = segment.p_right
+            t_top.p_left = segment.p_left
             t_top.show()
-
-
+            t_top.pid = self.get_trapezoid()
 
             # Trecho 1.2 - Parte de botar as relações dos trapézios no lugar certo
             t_left.t_upper_left = t.t_upper_left
             t_left.t_lower_left = t.t_lower_left
             t_left.t_upper_right = t_top
             t_left.t_lower_right = t_bottom
+
 
             t_right.t_upper_left = t_top
             t_right.t_lower_left = t_bottom
@@ -404,14 +435,13 @@ class STrapezoidMap():
                 if t.t_lower_right.t_lower_left == t:                 
                     t.t_lower_right.t_lower_left = t_right
 
-            pid_left = self.add_trapezoid(t_left)
-            pid_right = self.add_trapezoid(t_right)
-            pid_bottom = self.add_trapezoid(t_bottom)
-            pid_top = self.add_trapezoid(t_top)
-           
+            self.trapezoid_list[t_left.pid] = t_left
+            self.trapezoid_list[t_right.pid] = t_right
+            self.trapezoid_list[t_bottom.pid] = t_bottom
+            self.trapezoid_list[t_top.pid] = t_top     
 
             print ("PID")
-            print (pid_left, pid_right, pid_bottom, pid_top)
+            print (t_left.pid, t_right.pid, t_bottom.pid, t_top.pid)
 
 
             # Trecho 2 - Atualizar a estrutura de busca
