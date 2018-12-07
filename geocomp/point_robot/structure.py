@@ -533,9 +533,53 @@ class STrapezoidMap():
                 lower_trap.append(t_bottom)
 
             cnt = cnt + 1
+            list_trap = [] #TODO: TER TRAPEZIOS
 
-        merge(upper_trap)
-        merge(lower_trap)
+            
+            list_trap = [(trap, SNode(node_type = 1, info = segment))
+                         for trap in list_trap]
+        
+
+            mergeDown(list_trap, segment)
+        # merge(lower_trap)
+
+    def mergeDown(list_trap, seg):
+        new_traps = []
+        left_ext = seg.p_left
+        current_trap = STrapezoid(left_ext, None, seg, None)
+        for (trap, node) in lista_trap:
+            right_ext = trap.p_right
+            node.right = current_trap
+            if(seg.is_above(right_ext) == False):
+                # Cria novo trap
+                current_trap.p_right = right_ext
+                current_trap.s_bottom = trap.s_bottom
+
+                
+                new_traps.append()
+                left_ext = right_ext
+                current_trap = STrapezoid(left_ext, None, seg, None)
+            
+
+    #TO DO: TODO ELE
+    def mergeUp(list_trap, seg):
+        new_traps = []
+        left_ext = seg.p_left
+        current_trap = STrapezoid(left_ext, None, seg, None)
+        for (trap, node) in lista_trap:
+            right_ext = trap.p_right
+            node.right = current_trap
+            if(seg.is_above(right_ext) == False):
+                # Cria novo trap
+                current_trap.p_right = right_ext
+                current_trap.s_bottom = trap.s_bottom
+
+                
+                new_traps.append()
+                left_ext = right_ext
+                current_trap = STrapezoid(left_ext, None, seg, None)
+
+            
 
 
     def add(self, node, segment):

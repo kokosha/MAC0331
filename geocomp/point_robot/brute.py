@@ -115,31 +115,30 @@ def Brute (l):
 
 
 	# TESTE DO GRAFO
-	'''
+	
 	grafo = Graph()
 	condition = 0
 
-	grafo.newVertex(12, 16)
-	grafo.newVertex(16, 12)
-	grafo.newVertex(12, 12)
-	grafo.newVertex(16, 16)
+	grafo.newVertex(3, 4)
+	grafo.newVertex(4, 3)
+	grafo.newVertex(3, 3)
+	grafo.newVertex(4, 4)
 
-	grafo.newEdge(grafo.findVertex(12, 16), grafo.findVertex(12, 12))
-	grafo.newEdge(grafo.findVertex(12, 16), grafo.findVertex(16, 16))
-	grafo.newEdge(grafo.findVertex(12, 16), grafo.findVertex(16, 12))
+	grafo.newEdge(grafo.findVertex(3, 4), grafo.findVertex(3, 3))
+	grafo.newEdge(grafo.findVertex(3, 4), grafo.findVertex(4, 4))
+	grafo.newEdge(grafo.findVertex(3, 4), grafo.findVertex(4, 3))
 
-	grafo.newVertex(16, 8)
-	grafo.newEdge(grafo.findVertex(16, 12), grafo.findVertex(16, 8))
-	grafo.newVertex(16, 4)
-	grafo.newEdge(grafo.findVertex(16, 8), grafo.findVertex(16, 4))
+	grafo.newVertex(4, 2)
+	grafo.newEdge(grafo.findVertex(4, 3), grafo.findVertex(4, 2))
+	grafo.newVertex(4, 1)
+	grafo.newEdge(grafo.findVertex(4, 2), grafo.findVertex(4, 1))
 
-	grafo.newVertex(8, 16)
-	grafo.newEdge(grafo.findVertex(12, 16), grafo.findVertex(8, 16))
+	grafo.newVertex(2, 4)
+	grafo.newEdge(grafo.findVertex(3, 4), grafo.findVertex(2, 4))
 
-	grafo.DFS(grafo.findVertex(16, 4), grafo.findVertex(16, 16))
+	grafo.DFS(grafo.findVertex(4, 1), grafo.findVertex(4, 4))
 	
 	return 1
-	'''
 
 
 
