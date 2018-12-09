@@ -481,17 +481,17 @@ class STrapezoidMap():
                 # QUEBRA O TRAPEZIO EM TRES PEDACOS
                 t_left = copy.copy(at)
                 t_left.p_right = segment.p_left
+                t_left.pid = self.get_trapezoid()
 
                 t_bottom = copy.copy(at)
                 t_bottom.s_top = segment
-                t_bottom.p_right = segment.p_left
-                t_bottom.p_left = segment.p_right
+                t_bottom.p_left = segment.p_left
+                t_bottom.pid = self.get_trapezoid()
 
                 t_top = copy.copy(at)
                 t_top.s_bottom = segment
-                t_top.p_right = segment.p_left
-                t_top.p_left = segment.p_right
-
+                t_top.p_left = segment.p_left
+                t_top.pid = self.get_trapezoid()
 
 
                 upper_trap.append(t_top)
@@ -502,16 +502,17 @@ class STrapezoidMap():
                 # QUEBRA O TRAPEZIO EM TRES PEDACOS
                 t_left = copy.copy(at)
                 t_left.p_left = segment.p_right
+                t_left.pid = self.get_trapezoid()
 
                 t_bottom = copy.copy(at)
                 t_bottom.s_top = segment
-                t_bottom.p_right = segment.p_left
-                t_bottom.p_left = segment.p_right
+                t_bottom.p_right = segment.p_right
+                t_bottom.pid = self.get_trapezoid()
 
                 t_top = copy.copy(at)
                 t_top.s_bottom = segment
-                t_top.p_right = segment.p_left
-                t_top.p_left = segment.p_right
+                t_top.p_right = segment.p_right
+                t_top.pid = self.get_trapezoid()
 
                 upper_trap.append(t_top)
                 lower_trap.append(t_bottom)
@@ -521,13 +522,11 @@ class STrapezoidMap():
                 # QUEBRA O TRAPEZIO EM DOIS PEDACOS
                 t_bottom = copy.copy(at)
                 t_bottom.s_top = segment
-                t_bottom.p_right = segment.p_left
-                t_bottom.p_left = segment.p_right
+                t_bottom.pid = self.get_trapezoid()
 
                 t_top = copy.copy(at)
                 t_top.s_bottom = segment
-                t_top.p_right = segment.p_left
-                t_top.p_left = segment.p_right
+                t_bottom.pid = self.get_trapezoid()
 
                 upper_trap.append(t_top)
                 lower_trap.append(t_bottom)
@@ -540,7 +539,7 @@ class STrapezoidMap():
                          for trap in list_trap]
         
 
-            mergeDown(list_trap, segment)
+        #mergeDown(list_trap, segment)
         # merge(lower_trap)
 
     def mergeDown(list_trap, seg):
