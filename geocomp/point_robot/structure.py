@@ -48,7 +48,7 @@ class SSegment():
         print("SSegment")
         print(self.p_left.x, self.p_left.y, self.p_right.x, self.p_right.y)
 
-    def show(self):
+    def show(self, color):
         p_left = self.p_left
         p_right = self.p_right
         linha = []
@@ -57,9 +57,9 @@ class SSegment():
         linha.append(Point(p_left.x, p_left.y)) 
 
         self.linha = Polygon(linha)
-        self.linha.plot('white')
+        self.linha.plot(color)
         control.sleep()
-        self.linha.plot('yellow')
+
 
     def hide(self):
         self.linha.hide()
@@ -78,6 +78,7 @@ class STrapezoid():
         self.s_bottom = s_bottom
         self.pid = pid
         self.tid = 0
+        self.remove = 0
 
         self.t_upper_left = None
         self.t_upper_right = None
@@ -86,8 +87,12 @@ class STrapezoid():
 
         self.linha1 = None
         self.linha2 = None
+    #def get_point(self):
 
-    def show(self):
+
+    #def show_point(self, color):
+
+    def show(self, color):
         trapezio = self
         s_top = trapezio.s_top
         s_bottom = trapezio.s_bottom
@@ -108,9 +113,13 @@ class STrapezoid():
         #print (at, bt, ct)
 
 
-        # FUTURO CORNER CASE BT = 0
-        yt_left = (-ct-at*p_left.x)/(bt)
-        yt_right = (-ct-at*p_right.x)/(bt)
+        # FUTURO CORNER CASE BT = 0 -
+        if bt != 0:
+            yt_left = (-ct-at*p_left.x)/(bt)
+            yt_right = (-ct-at*p_right.x)/(bt)
+        else:
+            yt_left = p_right.y;
+            yt_right = p_right.y;
 
         Ab = s_bottom.p_right
         Bb = s_bottom.p_left
@@ -123,10 +132,13 @@ class STrapezoid():
         #print (ab, bb, cb)
 
 
-        # CORNER CASE BT = 0
-        yb_left = 1.0*(-cb - ab * p_left.x)/(bb)
-        yb_right = 1.0*(-cb - ab * p_right.x)/(bb)
-
+        # FUTURE CORNER CASE BB = 0 -
+        if bb != 0:
+            yb_left = 1.0*(-cb - ab * p_left.x)/(bb)
+            yb_right = 1.0*(-cb - ab * p_right.x)/(bb)
+        else:
+            yb_left = p_left.y;
+            yb_right = p_left.y;
 
         linha1 = []
         linha1.append(Point(p_left.x, yt_left))
@@ -134,9 +146,8 @@ class STrapezoid():
         linha1.append(Point(p_left.x, yt_left))     
 
         self.linha1 = Polygon(linha1)
-        self.linha1.plot('red')
-        control.sleep()
-        self.linha1.plot('blue')
+        self.linha1.plot(color)
+
 
 
         linha2 = []
@@ -145,9 +156,8 @@ class STrapezoid():
         linha2.append(Point(p_right.x, yt_right))
 
         self.linha2 = Polygon(linha2)
-        self.linha2.plot('red')
+        self.linha2.plot(color)
         control.sleep()
-        self.linha2.plot('blue')
 
     def hide(self):
         self.linha1.hide()
@@ -180,6 +190,7 @@ class SNode():
         self.node_type = node_type
         self.info = info
         self.pid = pid
+        self.remove = 0
 
 
 
@@ -225,7 +236,8 @@ class STrapezoidMap():
 
         # Criando o trapezio
         t_start = STrapezoid(p_left, p_right, s_top, s_bottom, 0)
-        t_start.show()
+        t_start.show("red")
+
 
 
         # A estrutura de busca
@@ -306,6 +318,9 @@ class STrapezoidMap():
         return v
 
 
+    def rmv_trapezoid(self, trap):
+        trap.remove = 1
+
     def get_trapezoid(self):
         v = -1
         # Achando a posicao do trapezio na lista
@@ -357,32 +372,33 @@ class STrapezoidMap():
             # Remover t
             t = node.info
             t.hide()
+            self.rmv_trapezoid(t)
             # Adicionar t_top, t_bottom, t_left, t_right
                 
             # FUTURO CORNER CASE
             t_left = copy.copy(node.info)
             t_left.p_right = segment.p_left
-            t_left.show()
+            t_left.show("red")
             t_left.pid = self.get_trapezoid()
 
             # FUTURO CORNER CASE
             t_right = copy.copy(node.info)
             t_right.p_left = segment.p_right
-            t_right.show()
+            t_right.show("red")
             t_right.pid = self.get_trapezoid()
 
             t_bottom = copy.copy(node.info)
             t_bottom.s_top = segment
             t_bottom.p_right = segment.p_right
             t_bottom.p_left = segment.p_left
-            t_bottom.show()
+            t_bottom.show("red")
             t_bottom.pid = self.get_trapezoid()
 
             t_top = copy.copy(node.info)
             t_top.s_bottom = segment
             t_top.p_right = segment.p_right
             t_top.p_left = segment.p_left
-            t_top.show()
+            t_top.show("red")
             t_top.pid = self.get_trapezoid()
 
             # Trecho 1.2 - Parte de botar as relações dos trapézios no lugar certo
@@ -475,61 +491,147 @@ class STrapezoidMap():
 
         upper_trap = []
         lower_trap = []
+
+        t_left = None
+        t_right = None
+
+        last_upper = None
+        last_lower = None
+
         for x in l_node:
+            node = self.node_list[x]
             at = self.node_list[x].info
+            at.hide()
+            self.rmv_trapezoid(at)
             if cnt == 0:
                 # QUEBRA O TRAPEZIO EM TRES PEDACOS
                 t_left = copy.copy(at)
                 t_left.p_right = segment.p_left
                 t_left.pid = self.get_trapezoid()
+                t_left.show("red")
 
                 t_bottom = copy.copy(at)
                 t_bottom.s_top = segment
                 t_bottom.p_left = segment.p_left
                 t_bottom.pid = self.get_trapezoid()
+                t_bottom.show("red")
 
                 t_top = copy.copy(at)
                 t_top.s_bottom = segment
                 t_top.p_left = segment.p_left
                 t_top.pid = self.get_trapezoid()
+                t_top.show("red")
 
+                if at.t_upper_left != None:
+                    at.t_upper_left.t_upper_right = t_left
+                    at.t_upper_left.t_lower_right = t_left                   
 
-                upper_trap.append(t_top)
-                lower_trap.append(t_bottom)
+                if at.t_lower_left != None:
+                    at.t_lower_left.t_upper_right = t_left
+                    at.t_lower_left.t_lower_right = t_left
 
-                    
+                last_lower = t_bottom
+                last_upper = t_top 
+               
+                self.trapezoid_list[t_left.pid] = t_left
+                self.trapezoid_list[t_bottom.pid] = t_bottom
+                self.trapezoid_list[t_top.pid] = t_top     
+
+                a = SNode(None, None, 0, t_left)
+                b = SNode(None, None, 0, t_top)
+                c = SNode(None, None, 0, t_bottom) 
+                id_a = self.add_node(a)
+                id_b = self.add_node(b)
+                id_c = self.add_node(c)     
+                s = SNode(id_b, id_c, 1, segment);
+                id_s = self.add_node(s)
+                p = SNode(id_a, id_s, 2, segment.p_left)
+                self.node_list[node.pid] = p
+
             elif cnt == tot - 1:
                 # QUEBRA O TRAPEZIO EM TRES PEDACOS
-                t_left = copy.copy(at)
-                t_left.p_left = segment.p_right
-                t_left.pid = self.get_trapezoid()
+                t_right = copy.copy(at)
+                t_right.p_left = segment.p_right
+                t_right.pid = self.get_trapezoid()
+                t_right.show("red")
 
                 t_bottom = copy.copy(at)
                 t_bottom.s_top = segment
                 t_bottom.p_right = segment.p_right
                 t_bottom.pid = self.get_trapezoid()
+                t_bottom.show("red")
+
 
                 t_top = copy.copy(at)
                 t_top.s_bottom = segment
                 t_top.p_right = segment.p_right
                 t_top.pid = self.get_trapezoid()
+                t_top.show("red")
+               
+                if at.t_upper_left != None:
+                    if at.t_upper_left.t_upper_right == at:
+                        at.t_upper_left.t_upper_right = t_left
+                    if at.t_upper_left.t_lower_right != at:
+                        at.t_upper_left.t_lower_right = t_left                   
 
-                upper_trap.append(t_top)
-                lower_trap.append(t_bottom)
+                if at.t_lower_left != None:
+                    if at.t_lower_left.t_upper_right == at:
+                        at.t_lower_left.t_upper_right = t_left
+                    if at.t_lower_left.t_lower_right == at:                        
+                        at.t_lower_left.t_lower_right = t_left
 
+                self.trapezoid_list[t_right.pid] = t_right
+                self.trapezoid_list[t_bottom.pid] = t_bottom
+                self.trapezoid_list[t_top.pid] = t_top     
+               
+                a = SNode(None, None, 0, t_right)
+                b = SNode(None, None, 0, t_top)
+                c = SNode(None, None, 0, t_bottom) 
+                id_a = self.add_node(a)
+                id_b = self.add_node(b)
+                id_c = self.add_node(c)
+                s = SNode(id_b, id_c, 1, segment);
+                id_s = self.add_node(s)
+                q = SNode(id_s, id_a, 2, segment.p_right)
+                id_q = self.add_node(q)
+                self.node_list[node.pid] = q
 
             else:
                 # QUEBRA O TRAPEZIO EM DOIS PEDACOS
                 t_bottom = copy.copy(at)
                 t_bottom.s_top = segment
                 t_bottom.pid = self.get_trapezoid()
+                t_bottom.show("red")
 
                 t_top = copy.copy(at)
                 t_top.s_bottom = segment
-                t_bottom.pid = self.get_trapezoid()
+                t_top.pid = self.get_trapezoid()
+                t_top.show("red")
 
-                upper_trap.append(t_top)
-                lower_trap.append(t_bottom)
+                last_upper.t_upper_right = t_top
+                last_upper.t_lower_right = t_top
+                last_lower.t_upper_right = t_bottom
+                last_lower.t_lower_right = t_bottom
+
+                if at.t_upper_left != None:
+                    at.t_upper_left.t_upper_right = t_left
+                    at.t_upper_left.t_lower_right = t_left                   
+
+                if at.t_lower_left != None:
+                    at.t_lower_left.t_upper_right = t_left
+                    at.t_lower_left.t_lower_right = t_left
+
+                self.trapezoid_list[t_bottom.pid] = t_bottom
+                self.trapezoid_list[t_top.pid] = t_top     
+
+                a = SNode(None, None, 0, t_top)
+                b = SNode(None, None, 0, t_bottom) 
+                id_a = self.add_node(a)
+                id_b = self.add_node(b)
+                s = SNode(id_a, id_b, 1, segment);
+                id_s = self.add_node(s)
+                self.node_list[node.pid] = s
+
 
             cnt = cnt + 1
             list_trap = [] #TODO: TER TRAPEZIOS
@@ -540,7 +642,8 @@ class STrapezoidMap():
         
 
         #mergeDown(list_trap, segment)
-        # merge(lower_trap)
+        #mergeUp(list_trap, segment)
+
 
     def mergeDown(list_trap, seg):
         new_traps = []
@@ -600,9 +703,20 @@ class STrapezoidMap():
         val = 0
         for seg in segments:
             print("Segmento " + str(val) + " inserido!")
-            seg.show()
+            seg.show("yellow")
             self.add(self.node_list[0], seg)
             seg.hide()
+            seg.show("white")
+
             val = val + 1
 
-   
+    def make_graph(self):
+        '''
+        for trap in trapezoid_list:
+            if (trap.remove == 0):
+                trap.t
+        '''
+
+
+
+

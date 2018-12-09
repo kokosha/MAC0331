@@ -104,18 +104,17 @@ def Brute (l):
 	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
 
 
+
+
 	# Achando o grafo de locomoção
 
 	# Parte 2.1 - Transformando em grafo
 
-	# Parte 2.2 - Fazendo a query dos ponto inicial e ponto final
-
-
-
+	mapa.make_graph()
 
 
 	# TESTE DO GRAFO
-	
+
 	grafo = Graph()
 	condition = 0
 
@@ -137,7 +136,15 @@ def Brute (l):
 	grafo.newEdge(grafo.findVertex(3, 4), grafo.findVertex(2, 4))
 
 	grafo.DFS(grafo.findVertex(4, 1), grafo.findVertex(4, 4))
+
+
+	# Parte 2.2 - Achando o caminho
 	
+
+
+
+
+
 	return 1
 
 
