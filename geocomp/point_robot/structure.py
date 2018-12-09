@@ -264,7 +264,7 @@ class STrapezoidMap():
                     at = self.node_list[at.left]
                 else:
                     at = self.node_list[at.right]
-
+        print ("q "+ str(at.node_type))
         return at
     
     def follow_segment(self, node, segment):
@@ -278,6 +278,8 @@ class STrapezoidMap():
         if t_d0 == None : 
             return t_list
         t_list.append(t_d0.info.tid)
+
+
 
         # while q lies to the right of rightp(Dj)
         # do if rightp(Dj) lies above si
@@ -297,7 +299,7 @@ class STrapezoidMap():
 
             if j != None :
                 t_list.append(j.tid)
-            
+                print ("debug " + str(self.node_list[j.tid].node_type));
 
 
         return t_list
@@ -425,28 +427,20 @@ class STrapezoidMap():
 
             # Trecho 1.3 - Adicionar a relação inversa
             if t.t_upper_left != None :
-                if t.t_upper_left.t_upper_right == t:
-                    t.t_upper_left.t_upper_right = t_left
-                if t.t_upper_left.t_lower_right == t:
-                    t.t_upper_left.t_lower_right = t_left
+                t.t_upper_left.t_upper_right = t_left
+                t.t_upper_left.t_lower_right = t_left
 
             if t.t_lower_left != None :
-                if t.t_lower_left.t_upper_right == t:
-                    t.t_lower_left.t_upper_right = t_left
-                if t.t_lower_left.t_lower_right == t:
-                    t.t_lower_left.t_lower_right = t_left
+                t.t_lower_left.t_upper_right = t_left
+                t.t_lower_left.t_lower_right = t_left
 
             if t.t_upper_right != None :
-                if t.t_upper_right.t_upper_left == t:
-                    t.t_upper_right.t_upper_left = t_right
-                if t.t_upper_right.t_lower_left == t:
-                    t.t_upper_right.t_lower_left = t_right
+                t.t_upper_right.t_upper_left = t_right
+                t.t_upper_right.t_lower_left = t_right
 
             if t.t_lower_right != None :
-                if t.t_lower_right.t_upper_left == t:
-                    t.t_lower_right.t_upper_left = t_right
-                if t.t_lower_right.t_lower_left == t:                 
-                    t.t_lower_right.t_lower_left = t_right
+                t.t_lower_right.t_upper_left = t_right               
+                t.t_lower_right.t_lower_left = t_right
 
             self.trapezoid_list[t_left.pid] = t_left
             self.trapezoid_list[t_right.pid] = t_right
@@ -530,12 +524,13 @@ class STrapezoidMap():
                     at.t_lower_left.t_upper_right = t_left
                     at.t_lower_left.t_lower_right = t_left
 
-                last_lower = t_bottom
-                last_upper = t_top 
                
                 self.trapezoid_list[t_left.pid] = t_left
                 self.trapezoid_list[t_bottom.pid] = t_bottom
                 self.trapezoid_list[t_top.pid] = t_top     
+
+                lu_id = t_top.pid 
+                ll_id = t_bottom.pid
 
                 a = SNode(None, None, 0, t_left)
                 b = SNode(None, None, 0, t_top)
@@ -567,18 +562,19 @@ class STrapezoidMap():
                 t_top.p_right = segment.p_right
                 t_top.pid = self.get_trapezoid()
                 t_top.show("red")
-               
-                if at.t_upper_left != None:
-                    if at.t_upper_left.t_upper_right == at:
-                        at.t_upper_left.t_upper_right = t_left
-                    if at.t_upper_left.t_lower_right != at:
-                        at.t_upper_left.t_lower_right = t_left                   
 
-                if at.t_lower_left != None:
-                    if at.t_lower_left.t_upper_right == at:
-                        at.t_lower_left.t_upper_right = t_left
-                    if at.t_lower_left.t_lower_right == at:                        
-                        at.t_lower_left.t_lower_right = t_left
+                self.trapezoid_list[lu_id].t_upper_right = t_top
+                self.trapezoid_list[lu_id].t_lower_right = t_top
+                self.trapezoid_list[ll_id].t_upper_right = t_bottom
+                self.trapezoid_list[ll_id].t_lower_right = t_bottom
+
+                if at.t_upper_right != None:
+                    at.t_upper_right.t_upper_left = t_right
+                    at.t_upper_right.t_lower_left = t_right                  
+
+                if at.t_lower_right != None:
+                    at.t_lower_right.t_upper_left = t_right                      
+                    at.t_lower_right.t_lower_left = t_right
 
                 self.trapezoid_list[t_right.pid] = t_right
                 self.trapezoid_list[t_bottom.pid] = t_bottom
@@ -608,18 +604,14 @@ class STrapezoidMap():
                 t_top.pid = self.get_trapezoid()
                 t_top.show("red")
 
-                last_upper.t_upper_right = t_top
-                last_upper.t_lower_right = t_top
-                last_lower.t_upper_right = t_bottom
-                last_lower.t_lower_right = t_bottom
+                self.trapezoid_list[lu_id].t_upper_right = t_top
+                self.trapezoid_list[lu_id].t_lower_right = t_top
+                self.trapezoid_list[ll_id].t_upper_right = t_bottom
+                self.trapezoid_list[ll_id].t_lower_right = t_bottom
 
-                if at.t_upper_left != None:
-                    at.t_upper_left.t_upper_right = t_left
-                    at.t_upper_left.t_lower_right = t_left                   
-
-                if at.t_lower_left != None:
-                    at.t_lower_left.t_upper_right = t_left
-                    at.t_lower_left.t_lower_right = t_left
+                lu_id = t_top.pid 
+                ll_id = t_bottom.pid
+ 
 
                 self.trapezoid_list[t_bottom.pid] = t_bottom
                 self.trapezoid_list[t_top.pid] = t_top     
@@ -711,12 +703,10 @@ class STrapezoidMap():
             val = val + 1
 
     def make_graph(self):
-        '''
+        
         for trap in trapezoid_list:
             if (trap.remove == 0):
                 trap.t
-        '''
-
 
 
 
