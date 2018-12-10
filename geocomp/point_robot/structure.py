@@ -89,8 +89,76 @@ class STrapezoid():
 
         self.linha1 = None
         self.linha2 = None
-    #def get_point(self):
+   
+    def get_point(self):
+        trapezio = self
+        s_top = trapezio.s_top
+        s_bottom = trapezio.s_bottom
+        p_left = trapezio.p_left
+        p_right = trapezio.p_right
 
+        # Encontra equacao de reta de s_top e s_bottom ax+by+c = 0
+
+        # y = (-c-a*x)/b
+        At = s_top.p_right
+        Bt = s_top.p_left
+        at = Bt.y - At.y
+        bt = At.x - Bt.x
+        ct = - (at * At.x + bt * At.y)
+        #print ("top equation")
+        #print (at, bt, ct)
+
+
+        # FUTURO CORNER CASE BT = 0 -
+        if bt != 0:
+            yt_left = (-ct-at*p_left.x)/(bt)
+            yt_right = (-ct-at*p_right.x)/(bt)
+        else:
+            yt_left = p_right.y;
+            yt_right = p_right.y;
+
+        Ab = s_bottom.p_right
+        Bb = s_bottom.p_left
+        ab = Bb.y - Ab.y
+        bb = Ab.x - Bb.x
+        cb = - (ab * Ab.x + bb * Ab.y)
+
+
+        #print ("bottom equation")
+        #print (ab, bb, cb)
+
+
+        # FUTURE CORNER CASE BB = 0 -
+        if bb != 0:
+            yb_left = 1.0*(-cb - ab * p_left.x)/(bb)
+            yb_right = 1.0*(-cb - ab * p_right.x)/(bb)
+        else:
+            yb_left = p_left.y;
+            yb_right = p_left.y;
+
+        lista = []
+        P1X = p_left.x
+        P2X = p_left.x
+        P3X = p_right.x
+        P4X = p_right.x
+        P5X = p_left.x
+        P6X = p_right.x
+        P1Y = yt_left
+        P2Y = yb_left
+        P3Y = yt_right
+        P4Y = yb_right
+        P5Y = p_left.y
+        P6Y = p_right.y
+
+
+        lista.append(Point((P1X+P2X+P3X+P4X)/4.0,(P1Y+P2Y+P3Y+P4Y)/4.0))
+        lista.append(Point((P1X+P5X)/2.0,(P1X+P5X)/2.0))
+        lista.append(Point((P2X+P5X)/2.0,(P2X+P5X)/2.0))
+        lista.append(Point((P3X+P6X)/2.0,(P3X+P6X)/2.0))
+        lista.append(Point((P4X+P6X)/2.0,(P4X+P6X)/2.0))    
+
+
+        return lista
 
     #def show_point(self, color):
 
@@ -328,7 +396,8 @@ class STrapezoidMap():
 
 
     def rmv_trapezoid(self, trap):
-        trap.remove = 1
+        print("REMOVI " + str(trap.pid));
+        self.trapezoid_list[trap.pid].remove = 1
 
     def get_trapezoid(self):
         v = -1
@@ -496,6 +565,7 @@ class STrapezoidMap():
         for xnode in l_node:
             if self.node_list[xnode].node_type == 0:
                 list_trap.append(self.node_list[xnode].info)
+                self.rmv_trapezoid(self.node_list[xnode].info)
             else: 
                 print("THEREEEEEE IS A FATAL BUG")
 
@@ -511,7 +581,6 @@ class STrapezoidMap():
         at = self.node_list[l_node[0]].info
         t_left = copy.copy(at)
         t_left.p_right = segment.p_left
-        t_left.pid = self.get_trapezoid()
 
         t_left.t_upper_left = at.t_upper_left #1
         t_left.t_lower_left = at.t_lower_left #1
@@ -538,7 +607,6 @@ class STrapezoidMap():
         at = self.node_list[l_node[tot-1]].info
         t_right = copy.copy(at)
         t_right.p_left = segment.p_right
-        t_right.pid = self.get_trapezoid()
 
 
         n_right = SNode(None, None, 0, t_right)
@@ -721,7 +789,7 @@ class STrapezoidMap():
         # PARTE ESTRANHA
         if (cnt > 0):
             current_trap.p_right = seg.p_right
-            current_trap.s_bottom = seg
+            current_trap.s_bottom = trap.s_bottom
 
             while cnt > 0:
                 new_traps.append(current_trap)
@@ -754,7 +822,7 @@ class STrapezoidMap():
         # PARTE ESTRANHA
         if (cnt > 0):
             current_trap.p_right = seg.p_right
-            current_trap.s_top = seg
+            current_trap.s_top = trap.s_top
             while cnt > 0:
                 new_traps.append(current_trap)
                 cnt = cnt - 1
@@ -791,12 +859,38 @@ class STrapezoidMap():
 
             val = val + 1
 
-    '''
+
     def make_graph(self):
         
-        for trap in trapezoid_list:
+
+        par = []
+        for trap in self.trapezoid_list:
+            print("trap.remove == 0" + str(trap.pid))
             if (trap.remove == 0):
-                trap.t
+                print("trap.remove == 0" + str(trap.pid))
+                val = trap.get_point()
+                if (trap.t_lower_right != None and trap.t_upper_right != None):
+                    trap.t_lower_right.debug()
+                    trap.t_upper_right.debug()
+                    if (trap.t_lower_right == trap.t_upper_right):
+                        par.append((val[0], val[3]))
+                        par.append((val[3], trap.t_lower_right.get_point()[0]))
+                    else:
+                        par.append((val[0], val[3]))
+                        par.append((val[3], trap.t_lower_right.get_point()[0]))
+                        par.append((val[0], val[4]))
+                        par.append((val[4], trap.t_upper_right.get_point()[0]))
 
-    '''
+                if (trap.t_lower_left != None and trap.t_upper_left != None):
+                    trap.t_lower_left.debug()
+                    trap.t_upper_left.debug()
+                    if (trap.t_lower_left == trap.t_upper_left):
+                        par.append((val[0], val[1]))
+                        par.append((val[1], trap.t_lower_left.get_point()[0]))
+                    else:
+                        par.append((val[0], val[1]))
+                        par.append((val[1], trap.t_lower_left.get_point()[0]))
+                        par.append((val[0], val[2]))
+                        par.append((val[2], trap.t_upper_left.get_point()[0]))                   
 
+        return par
