@@ -416,7 +416,6 @@ class STrapezoidMap():
     def rmv_trapezoid(self, trap):
         print("REMOVI " + str(trap.pid));
         trap.remove = 1
-        self.trapezoid_list[trap.pid].remove = 1
 
     def get_trapezoid(self):
         v = -1
@@ -543,7 +542,8 @@ class STrapezoidMap():
             self.trapezoid_list[t_top.pid] = t_top     
 
             print ("PID")
-            print (t_left.pid, t_right.pid, t_bottom.pid, t_top.pid)
+            print ("LEFT " + str(t_left.pid) + "RIGHT "  + str(t_right.pid))
+            print ("BOTTOM " + str(t_bottom.pid) + "TOP "  + str(t_top.pid))
 
 
             # Trecho 2 - Atualizar a estrutura de busca
@@ -579,7 +579,7 @@ class STrapezoidMap():
         tot = len(l_node)
         cnt = 0
 
-
+        # Achando a lista de trapezioss
         list_trap = [] 
         
         for xnode in l_node:
@@ -587,6 +587,7 @@ class STrapezoidMap():
                 list_trap.append(self.node_list[xnode].info)
             else: 
                 print("THEREEEEEE IS A FATAL BUG")
+                assert(0)
 
 
 
@@ -823,11 +824,12 @@ class STrapezoidMap():
                     cnt = cnt - 1
                 left_ext = right_ext
                 current_trap = STrapezoid(left_ext, None, seg, None)
+            last_trap = trap
         print("cnt " + str(cnt))
         # PARTE ESTRANHA
         if (cnt > 0):
             current_trap.p_right = seg.p_right
-            current_trap.s_bottom = trap.s_bottom
+            current_trap.s_bottom = last_trap.s_bottom
 
             while cnt > 0:
                 new_traps.append(current_trap)
@@ -859,7 +861,7 @@ class STrapezoidMap():
         # PARTE ESTRANHA
         if (cnt > 0):
             current_trap.p_right = seg.p_right
-            current_trap.s_top = trap.s_top
+            current_trap.s_top = last_trap.s_top
             while cnt > 0:
                 new_traps.append(current_trap)
                 cnt = cnt - 1
@@ -986,6 +988,8 @@ class STrapezoidMap():
                 # direction from x to y
                 if skip == 1:
                     continue
-                if(n_seg_top.is_above(n_p) == True and n_seg_bot.is_above(n_p) == True):
-                    self.rmv_trapezoid(trap)   
+                trap.blink("white");
+                if(n_seg_top.is_above(n_p) == False or n_seg_bot.is_above(n_p) == False):
+                    self.rmv_trapezoid(trap) 
+
 
