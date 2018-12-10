@@ -619,6 +619,8 @@ class STrapezoidMap():
                     # VIZINHOS
                     l_top.t_upper_right = t_top #2
                     l_top.t_lower_right = t_top #2
+                    t_top.t_upper_left = l_top #2
+                    t_top.t_lower_left = l_top #2
 
 
                 if t_bottom != l_bottom:
@@ -629,12 +631,14 @@ class STrapezoidMap():
                     # VIZINHOS
                     l_bottom.t_upper_right = t_bottom #2
                     l_bottom.t_lower_right = t_bottom #2
+                    t_bottom.t_upper_left = l_bottom #2
+                    t_bottom.t_lower_left = l_bottom #2              
 
                 t_right.blink()
                 t_right.pid = self.get_trapezoid()
 
-                t_right.t_upper_left = t_top
-                t_right.t_lower_left = t_bottom
+                t_right.t_upper_left = t_top #2
+                t_right.t_lower_left = t_bottom #2
 
                 t_top.t_upper_right = t_right #2
                 t_top.t_lower_right = t_right #2
@@ -666,8 +670,8 @@ class STrapezoidMap():
                     # VIZINHOS
                     l_top.t_upper_right = t_top #3
                     l_top.t_lower_right = t_top #3
-                    t_top.t_upper_right = l_top #3
-                    t_top.t_lower_right = l_top #3
+                    t_top.t_upper_left = l_top #3
+                    t_top.t_lower_left = l_top #3
 
                 if t_bottom != l_bottom:
                     t_bottom.pid = self.get_trapezoid()
@@ -677,8 +681,8 @@ class STrapezoidMap():
                     # VIZINHOS
                     l_bottom.t_upper_right = t_bottom #3
                     l_bottom.t_lower_right = t_bottom #3
-                    t_bottom.t_upper_right = l_bottom #3
-                    t_bottom.t_lower_right = l_bottom #3
+                    t_bottom.t_upper_left = l_bottom #3
+                    t_bottom.t_lower_left = l_bottom #3
 
                 l_top = t_top
                 l_bottom = t_bottom
@@ -714,9 +718,10 @@ class STrapezoidMap():
                 left_ext = right_ext
                 current_trap = STrapezoid(left_ext, None, seg, None)
         print("cnt " + str(cnt))
+        # PARTE ESTRANHA
         if (cnt > 0):
-            current_trap.p_right = right_ext
-            current_trap.s_bottom = trap.s_bottom
+            current_trap.p_right = seg.p_right
+            current_trap.s_bottom = seg
 
             while cnt > 0:
                 new_traps.append(current_trap)
@@ -746,9 +751,10 @@ class STrapezoidMap():
                 current_trap = STrapezoid(left_ext, None, None, seg)
 
             last_trap = trap
+        # PARTE ESTRANHA
         if (cnt > 0):
-            current_trap.p_right = right_ext
-            current_trap.s_top = trap.s_top
+            current_trap.p_right = seg.p_right
+            current_trap.s_top = seg
             while cnt > 0:
                 new_traps.append(current_trap)
                 cnt = cnt - 1
