@@ -18,7 +18,7 @@ class SPoint():
         print(self.x, self.y)
 
     def is_left(self, point):
-        return (self.x > point.x)
+        return (self.x >= point.x)
 
 # Faz o produto vetorial de dois vetores p1 e p2
 
@@ -183,7 +183,7 @@ class STrapezoid():
         p_right = trapezio.p_right
 
 
-        #trapezio.debug()
+        # trapezio.debug()
         # Encontra equacao de reta de s_top e s_bottom ax+by+c = 0
 
         # y = (-c-a*x)/b
@@ -293,6 +293,7 @@ class STrapezoidMap():
 
     def __init__(self, segments):
         self.segments = segments
+        self.print_control = []
 
 
         # Parte 1
@@ -331,8 +332,6 @@ class STrapezoidMap():
         t_start = STrapezoid(p_left, p_right, s_top, s_bottom, 0)
         t_start.blink()
 
-
-
         # A estrutura de busca
         self.node_list = [SNode(None, None, 0, t_start, 0)]
 
@@ -341,7 +340,65 @@ class STrapezoidMap():
 
         self.removed_node_list = []
         self.removed_trapezoid_list = []
-    
+ 
+    # Função que constroe o mapa trapezoidal
+    def construct(self):
+        segments = self.segments
+        random.shuffle(segments)
+        val = 0
+        for seg in segments:
+            print("Segmento " + str(val) + " inserido!")
+            seg.show("yellow")
+            self.add(self.node_list[0], seg)
+            seg.hide()
+            seg.show("white")
+
+            val = val + 1
+
+    # Função que faz o incremento de um segmento
+    def add(self, node, segment):
+        t_list = self.follow_segment(node, segment)
+        if len(t_list) == 1:
+            self.simple_case(t_list, segment)
+        else:
+            self.hard_case(t_list, segment)
+
+    # Função que acha os trapezios que intersecta dado um segmento
+    # BUG?
+    def follow_segment(self, node, segment):
+        # Let p and q be the left and right endpoint of si.
+        p_p = segment.p_left
+        p_q = segment.p_right
+        # Search with p and q in the search structure D to find D0.
+        t_d0 = self.query(node, p_p)
+        print ("follow " + str(t_d0.info.tid))
+        t_list = []
+        if t_d0 == None : 
+            return t_list
+        t_list.append(t_d0.info.tid)
+        # while q lies to the right of rightp(Dj)
+        # do if rightp(Dj) lies above si
+        # then Let Dj+1 be the lower right neighbor of Dj lies.
+        # else Let Dj+1 be the upper right neighbor of Dj lies.
+        j = t_d0.info
+
+        while j != None and (j.p_right != None and p_q.is_left(j.p_right)):
+            print("PID")
+            print(j.t_upper_right.pid, j.t_lower_right.pid)
+            p_q.debug()
+            j.p_right.debug()
+            if segment.is_above(j.p_right):
+                j = j.t_lower_right
+            else:
+                j = j.t_upper_right
+
+            if j != None :
+                t_list.append(j.tid)
+                print ("debug " + str(self.node_list[j.tid].node_type));
+
+        return t_list
+    # Procura na DAG de decisão
+    # NO BUG
     def query(self, at, p_p):
         while at.node_type != 0 :
             if at.node_type == 1:
@@ -356,45 +413,9 @@ class STrapezoidMap():
                     at = self.node_list[at.left]
                 else:
                     at = self.node_list[at.right]
-        print ("q "+ str(at.node_type))
         return at
     
-    def follow_segment(self, node, segment):
-        # Let p and q be the left and right endpoint of si.
-        p_p = segment.p_left
-        p_q = segment.p_right
-        # Search with p and q in the search structure D to find D0.
-        t_d0 = self.query(node, p_p)
-        print ("follow " + str(t_d0.info.tid))
-        t_list = []
-        if t_d0 == None : 
-            return t_list
-        t_list.append(t_d0.info.tid)
 
-
-
-        # while q lies to the right of rightp(Dj)
-        # do if rightp(Dj) lies above si
-        # then Let Dj+1 be the lower right neighbor of Dj lies.
-        # else Let Dj+1 be the upper right neighbor of Dj lies.
-        j = t_d0.info
-
-
-        while j != None and (j.p_right != None and p_q.is_left(j.p_right)):
-            #print(j.t_upper_left.pid, j.t_lower_left.pid)
-            p_q.debug()
-            j.p_right.debug()
-            if segment.is_above(j.p_right):
-                j = j.t_lower_right
-            else:
-                j = j.t_upper_right
-
-            if j != None :
-                t_list.append(j.tid)
-                print ("debug " + str(self.node_list[j.tid].node_type));
-
-
-        return t_list
 
     def add_node(self, node):
         v = -1
@@ -426,46 +447,16 @@ class STrapezoidMap():
             v = len(self.trapezoid_list)
             self.trapezoid_list.append(STrapezoid())
         return v
-        ''''
-    def add_trapezoid(self, trap):
-        v = -1
-        # Achando a posicao do trapezio na lista
-        if len(self.removed_trapezoid_list) > 0:
-            v = self.removed_trapezoid_list[-1]
-            self.removed_trapezoid_list.pop()
-        else :
-            v = len(self.trapezoid_list)
-            self.trapezoid_list.append(STrapezoid())
-
-        # Mudando o posicao do trapezio e adicionando na lista
-        trap.pid = v
-        print("rs "+str(trap.pid))
-        print(str(trap.t_upper_right.pid))
-        print(str(trap.t_lower_right.pid))      
-        self.trapezoid_list[v] = trap
-
-        return v
-
-    '''
-
-        
+    # CASO SIMPLES
+    # NO BUG
     def simple_case(self, l_node, segment):
-        # Parte 3
-
-        print("Simple Case")
+        print("Fazendo o Simple Case")
         node = self.node_list[l_node[0]]
         if (node.node_type == 0) :
-            # Criando os novos trapezios podem ter 2, 3, 4 trapezios
-            # Vamos primeiro supor que não existe coordenada x igual.
-
-            # Note que se um ou ambos os pontos do segmentos for igual a p_left(D) or p_right(D)
-            # Então pode acontecer de ter 2 ou 3 trapezios.
-            # Note também que se existir um segmento que está contido em outro segmento
-            # Então pode acontecer de ter 1 trapezios
-
-
-            # Remover t
+            # Remove o trapezio inicial
             t = node.info
+            print(t.linha1)
+            print(t.linha2)
             t.hide()
 
             # Adicionar t_top, t_bottom, t_left, t_right
@@ -566,15 +557,12 @@ class STrapezoidMap():
             self.rmv_trapezoid(t)
 
     def hard_case(self, l_node, segment):
-
-
         # Parte 4
         # Trecho 1 - Atualizar o mapa trapezoidal
 
-
         # Os cantos sao aqueles que mudam
 
-        print("Hard Case")
+        print("Fazendo o Hard Case")
         tot = len(l_node)
         cnt = 0
 
@@ -585,7 +573,7 @@ class STrapezoidMap():
             if self.node_list[xnode].node_type == 0:
                 list_trap.append(self.node_list[xnode].info)
             else: 
-                print("THEREEEEEE IS A FATAL BUG")
+                print("Achamos um node que não é trapézio")
                 assert(0)
 
 
@@ -659,7 +647,6 @@ class STrapezoidMap():
                 if t_top != l_top:
                     t_top.pid = self.get_trapezoid()
                     t_top.blink()
-                    t_top.debug()
                     self.trapezoid_list[t_top.pid] = t_top
                     # VIZINHOS
                     t_top.t_lower_left = t_left #1
@@ -668,7 +655,6 @@ class STrapezoidMap():
                 if t_bottom != l_bottom:
                     t_bottom.pid = self.get_trapezoid()
                     t_bottom.blink()
-                    t_bottom.debug()
                     self.trapezoid_list[t_bottom.pid] = t_bottom
 
                     # VIZINHOS
@@ -699,7 +685,6 @@ class STrapezoidMap():
                 if t_top != l_top:
                     t_top.pid = self.get_trapezoid()
                     t_top.blink()
-                    t_top.debug()
                     self.trapezoid_list[t_top.pid] = t_top
 
                     b = SNode(None, None, 0, t_top)
@@ -718,7 +703,6 @@ class STrapezoidMap():
                 if t_bottom != l_bottom:
                     t_bottom.pid = self.get_trapezoid()
                     t_bottom.blink()
-                    t_bottom.debug()
                     self.trapezoid_list[t_bottom.pid] = t_bottom
 
                     c = SNode(None, None, 0, t_bottom)
@@ -805,6 +789,7 @@ class STrapezoidMap():
                 self.node_list[node.pid] = s
         
         for x in list_trap:
+            x.hide()
             self.rmv_trapezoid(x)
 
 
@@ -877,36 +862,8 @@ class STrapezoidMap():
             current_trap = STrapezoid(left_ext, None, None, seg)          
         print("cnt " + str(cnt))
         return new_traps
-            
-
-
-    def add(self, node, segment):
-
-        # Parte 2
-        t_list = self.follow_segment(node, segment)
-        print("Add "+ str(len(t_list)))
-        if len(t_list) == 1:
-            self.simple_case(t_list, segment)
-        else:
-            self.hard_case(t_list, segment)
-
-
-
-
-    def construct(self):
-        segments = self.segments
-        random.shuffle(segments)
-        val = 0
-        for seg in segments:
-            print("Segmento " + str(val) + " inserido!")
-            seg.show("yellow")
-            self.add(self.node_list[0], seg)
-            seg.hide()
-            seg.show("white")
-
-            val = val + 1
-
-
+#FOR LATER
+'''
     def make_graph(self):
         
         par = []
@@ -1000,4 +957,4 @@ class STrapezoidMap():
                 if(n_seg_top.is_above(n_p) == False or n_seg_bot.is_above(n_p) == False):
                     self.rmv_trapezoid(trap) 
 
-
+'''

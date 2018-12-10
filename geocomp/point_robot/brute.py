@@ -105,8 +105,11 @@ def Brute (l):
 	mapa = STrapezoidMap(lsegments)
 	mapa.construct()
 
+	assert(0)
 	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
 	mapa.checking()
+
+
 
 
 	# Achando o grafo de locomoção
