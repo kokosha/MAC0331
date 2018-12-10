@@ -397,6 +397,7 @@ class STrapezoidMap():
 
     def rmv_trapezoid(self, trap):
         print("REMOVI " + str(trap.pid));
+        trap.remove = 1
         self.trapezoid_list[trap.pid].remove = 1
 
     def get_trapezoid(self):
@@ -450,7 +451,7 @@ class STrapezoidMap():
             # Remover t
             t = node.info
             t.hide()
-            self.rmv_trapezoid(t)
+
             # Adicionar t_top, t_bottom, t_left, t_right
                 
             # FUTURO CORNER CASE
@@ -544,7 +545,7 @@ class STrapezoidMap():
             id_q = self.add_node(q)
             p = SNode(id_a, id_q, 2, segment.p_left)
             self.node_list[node.pid] = p
-
+            self.rmv_trapezoid(t)
 
     def hard_case(self, l_node, segment):
 
@@ -762,7 +763,12 @@ class STrapezoidMap():
                 s = SNode(id_a, id_b, 1, segment);
                 id_s = self.add_node(s)
                 self.node_list[node.pid] = s
-
+        
+        for xnode in l_node:
+            if self.node_list[xnode].node_type == 0:
+                self.rmv_trapezoid(self.node_list[xnode].info)
+            else: 
+                print("THEREEEEEE IS A FATAL BUG")
 
 
 
@@ -868,31 +874,34 @@ class STrapezoidMap():
             print("trap.remove == 0" + str(trap.pid))
             print("trap.remove == 0" + str(trap.pid))
             val = trap.get_point()
-            par.append((Point(0,0), val[0]))
-            #s
-            '''
+            
+
+            if trap.remove == 0:
+                par.append((Point(0,0), val[0]))
+                #
+                '''
                 if (trap.t_lower_right != None and trap.t_upper_right != None):
                     trap.t_lower_right.debug()
                     trap.t_upper_right.debug()
                     if (trap.t_lower_right == trap.t_upper_right):
-                        par.append((val[0], val[3]))
-                        par.append((val[3], trap.t_lower_right.get_point()[0]))
+                        #par.append((val[0], val[3]))
+                        #par.append((val[3], trap.t_lower_right.get_point()[0]))
                     else:
-                        par.append((val[0], val[3]))
-                        par.append((val[3], trap.t_lower_right.get_point()[0]))
-                        par.append((val[0], val[4]))
-                        par.append((val[4], trap.t_upper_right.get_point()[0]))
+                        #par.append((val[0], val[3]))
+                        #par.append((val[3], trap.t_lower_right.get_point()[0]))
+                        #par.append((val[0], val[4]))
+                        #par.append((val[4], trap.t_upper_right.get_point()[0]))
 
                 if (trap.t_lower_left != None and trap.t_upper_left != None):
                     trap.t_lower_left.debug()
                     trap.t_upper_left.debug()
                     if (trap.t_lower_left == trap.t_upper_left):
-                        par.append((val[0], val[1]))
-                        par.append((val[1], trap.t_lower_left.get_point()[0]))
+                        #par.append((val[0], val[1]))
+                        #par.append((val[1], trap.t_lower_left.get_point()[0]))
                     else:
-                        par.append((val[0], val[1]))
-                        par.append((val[1], trap.t_lower_left.get_point()[0]))
-                        par.append((val[0], val[2]))
-                        par.append((val[2], trap.t_upper_left.get_point()[0]))                   
-            '''
+                        #par.append((val[0], val[1]))
+                        #par.append((val[1], trap.t_lower_left.get_point()[0]))
+                        #par.append((val[0], val[2]))
+                        #par.append((val[2], trap.t_upper_left.get_point()[0])) 
+                '''                  
         return par
