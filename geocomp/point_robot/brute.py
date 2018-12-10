@@ -119,10 +119,53 @@ def Brute (l):
 	condition = 0
 
 	for x in val:
+		grafo.newVertex(x[0].x, x[0].y)
+		grafo.newVertex(x[1].x, x[1].y)
+		grafo.newEdge(grafo.findVertex(x[0].x, x[0].y), grafo.findVertex(x[1].x, x[1].y))		
 		seg = Segment(Point(x[0].x, x[0].y), Point(x[1].x, x[1].y))
 		seg.plot('cyan')
 		control.sleep()
-		'''
+
+
+	# Parte 2.2 - Achando o caminho	
+	s = SPoint(1, 2)
+	e = SPoint(2, 2)
+	if (-1e9 > s.x or 1e9 < s.x) :
+		print("Outside boundary");
+	if (-1e9 > e.x or 1e9 < e.x) :
+		print("Outside boundary");	
+	sn = mapa.query(mapa.node_list[0], s)
+	en = mapa.query(mapa.node_list[0], e)
+	if sn.info == en.info:
+		grafo.newVertex(e.x, e.y)
+		grafo.newVertex(s.x, s.y)
+		grafo.newEdge(grafo.findVertex(s.x, s.y), grafo.findVertex(e.x, e.y))
+	else:		
+		if sn.node_type == 0 :
+			x = sn.info.get_point()
+			grafo.newVertex(x[0].x, x[0].y)
+			grafo.newVertex(s.x, s.y)
+			grafo.newEdge(grafo.findVertex(s.x, s.y), grafo.findVertex(x[0].x, x[0].y))
+
+			seg = Segment(Point(s.x, s.y), Point(x[0].x, x[0].y))
+			seg.plot('red')
+			control.sleep()
+		else:
+			print("WRONG TYPE")
+		if en.node_type == 0 :
+			x = en.info.get_point()
+			grafo.newVertex(x[0].x, x[0].y)
+			grafo.newVertex(e.x, e.y)
+			grafo.newEdge(grafo.findVertex(x[0].x, x[0].y), grafo.findVertex(e.x, e.y))
+			seg = Segment(Point(x[0].x, x[0].y), Point(e.x, e.y))
+			seg.plot('red')
+			control.sleep()
+		else:
+			print("WRONG TYPE")
+
+	grafo.DFS(grafo.findVertex(s.x, s.y), grafo.findVertex(e.x, e.y))
+    #
+'''
 	grafo.newVertex(3, 4)
 	grafo.newVertex(4, 3)
 	grafo.newVertex(3, 3)
@@ -140,17 +183,10 @@ def Brute (l):
 	grafo.newVertex(2, 4)
 	grafo.newEdge(grafo.findVertex(3, 4), grafo.findVertex(2, 4))
 
-	grafo.DFS(grafo.findVertex(4, 1), grafo.findVertex(4, 4))
+
 	'''
 
-	# Parte 2.2 - Achando o caminho
-	
 
-
-
-
-
-	return 1
 
 
 
