@@ -243,7 +243,7 @@ class STrapezoidMap():
 
         # Criando o trapezio
         t_start = STrapezoid(p_left, p_right, s_top, s_bottom, 0)
-        t_start.show("red")
+        t_start.blink()
 
 
 
@@ -687,6 +687,15 @@ class STrapezoidMap():
                 left_ext = right_ext
                 current_trap = STrapezoid(left_ext, None, seg, None)
         print("cnt " + str(cnt))
+        if (cnt > 0):
+            current_trap.p_right = right_ext
+            current_trap.s_bottom = trap.s_bottom
+
+            while cnt > 0:
+                new_traps.append(current_trap)
+                cnt = cnt - 1
+            left_ext = right_ext
+            current_trap = STrapezoid(left_ext, None, seg, None) 
         return new_traps
 
     #TO DO: TODO ELE
@@ -696,9 +705,9 @@ class STrapezoidMap():
         current_trap = STrapezoid(left_ext, None, None, seg)
         cnt = 0
         for (trap, node) in list_trap:
-            cnt = cnt + 1
             right_ext = trap.p_right
             node.right = current_trap
+            cnt = cnt + 1
             if(seg.is_above(right_ext) == True or seg.is_equal(right_ext) == True):
                 # Cria novo trap
                 current_trap.p_right = right_ext
@@ -708,6 +717,16 @@ class STrapezoidMap():
                     cnt = cnt - 1
                 left_ext = right_ext
                 current_trap = STrapezoid(left_ext, None, None, seg)
+
+            last_trap = trap
+        if (cnt > 0):
+            current_trap.p_right = right_ext
+            current_trap.s_top = trap.s_top
+            while cnt > 0:
+                new_traps.append(current_trap)
+                cnt = cnt - 1
+            left_ext = right_ext
+            current_trap = STrapezoid(left_ext, None, None, seg)          
         print("cnt " + str(cnt))
         return new_traps
             
