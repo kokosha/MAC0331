@@ -344,7 +344,6 @@ class STrapezoidMap():
     
     def query(self, at, p_p):
         while at.node_type != 0 :
-            print ("q "+ str(at.node_type))
             if at.node_type == 1:
                 # checar cima e embaixo
                 if(at.info.is_above(p_p)):
@@ -542,8 +541,8 @@ class STrapezoidMap():
             self.trapezoid_list[t_top.pid] = t_top     
 
             print ("PID")
-            print ("LEFT " + str(t_left.pid) + "RIGHT "  + str(t_right.pid))
-            print ("BOTTOM " + str(t_bottom.pid) + "TOP "  + str(t_top.pid))
+            print ("LEFT " + str(t_left.pid) + " RIGHT "  + str(t_right.pid))
+            print ("BOTTOM " + str(t_bottom.pid) + " TOP "  + str(t_top.pid))
 
 
             # Trecho 2 - Atualizar a estrutura de busca
@@ -660,6 +659,7 @@ class STrapezoidMap():
                 if t_top != l_top:
                     t_top.pid = self.get_trapezoid()
                     t_top.blink()
+                    t_top.debug()
                     self.trapezoid_list[t_top.pid] = t_top
                     # VIZINHOS
                     t_top.t_lower_left = t_left #1
@@ -668,6 +668,7 @@ class STrapezoidMap():
                 if t_bottom != l_bottom:
                     t_bottom.pid = self.get_trapezoid()
                     t_bottom.blink()
+                    t_bottom.debug()
                     self.trapezoid_list[t_bottom.pid] = t_bottom
 
                     # VIZINHOS
@@ -698,6 +699,7 @@ class STrapezoidMap():
                 if t_top != l_top:
                     t_top.pid = self.get_trapezoid()
                     t_top.blink()
+                    t_top.debug()
                     self.trapezoid_list[t_top.pid] = t_top
 
                     b = SNode(None, None, 0, t_top)
@@ -716,6 +718,7 @@ class STrapezoidMap():
                 if t_bottom != l_bottom:
                     t_bottom.pid = self.get_trapezoid()
                     t_bottom.blink()
+                    t_bottom.debug()
                     self.trapezoid_list[t_bottom.pid] = t_bottom
 
                     c = SNode(None, None, 0, t_bottom)
@@ -758,6 +761,7 @@ class STrapezoidMap():
                 if t_top != l_top:
                     t_top.pid = self.get_trapezoid()
                     t_top.blink()
+                    t_top.debug()
                     self.trapezoid_list[t_top.pid] = t_top
 
                     b = SNode(None, None, 0, t_top)
@@ -775,6 +779,7 @@ class STrapezoidMap():
                 if t_bottom != l_bottom:
                     t_bottom.pid = self.get_trapezoid()
                     t_bottom.blink()
+                    t_bottom.debug()
                     self.trapezoid_list[t_bottom.pid] = t_bottom
 
                     c = SNode(None, None, 0, t_bottom) 
@@ -795,8 +800,6 @@ class STrapezoidMap():
                 last_c = c
 
 
-
-
                 s = SNode(id_b, id_c, 1, segment);
                 id_s = self.add_node(s)
                 self.node_list[node.pid] = s
@@ -813,9 +816,12 @@ class STrapezoidMap():
         cnt = 0
         for trap in list_trap:
             right_ext = trap.p_right
+            if right_ext.x > seg.p_right.x:
+                right_ext = seg.p_right
             cnt = cnt + 1
-            if(seg.is_above(right_ext) == False or seg.is_equal(right_ext) == True):
+            if(seg.is_above(right_ext) == False):
                 # Cria novo trap
+
                 current_trap.p_right = right_ext
                 current_trap.s_bottom = trap.s_bottom
 
@@ -846,8 +852,10 @@ class STrapezoidMap():
         cnt = 0
         for trap in list_trap:
             right_ext = trap.p_right
+            if right_ext.x > seg.p_right.x:
+                right_ext = seg.p_right
             cnt = cnt + 1
-            if(seg.is_above(right_ext) == True or seg.is_equal(right_ext) == True):
+            if(seg.is_above(right_ext) == True):
                 # Cria novo trap
                 current_trap.p_right = right_ext
                 current_trap.s_top = trap.s_top

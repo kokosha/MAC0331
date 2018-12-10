@@ -135,13 +135,19 @@ def Brute (l):
 	s = SPoint(1, 2)
 	e = SPoint(2, 2)
 
-	if (-1e9 > s.x or 1e9 < s.x) :
-		print("Outside boundary");
-	if (-1e9 > e.x or 1e9 < e.x) :
-		print("Outside boundary");	
+
+
 
 	sn = mapa.query(mapa.node_list[0], s)
 	en = mapa.query(mapa.node_list[0], e)
+	if (-1e9 > s.x or 1e9 < s.x) :
+		print("Outside boundary");
+	elif (-1e9 > e.x or 1e9 < e.x) :
+		print("Outside boundary");	
+	elif sn.info.remove == 1:
+		print("Outside boundary");
+	elif en.info.remove == 1:
+		print("Outside boundary");
 	if sn.info == en.info:
 		grafo.newVertex(e.x, e.y)
 		grafo.newVertex(s.x, s.y)
