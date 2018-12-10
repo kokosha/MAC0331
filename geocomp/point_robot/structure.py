@@ -708,6 +708,7 @@ class STrapezoidMap():
                     t_top.t_lower_left = l_top #2
                 else:                 
                     b = last_b
+                    id_b = b.pid
 
 
 
@@ -724,7 +725,8 @@ class STrapezoidMap():
                     t_bottom.t_upper_left = l_bottom #2
                     t_bottom.t_lower_left = l_bottom #2  
                 else:
-                    c = last_c            
+                    c = last_c       
+                    id_c = c.pid     
 
                 t_right.blink()
                 t_right.pid = self.get_trapezoid()
@@ -743,8 +745,6 @@ class STrapezoidMap():
 
 
                 id_a = self.add_node(a)
-
-                id_c = self.add_node(c)
                 s = SNode(id_b, id_c, 1, segment);
                 id_s = self.add_node(s)
                 q = SNode(id_s, id_a, 2, segment.p_right)
@@ -769,6 +769,7 @@ class STrapezoidMap():
                     t_top.t_lower_left = l_top #3
                 else:
                     b = last_b
+                    id_b = b.pid
 
                 if t_bottom != l_bottom:
                     t_bottom.pid = self.get_trapezoid()
@@ -784,6 +785,8 @@ class STrapezoidMap():
                     t_bottom.t_lower_left = l_bottom #3
                 else:
                     c = last_c
+                    id_c = c.pid
+
                 l_top = t_top
                 l_bottom = t_bottom
 
