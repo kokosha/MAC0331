@@ -75,16 +75,25 @@ def Brute (l):
 		Lpolygon.append(at)
 		at = []
 
+
+
 	# Printando os polígonos simples
 	for x in Lpolygon:
 		blocked = Polygon(x)
 		Printo(blocked)
 
 
+	# Fazemos um achatamento dos dados
+
+	
+
 	# Achando o espaço livre de locomoção em mapa de trapezoidação
 
 	# Parte 1.1 - Transformando os polígonos iniciais em arestas(segmentos de retas)
+
+
 	lsegments = []
+
 	for l in Lpolygon:
 		foo = Generate(l)
 		for x in foo:
