@@ -152,10 +152,10 @@ class STrapezoid():
 
 
         lista.append(Point((P1X+P2X+P3X+P4X)/4.0,(P1Y+P2Y+P3Y+P4Y)/4.0))
-        lista.append(Point((P1X+P5X)/2.0,(P1X+P5X)/2.0))
-        lista.append(Point((P2X+P5X)/2.0,(P2X+P5X)/2.0))
-        lista.append(Point((P3X+P6X)/2.0,(P3X+P6X)/2.0))
-        lista.append(Point((P4X+P6X)/2.0,(P4X+P6X)/2.0))    
+        lista.append(Point((P1X+P5X)/2.0,(P1Y+P5Y)/2.0))
+        lista.append(Point((P2X+P5X)/2.0,(P2Y+P5Y)/2.0))
+        lista.append(Point((P3X+P6X)/2.0,(P3Y+P6Y)/2.0))
+        lista.append(Point((P4X+P6X)/2.0,(P4Y+P6Y)/2.0))    
 
 
         return lista
@@ -866,9 +866,11 @@ class STrapezoidMap():
         par = []
         for trap in self.trapezoid_list:
             print("trap.remove == 0" + str(trap.pid))
-            if (trap.remove == 0):
-                print("trap.remove == 0" + str(trap.pid))
-                val = trap.get_point()
+            print("trap.remove == 0" + str(trap.pid))
+            val = trap.get_point()
+            par.append((Point(0,0), val[0]))
+            #s
+            '''
                 if (trap.t_lower_right != None and trap.t_upper_right != None):
                     trap.t_lower_right.debug()
                     trap.t_upper_right.debug()
@@ -892,5 +894,5 @@ class STrapezoidMap():
                         par.append((val[1], trap.t_lower_left.get_point()[0]))
                         par.append((val[0], val[2]))
                         par.append((val[2], trap.t_upper_left.get_point()[0]))                   
-
+            '''
         return par

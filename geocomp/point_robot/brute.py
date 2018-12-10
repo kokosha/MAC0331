@@ -119,10 +119,10 @@ def Brute (l):
 	condition = 0
 
 	for x in val:
-		grafo.newVertex(x[0].x, x[0].y)
-		grafo.newVertex(x[1].x, x[1].y)
-		grafo.newEdge(grafo.findVertex(x[0].x, x[0].y), grafo.findVertex(x[1].x, x[1].y))
-
+		seg = Segment(Point(x[0].x, x[0].y), Point(x[1].x, x[1].y))
+		seg.plot('cyan')
+		control.sleep()
+		'''
 	grafo.newVertex(3, 4)
 	grafo.newVertex(4, 3)
 	grafo.newVertex(3, 3)
@@ -141,7 +141,7 @@ def Brute (l):
 	grafo.newEdge(grafo.findVertex(3, 4), grafo.findVertex(2, 4))
 
 	grafo.DFS(grafo.findVertex(4, 1), grafo.findVertex(4, 4))
-
+	'''
 
 	# Parte 2.2 - Achando o caminho
 	
