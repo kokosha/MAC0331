@@ -639,6 +639,9 @@ class STrapezoidMap():
 
         l_top = None
         l_bottom = None
+
+        last_b = None
+        last_c = None
         for i in range(len(lower_trap)):
             node = self.node_list[l_node[i]]
             if i == 0:
@@ -676,6 +679,9 @@ class STrapezoidMap():
                 a = SNode(None, None, 0, t_left)
                 b = SNode(None, None, 0, t_top)
                 c = SNode(None, None, 0, t_bottom) 
+
+                last_b = b
+                last_c = c
                 id_a = self.add_node(a)
                 id_b = self.add_node(b)
                 id_c = self.add_node(c)     
@@ -693,11 +699,16 @@ class STrapezoidMap():
                     t_top.blink()
                     self.trapezoid_list[t_top.pid] = t_top
 
+                    b = SNode(None, None, 0, t_top)
+                    id_b = self.add_node(b)
                     # VIZINHOS
                     l_top.t_upper_right = t_top #2
                     l_top.t_lower_right = t_top #2
                     t_top.t_upper_left = l_top #2
                     t_top.t_lower_left = l_top #2
+                else:                 
+                    b = last_b
+
 
 
                 if t_bottom != l_bottom:
@@ -705,11 +716,15 @@ class STrapezoidMap():
                     t_bottom.blink()
                     self.trapezoid_list[t_bottom.pid] = t_bottom
 
+                    c = SNode(None, None, 0, t_bottom)
+                    id_c = self.add_node(c) 
                     # VIZINHOS
                     l_bottom.t_upper_right = t_bottom #2
                     l_bottom.t_lower_right = t_bottom #2
                     t_bottom.t_upper_left = l_bottom #2
-                    t_bottom.t_lower_left = l_bottom #2              
+                    t_bottom.t_lower_left = l_bottom #2  
+                else:
+                    c = last_c            
 
                 t_right.blink()
                 t_right.pid = self.get_trapezoid()
@@ -725,10 +740,10 @@ class STrapezoidMap():
                 self.trapezoid_list[t_right.pid] = t_right
 
                 a = SNode(None, None, 0, t_right)
-                b = SNode(None, None, 0, t_top)
-                c = SNode(None, None, 0, t_bottom) 
+
+
                 id_a = self.add_node(a)
-                id_b = self.add_node(b)
+
                 id_c = self.add_node(c)
                 s = SNode(id_b, id_c, 1, segment);
                 id_s = self.add_node(s)
@@ -744,31 +759,41 @@ class STrapezoidMap():
                     t_top.blink()
                     self.trapezoid_list[t_top.pid] = t_top
 
+                    b = SNode(None, None, 0, t_top)
+                    id_b = self.add_node(b)
+
                     # VIZINHOS
                     l_top.t_upper_right = t_top #3
                     l_top.t_lower_right = t_top #3
                     t_top.t_upper_left = l_top #3
                     t_top.t_lower_left = l_top #3
+                else:
+                    b = last_b
 
                 if t_bottom != l_bottom:
                     t_bottom.pid = self.get_trapezoid()
                     t_bottom.blink()
                     self.trapezoid_list[t_bottom.pid] = t_bottom
 
+                    c = SNode(None, None, 0, t_bottom) 
+                    id_c = self.add_node(c)
                     # VIZINHOS
                     l_bottom.t_upper_right = t_bottom #3
                     l_bottom.t_lower_right = t_bottom #3
                     t_bottom.t_upper_left = l_bottom #3
                     t_bottom.t_lower_left = l_bottom #3
-
+                else:
+                    c = last_c
                 l_top = t_top
                 l_bottom = t_bottom
 
-                a = SNode(None, None, 0, t_top)
-                b = SNode(None, None, 0, t_bottom) 
-                id_a = self.add_node(a)
-                id_b = self.add_node(b)
-                s = SNode(id_a, id_b, 1, segment);
+                last_b = b
+                last_c = c
+
+
+
+
+                s = SNode(id_b, id_c, 1, segment);
                 id_s = self.add_node(s)
                 self.node_list[node.pid] = s
         
