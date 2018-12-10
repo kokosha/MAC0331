@@ -37,6 +37,7 @@ class SSegment():
     def __init__ (self, p_left = None, p_right = None):
         self.p_left = p_left
         self.p_right = p_right
+        self.swap = 0
 
         self.linha = None
 
@@ -319,7 +320,9 @@ class STrapezoidMap():
         maxY = maxY + 1
 
         s_top = SSegment(SPoint(minX, maxY), SPoint(maxX, maxY))
+        s_top.swap = 2
         s_bottom = SSegment(SPoint(minX, minY), SPoint(maxX, minY))
+        s_bottom.swap = 2
         p_left = SPoint(minX, maxY)
         p_right = SPoint(maxX, maxY)
 
@@ -560,6 +563,7 @@ class STrapezoidMap():
             id_q = self.add_node(q)
             p = SNode(id_a, id_q, 2, segment.p_left)
             self.node_list[node.pid] = p
+
             self.rmv_trapezoid(t)
 
     def hard_case(self, l_node, segment):
@@ -581,14 +585,9 @@ class STrapezoidMap():
         for xnode in l_node:
             if self.node_list[xnode].node_type == 0:
                 list_trap.append(self.node_list[xnode].info)
-                self.rmv_trapezoid(self.node_list[xnode].info)
             else: 
                 print("THEREEEEEE IS A FATAL BUG")
 
-
-
-        list_trap = [(trap, SNode(node_type = 1, info = segment))
-                         for trap in list_trap]
 
 
 
@@ -614,10 +613,6 @@ class STrapezoidMap():
 
 
 
-        n_left = SNode(None, None, 0, t_left)
-        id_left = self.add_node(n_left)
-
-
         # RIGHTIEST TRAPEZOID
 
         at = self.node_list[l_node[tot-1]].info
@@ -625,8 +620,6 @@ class STrapezoidMap():
         t_right.p_left = segment.p_right
 
 
-        n_right = SNode(None, None, 0, t_right)
-        id_right = self.add_node(n_right)
 
         lower_trap = self.mergeDown(list_trap, segment)
         upper_trap = self.mergeUp(list_trap, segment)
@@ -779,11 +772,8 @@ class STrapezoidMap():
                 id_s = self.add_node(s)
                 self.node_list[node.pid] = s
         
-        for xnode in l_node:
-            if self.node_list[xnode].node_type == 0:
-                self.rmv_trapezoid(self.node_list[xnode].info)
-            else: 
-                print("THEREEEEEE IS A FATAL BUG")
+        for x in list_trap:
+            self.rmv_trapezoid(x)
 
 
 
@@ -792,9 +782,8 @@ class STrapezoidMap():
         left_ext = seg.p_left
         current_trap = STrapezoid(left_ext, None, seg, None)
         cnt = 0
-        for (trap, node) in list_trap:
+        for trap in list_trap:
             right_ext = trap.p_right
-            node.right = current_trap
             cnt = cnt + 1
             if(seg.is_above(right_ext) == False or seg.is_equal(right_ext) == True):
                 # Cria novo trap
@@ -825,9 +814,8 @@ class STrapezoidMap():
         left_ext = seg.p_left
         current_trap = STrapezoid(left_ext, None, None, seg)
         cnt = 0
-        for (trap, node) in list_trap:
+        for trap in list_trap:
             right_ext = trap.p_right
-            node.right = current_trap
             cnt = cnt + 1
             if(seg.is_above(right_ext) == True or seg.is_equal(right_ext) == True):
                 # Cria novo trap
@@ -899,8 +887,8 @@ class STrapezoidMap():
                 if (trap.t_lower_right != None and trap.t_upper_right != None):
                     if trap.t_lower_right.remove == 0 and trap.t_upper_right.remove == 0:
 
-                        trap.t_lower_right.debug()
-                        trap.t_upper_right.debug()
+                        #trap.t_lower_right.debug()
+                        #trap.t_upper_right.debug()
                         if (trap.t_lower_right == trap.t_upper_right):
                             if(val[3] != Point(1e9, 1e9)):
                                 par.append((val[0], val[3]))
@@ -916,8 +904,8 @@ class STrapezoidMap():
 
                 if (trap.t_lower_left != None and trap.t_upper_left != None):
                     if trap.t_lower_left.remove == 0 and trap.t_upper_left.remove == 0:
-                        trap.t_lower_left.debug()
-                        trap.t_upper_left.debug()
+                        #trap.t_lower_left.debug()
+                        #trap.t_upper_left.debug()
                         if (trap.t_lower_left == trap.t_upper_left):
                             if(val[1] != Point(1e9, 1e9)):
                                 par.append((val[0], val[1]))
@@ -931,3 +919,45 @@ class STrapezoidMap():
                             par.append((val[0], val[2]))
                             par.append((val[2], trap.t_upper_left.get_point()[0]))                   
         return par
+
+    def checking(self):
+        for trap in self.trapezoid_list:
+
+            if trap.remove == 0:  
+                val = trap.get_point()
+                seg_top = trap.s_top
+                seg_bot = trap.s_bottom
+
+                skip = 0
+                if(seg_top.swap == 2):
+                    x1 = seg_top.p_right
+                    y1 = seg_top.p_left
+                    skip = 1
+                elif(seg_top.swap == 1):
+                    x1 = seg_top.p_right
+                    y1 = seg_top.p_left
+                else:
+                    x1 = seg_top.p_left
+                    y1 = seg_top.p_right           
+                n_seg_top = SSegment(x1, y1)
+
+                if(seg_bot.swap == 2):
+                    x2 = seg_top.p_right
+                    y2 = seg_top.p_left
+                    skip = 1
+                elif(seg_bot.swap == 1):
+                    x2 = seg_bot.p_right
+                    y2 = seg_bot.p_left
+                else:
+                    x2 = seg_top.p_left
+                    y2 = seg_top.p_right   
+                
+                n_seg_bot = SSegment(x2, y2)
+
+                n_p = SPoint(val[0].x, val[0].y)
+                # direction from x to y
+                if skip == 1:
+                    continue
+                if(n_seg_top.is_above(n_p) == True and n_seg_bot.is_above(n_p) == True):
+                    self.rmv_trapezoid(trap)   
+

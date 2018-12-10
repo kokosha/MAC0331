@@ -29,7 +29,9 @@ def Generate(l):
 	n = len(l)
 	for i in range(n):
 		lsegments.append(SSegment(SPoint(l[i%n].x, l[i%n].y), SPoint(l[(i+1)%n].x, l[(i+1)%n].y)))
-
+		seg = Segment(Point(l[i%n].x, l[i%n].y), Point(l[(i+1)%n].x, l[(i+1)%n].y))
+		seg.plot('green')
+		control.sleep()
 	return lsegments
 
 
@@ -88,10 +90,12 @@ def Brute (l):
 		for x in foo:
 			p1 = x.p_left
 			p2 = x.p_right
+			x.swap = 0
 
 			if p1.x > p2.x:
 				x.p_left = p2
 				x.p_right = p1
+				x.swap = 1
 
 			lsegments.append(x)
 
@@ -102,7 +106,7 @@ def Brute (l):
 	mapa.construct()
 
 	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
-	#mapa.checking()
+	mapa.checking()
 
 
 	# Achando o grafo de locomoção
@@ -130,16 +134,21 @@ def Brute (l):
 	# Parte 2.2 - Achando o caminho	
 	s = SPoint(1, 2)
 	e = SPoint(2, 2)
+
 	if (-1e9 > s.x or 1e9 < s.x) :
 		print("Outside boundary");
 	if (-1e9 > e.x or 1e9 < e.x) :
 		print("Outside boundary");	
+
 	sn = mapa.query(mapa.node_list[0], s)
 	en = mapa.query(mapa.node_list[0], e)
 	if sn.info == en.info:
 		grafo.newVertex(e.x, e.y)
 		grafo.newVertex(s.x, s.y)
 		grafo.newEdge(grafo.findVertex(s.x, s.y), grafo.findVertex(e.x, e.y))
+		seg = Segment(Point(s.x, s.y), Point(e.x, e.y))
+		seg.plot('red')
+		control.sleep()
 	else:		
 		if sn.node_type == 0 :
 			x = sn.info.get_point()
