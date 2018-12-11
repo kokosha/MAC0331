@@ -125,17 +125,14 @@ def Brute (l):
 	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
 	mapa.checking()
 
-	assert(0)
 
-	'''
+	
 	# Achando o grafo de locomoção
 
 	# Parte 2.1 - Transformando em grafo
-	val = mapa.make_graph()
+	mapa.make_graph()
 
-	print(val)
-
-
+	'''
 	# TESTE DO GRAFO
 
 	grafo = Graph()

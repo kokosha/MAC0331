@@ -93,7 +93,13 @@ class STrapezoid():
 
         self.linha1 = None
         self.linha2 = None
+
+        # Saber se a varredura já passou por ele
+        self.visited = False
    
+    #def center(self):
+
+
     def get_point(self):
         trapezio = self
         s_top = trapezio.s_top
@@ -346,10 +352,10 @@ class STrapezoidMap():
             maxY = max(maxY, seg.p_left.y)
             maxY = max(maxY, seg.p_right.y)
 
-        minX = minX - 1
-        minY = minY - 1
-        maxX = maxX + 1
-        maxY = maxY + 1
+        minX = minX - 0.1
+        minY = minY - 0.1
+        maxX = maxX + 0.1
+        maxY = maxY + 0.1
 
         s_top = SSegment(SPoint(minX, maxY), SPoint(maxX, maxY))
         s_top.swap = 2
@@ -385,6 +391,44 @@ class STrapezoidMap():
             seg.show("white")
 
             val = val + 1
+
+    # Devolve os trapézios vizinhos da direita
+    def neigh(self, trap):
+        trap.visited = True
+        print("rola")
+        trap.show('cyan')
+        trap.hide()
+        if (trap.t_upper_right != None):
+            if (trap.t_upper_right.visited):
+                #faz no grafo
+                j = 5
+            else: 
+                self.neigh(trap.t_upper_right)
+        if (trap.t_lower_right != None):
+            if(trap.t_lower_right.visited):
+                #faz no grafo
+                j = 5
+            else:
+                self.neigh(trap.t_lower_right)
+
+    # Cria o grafo
+    def make_graph(self):
+        base = self.trapezoid_list[0]
+        for i in self.trapezoid_list:
+            if i.p_left.x < base.p_left.x:
+                base = i
+            elif i.p_left.x == base.p_left.x:
+                if i.p_right.x < base.p_right.x:
+                    base = i
+
+        self.neigh(base)
+
+        '''
+        base.show('cyan')
+        base.hide()
+
+        base.t_upper_right.t_upper_right.show('cyan')
+        '''
 
     # Função que faz o incremento de um segmento
     def add(self, node, segment):
