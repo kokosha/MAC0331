@@ -27,11 +27,17 @@ def Generate(l):
 	# Dado a lista de pontos do poligono e gera todos os segmentos de retas
 	lsegments = []
 	n = len(l)
-	for i in range(n):
-		lsegments.append(SSegment(SPoint(l[i%n].x, l[i%n].y), SPoint(l[(i+1)%n].x, l[(i+1)%n].y)))
-		seg = Segment(Point(l[i%n].x, l[i%n].y), Point(l[(i+1)%n].x, l[(i+1)%n].y))
+	if (n == 2) :
+		lsegments.append(SSegment(SPoint(l[0].x, l[0].y), SPoint(l[1].x, l[1].y)))
+		seg = Segment(Point(l[0].x, l[0].y), Point(l[1].x, l[1].y))
 		seg.plot('green')
 		control.sleep()
+	else:
+		for i in range(n):
+			lsegments.append(SSegment(SPoint(l[i%n].x, l[i%n].y), SPoint(l[(i+1)%n].x, l[(i+1)%n].y)))
+			seg = Segment(Point(l[i%n].x, l[i%n].y), Point(l[(i+1)%n].x, l[(i+1)%n].y))
+			seg.plot('green')
+			control.sleep()
 	return lsegments
 
 
@@ -85,7 +91,7 @@ def Brute (l):
 
 	# Fazemos um achatamento dos dados
 
-	
+
 
 	# Achando o espaço livre de locomoção em mapa de trapezoidação
 
