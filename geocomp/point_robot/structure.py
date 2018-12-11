@@ -543,20 +543,20 @@ class STrapezoidMap():
 
             # Trecho 1.3 - Adicionar a relação inversa
             if t.t_upper_left != None :
-                t.t_upper_left.t_upper_right = t_left
-                t.t_upper_left.t_lower_right = t_left
+                self.trapezoid_list[t.t_upper_left.pid].t_upper_right = t_left
+                self.trapezoid_list[t.t_upper_left.pid].t_lower_right = t_left
 
             if t.t_lower_left != None :
-                t.t_lower_left.t_upper_right = t_left
-                t.t_lower_left.t_lower_right = t_left
+                self.trapezoid_list[t.t_lower_left.pid].t_upper_right = t_left
+                self.trapezoid_list[t.t_lower_left.pid].t_lower_right = t_left
 
             if t.t_upper_right != None :
-                t.t_upper_right.t_upper_left = t_right
-                t.t_upper_right.t_lower_left = t_right
+                self.trapezoid_list[t.t_upper_right.pid].t_upper_left = t_right
+                self.trapezoid_list[t.t_upper_right.pid].t_lower_left = t_right
 
             if t.t_lower_right != None :
-                t.t_lower_right.t_upper_left = t_right               
-                t.t_lower_right.t_lower_left = t_right
+                self.trapezoid_list[t.t_lower_right.pid].t_upper_left = t_right               
+                self.trapezoid_list[t.t_lower_right.pid].t_lower_left = t_right
 
             self.trapezoid_list[t_left.pid] = t_left
             self.trapezoid_list[t_right.pid] = t_right
@@ -651,11 +651,11 @@ class STrapezoidMap():
 
 
                 if at.t_upper_left != None:
-                    at.t_upper_left.t_upper_right = t_left #1
-                    at.t_upper_left.t_lower_right = t_left #1                
+                    self.trapezoid_list[at.t_upper_left.pid].t_upper_right = t_left #1
+                    self.trapezoid_list[at.t_upper_left.pid].t_lower_right = t_left #1                
                 if at.t_lower_left != None:
-                    at.t_lower_left.t_upper_right = t_left #1
-                    at.t_lower_left.t_lower_right = t_left #1
+                    self.trapezoid_list[at.t_lower_left.pid].t_upper_right = t_left #1
+                    self.trapezoid_list[at.t_lower_left.pid].t_lower_right = t_left #1
 
  
 
@@ -719,12 +719,12 @@ class STrapezoidMap():
 
 
                 if at.t_upper_right != None:
-                    at.t_upper_right.t_upper_left = t_right #2
-                    at.t_upper_right.t_lower_left = t_right #2                
+                    self.trapezoid_list[at.t_upper_right.pid].t_upper_left = t_right #2
+                    self.trapezoid_list[at.t_upper_right.pid].t_lower_left = t_right #2                
 
                 if at.t_lower_right != None:
-                    at.t_lower_right.t_upper_left = t_right #2                    
-                    at.t_lower_right.t_lower_left = t_right #2
+                    self.trapezoid_list[at.t_lower_right.pid].t_upper_left = t_right #2                    
+                    self.trapezoid_list[at.t_lower_right.pid].t_lower_left = t_right #2
                 
 
 
