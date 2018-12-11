@@ -292,7 +292,10 @@ class STrapezoid():
         print ("p_right")
         print(self.p_right.x, self.p_right.y)
 
-
+    def pdebug(self):
+        self.blink("green")
+        control.sleep()
+        self.hide()       
 
 
 
@@ -392,10 +395,10 @@ class STrapezoidMap():
     # BUG?
     def follow_segment(self, node, segment):
         # Let p and q be the left and right endpoint of si.
-        p_p = segment.p_left
+        p_p = copy.deepcopy(segment.p_left)
         # TESTANDO PROPER INTERSECTION
         p_p.x = p_p.x + 1e-9
-        p_q = segment.p_right
+        p_q = copy.deepcopy(segment.p_right)
         p_q.x = p_q.x - 1e-9
         # Search with p and q in the search structure D to find D0.
         t_d0 = self.query(node, p_p)
@@ -413,9 +416,10 @@ class STrapezoidMap():
 
         while j != None and (j.p_right != None and p_q.is_left(j.p_right)):
             print("PID")
-            #print(j.t_upper_right.pid, j.t_lower_right.pid)
+            print(j.t_upper_right.pid, j.t_lower_right.pid)
             p_q.debug()
             j.p_right.debug()
+            segment.debug()
             if segment.is_above(j.p_right):
                 j = j.t_lower_right
             else:
@@ -552,20 +556,28 @@ class STrapezoidMap():
 
             # Trecho 1.3 - Adicionar a relação inversa
             if t.t_upper_left != None :
-                self.trapezoid_list[t.t_upper_left.pid].t_upper_right = t_left
-                self.trapezoid_list[t.t_upper_left.pid].t_lower_right = t_left
+                if t.t_upper_left.t_upper_right == t :
+                    t.t_upper_left.t_upper_right = t_left
+                if t.t_upper_left.t_lower_right == t :                  
+                    t.t_upper_left.t_lower_right = t_left
 
             if t.t_lower_left != None :
-                self.trapezoid_list[t.t_lower_left.pid].t_upper_right = t_left
-                self.trapezoid_list[t.t_lower_left.pid].t_lower_right = t_left
+                if t.t_lower_left.t_upper_right == t :
+                    t.t_lower_left.t_upper_right = t_left
+                if t.t_lower_left.t_lower_right == t :
+                    t.t_lower_left.t_lower_right = t_left
 
             if t.t_upper_right != None :
-                self.trapezoid_list[t.t_upper_right.pid].t_upper_left = t_right
-                self.trapezoid_list[t.t_upper_right.pid].t_lower_left = t_right
+                if t.t_upper_right.t_upper_left == t :
+                    t.t_upper_right.t_upper_left = t_right
+                if t.t_upper_right.t_lower_left == t :
+                    t.t_upper_right.t_lower_left = t_right
 
             if t.t_lower_right != None :
-                self.trapezoid_list[t.t_lower_right.pid].t_upper_left = t_right               
-                self.trapezoid_list[t.t_lower_right.pid].t_lower_left = t_right
+                if t.t_lower_right.t_upper_left == t:
+                    t.t_lower_right.t_upper_left = t_right               
+                if t.t_lower_right.t_lower_left == t:
+                    t.t_lower_right.t_lower_left = t_right
 
             self.trapezoid_list[t_left.pid] = t_left
             self.trapezoid_list[t_right.pid] = t_right
@@ -633,7 +645,12 @@ class STrapezoidMap():
         lower_trap, lower_id = self.mergeDown(list_trap, segment)
         upper_trap, upper_id = self.mergeUp(list_trap, segment)
 
-        '''
+        ''''
+        for x in list_trap:
+            x.blink("green")
+            control.sleep()
+            x.hide()       
+ 
         for x in lower_trap:
             x.blink()
             control.sleep()
@@ -644,8 +661,7 @@ class STrapezoidMap():
             x.blink()
             control.sleep()
             x.hide()
-
-            '''
+    '''
 
         l_top = None
         l_bottom = None
@@ -669,17 +685,23 @@ class STrapezoidMap():
                 t_left.t_upper_right = upper_trap[upper_id[i]]    #1
                 t_left.t_lower_right = lower_trap[lower_id[i]] #1
 
+
+
                 t_left.pid = self.get_trapezoid()
                 t_left.blink()
                 self.trapezoid_list[t_left.pid] = t_left
 
 
                 if at.t_upper_left != None:
-                    self.trapezoid_list[at.t_upper_left.pid].t_upper_right = t_left #1
-                    self.trapezoid_list[at.t_upper_left.pid].t_lower_right = t_left #1                
+                    if at.t_upper_left.t_upper_right == at:
+                        at.t_upper_left.t_upper_right = t_left #1
+                    if at.t_upper_left.t_lower_right == at:                   
+                        at.t_upper_left.t_lower_right = t_left #1                
                 if at.t_lower_left != None:
-                    self.trapezoid_list[at.t_lower_left.pid].t_upper_right = t_left #1
-                    self.trapezoid_list[at.t_lower_left.pid].t_lower_right = t_left #1
+                    if at.t_lower_left.t_upper_right == at:
+                        at.t_lower_left.t_upper_right = t_left #1
+                    if at.t_lower_left.t_lower_right == at:
+                        at.t_lower_left.t_lower_right = t_left #1
 
  
 
@@ -745,12 +767,16 @@ class STrapezoidMap():
 
 
                 if at.t_upper_right != None:
-                    self.trapezoid_list[at.t_upper_right.pid].t_upper_left = t_right #2
-                    self.trapezoid_list[at.t_upper_right.pid].t_lower_left = t_right #2                
+                    if at.t_upper_right.t_upper_left == at:
+                        at.t_upper_right.t_upper_left = t_right #2
+                    if at.t_upper_right.t_lower_left == at:   
+                        at.t_upper_right.t_lower_left = t_right #2                
 
                 if at.t_lower_right != None:
-                    self.trapezoid_list[at.t_lower_right.pid].t_upper_left = t_right #2                    
-                    self.trapezoid_list[at.t_lower_right.pid].t_lower_left = t_right #2
+                    if at.t_lower_right.t_upper_left == at:
+                        at.t_lower_right.t_upper_left = t_right #2  
+                    if at.t_lower_right.t_lower_left == at:                                         
+                        at.t_lower_right.t_lower_left = t_right #2
                 
 
                 upper_trap[upper_id[i]].t_upper_right = t_right #2
@@ -758,8 +784,8 @@ class STrapezoidMap():
 
                 if upper_trap[upper_id[i]] != l_top:
                      # VIZINHOS
-                    self.trapezoid_list[l_top.pid].t_upper_right = upper_trap[upper_id[i]] #2
-                    self.trapezoid_list[l_top.pid].t_lower_right = upper_trap[upper_id[i]] #2
+                    l_top.t_upper_right = upper_trap[upper_id[i]] #2
+                    l_top.t_lower_right = upper_trap[upper_id[i]] #2
                     upper_trap[upper_id[i]].t_upper_left = self.trapezoid_list[l_top.pid] #2
                     upper_trap[upper_id[i]].t_lower_left = self.trapezoid_list[l_top.pid] #2
 
