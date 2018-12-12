@@ -132,8 +132,8 @@ def Brute (l):
 	# Parte 2.1 - Transformando em grafo
 	grafo = mapa.make_graph()
 
-	target = #para onde o robo quer ir
-	start = #de onde o robo sai
+	#target = #para onde o robo quer ir
+	#start = #de onde o robo sai
 
 	grafo.DFS(target, start)
 	'''

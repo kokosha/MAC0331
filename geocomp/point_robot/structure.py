@@ -366,10 +366,10 @@ class STrapezoidMap():
             maxY = max(maxY, seg.p_left.y)
             maxY = max(maxY, seg.p_right.y)
 
-        minX = minX - 0.1
-        minY = minY - 0.1
-        maxX = maxX + 0.1
-        maxY = maxY + 0.1
+        minX = minX - 1
+        minY = minY - 1
+        maxX = maxX + 1
+        maxY = maxY + 1
 
         s_top = SSegment(SPoint(minX, maxY), SPoint(maxX, maxY))
         s_top.swap = 2
@@ -405,6 +405,7 @@ class STrapezoidMap():
             seg.show("white")
 
             val = val + 1
+
 
     # Constrói no grafo uma edge entre o centro do trapézio e 
     # a aresta que tem um trapézio como vizinho
@@ -630,6 +631,7 @@ class STrapezoidMap():
 
     # CASO SIMPLES
     # NO BUG
+
     def simple_case(self, l_node, segment):
         print("Fazendo o Simple Case")
         node = self.node_list[l_node[0]]
@@ -642,18 +644,44 @@ class STrapezoidMap():
             # Adicionar t_top, t_bottom, t_left, t_right
                 
             # FUTURO CORNER CASE
-            t_left = copy.copy(node.info)
-            t_left.remove = 0
-            t_left.p_right = segment.p_left
-            t_left.blink()
-            t_left.pid = self.get_trapezoid()
 
-            # FUTURO CORNER CASE
-            t_right = copy.copy(node.info)
-            t_right.remove = 0
-            t_right.p_left = segment.p_right
-            t_right.blink()
-            t_right.pid = self.get_trapezoid()
+
+
+
+            if segment.p_left.x != t.p_left.x and segment.p_left.x != t.p_left.x:
+                # INICIAL
+                t_left = copy.copy(node.info)
+                t_left.remove = 0
+                t_left.p_right = segment.p_left
+                t_left.blink()
+                t_left.pid = self.get_trapezoid()
+                exist_left = 1
+            else:
+                exist_left = 0
+
+
+            # FUTURO CORNER CASE - OK
+            if segment.p_right.x != t.p_right.x and segment.p_right.y != t.p_right.y:
+                # INICIAL
+                t_right = copy.copy(node.info)
+                t_right.remove = 0
+                t_right.p_left = segment.p_right
+                t_right.blink()
+                t_right.pid = self.get_trapezoid()
+                exist_right = 1
+            else:
+                exist_right = 0
+
+            if exist_left == 1:
+                print("exist_left") 
+                segment.p_left.debug()
+                t.p_left.debug()
+
+            if exist_right == 1:
+                print("exist_right")
+                segment.p_right.debug()
+                t.p_right.debug()
+
 
             t_bottom = copy.copy(node.info)
             t_bottom.remove = 0
@@ -672,79 +700,176 @@ class STrapezoidMap():
             t_top.pid = self.get_trapezoid()
 
             # Trecho 1.2 - Parte de botar as relações dos trapézios no lugar certo
-            t_left.t_upper_left = t.t_upper_left
-            t_left.t_lower_left = t.t_lower_left
-            t_left.t_upper_right = t_top
-            t_left.t_lower_right = t_bottom
+            if exist_left == 1 :
+                t_left.t_upper_left = t.t_upper_left
+                t_left.t_lower_left = t.t_lower_left
+                t_left.t_upper_right = t_top
+                t_left.t_lower_right = t_bottom
 
+            if exist_right == 1:
+                t_right.t_upper_left = t_top
+                t_right.t_lower_left = t_bottom
+                t_right.t_upper_right = t.t_upper_right
+                t_right.t_lower_right = t.t_lower_right
 
-            t_right.t_upper_left = t_top
-            t_right.t_lower_left = t_bottom
-            t_right.t_upper_right = t.t_upper_right
-            t_right.t_lower_right = t.t_lower_right
+            if exist_left == 1:
+                t_bottom.t_upper_left = t_left
+                t_bottom.t_lower_left = t_left
+            else:
+                t_bottom.t_upper_left = t.t_lower_left
+                t_bottom.t_lower_left = t.t_lower_left
 
-            t_bottom.t_upper_left = t_left
-            t_bottom.t_lower_left = t_left
-            t_bottom.t_upper_right = t_right
-            t_bottom.t_lower_right = t_right
+            if exist_right == 1:
+                t_bottom.t_upper_right = t_right
+                t_bottom.t_lower_right = t_right
+            else:
+                t_bottom.t_upper_right = t.t_lower_right
+                t_bottom.t_lower_right = t.t_lower_right
 
-            t_top.t_upper_left = t_left
-            t_top.t_lower_left = t_left
-            t_top.t_upper_right = t_right
-            t_top.t_lower_right = t_right
+            if exist_left == 1:
+                t_top.t_upper_left = t_left
+                t_top.t_lower_left = t_left
+            else:
+                t_top.t_upper_left = t.t_upper_left
+                t_top.t_lower_left = t.t_upper_left             
+
+            if exist_right == 1:
+                t_top.t_upper_right = t_right
+                t_top.t_lower_right = t_right
+            else:
+                t_top.t_upper_right = t.t_upper_right
+                t_top.t_lower_right = t.t_upper_right             
 
             # Trecho 1.3 - Adicionar a relação inversa
             if t.t_upper_left != None :
                 if t.t_upper_left.t_upper_right == t :
-                    t.t_upper_left.t_upper_right = t_left
-                if t.t_upper_left.t_lower_right == t :                  
-                    t.t_upper_left.t_lower_right = t_left
+                    if exist_left == 1 :
+                        t.t_upper_left.t_upper_right = t_left
+                    else:
+                        t.t_upper_left.t_upper_right = t_top                    
+                if t.t_upper_left.t_lower_right == t :    
+                    if exist_left == 1:              
+                        t.t_upper_left.t_lower_right = t_left
+                    else:
+                        t.t_upper_left.t_lower_right = t_top
 
             if t.t_lower_left != None :
                 if t.t_lower_left.t_upper_right == t :
-                    t.t_lower_left.t_upper_right = t_left
+                    if exist_left == 1:
+                        t.t_lower_left.t_upper_right = t_left
+                    else:
+                        t.t_lower_left.t_upper_right = t_bottom
                 if t.t_lower_left.t_lower_right == t :
-                    t.t_lower_left.t_lower_right = t_left
+                    if exist_left == 1:
+                        t.t_lower_left.t_lower_right = t_left
+                    else:
+                        t.t_lower_left.t_lower_right = t_bottom
 
             if t.t_upper_right != None :
                 if t.t_upper_right.t_upper_left == t :
-                    t.t_upper_right.t_upper_left = t_right
+                    if exist_right == 1:
+                        t.t_upper_right.t_upper_left = t_right
+                    else:
+                        t.t_upper_right.t_upper_left = t_top
                 if t.t_upper_right.t_lower_left == t :
-                    t.t_upper_right.t_lower_left = t_right
+                    if exist_right == 1:
+                        t.t_upper_right.t_lower_left = t_right
+                    else:
+                        t.t_upper_right.t_lower_left = t_top
 
             if t.t_lower_right != None :
                 if t.t_lower_right.t_upper_left == t:
-                    t.t_lower_right.t_upper_left = t_right               
+                    if exist_right == 1:
+                        t.t_lower_right.t_upper_left = t_right       
+                    else:
+                        t.t_lower_right.t_upper_left = t_bottom      
                 if t.t_lower_right.t_lower_left == t:
-                    t.t_lower_right.t_lower_left = t_right
+                    if exist_right == 1:
+                        t.t_lower_right.t_lower_left = t_right
+                    else:
+                        t.t_lower_right.t_lower_left = t_bottom
 
-            self.trapezoid_list[t_left.pid] = t_left
-            self.trapezoid_list[t_right.pid] = t_right
+            if exist_left == 1:
+                self.trapezoid_list[t_left.pid] = t_left
+            if exist_right == 1:
+                self.trapezoid_list[t_right.pid] = t_right
             self.trapezoid_list[t_bottom.pid] = t_bottom
-            self.trapezoid_list[t_top.pid] = t_top     
+            self.trapezoid_list[t_top.pid] = t_top   
+
+            # DEBUG
+            if exist_right == 1:
+                print("t_right simple_case")
+                self.relation_trap(t_right)
+            if exist_left == 1:
+                print("t_left simple_case")
+                self.relation_trap(t_left)
+
+            print("t_bottom simple_case")
+            self.relation_trap(t_bottom) 
+
+            print("t_top simple_case")      
+            self.relation_trap(t_top)   
 
             print ("PID")
-            print ("LEFT " + str(t_left.pid) + " RIGHT "  + str(t_right.pid))
+            if exist_left == 1:
+                print ("LEFT " + str(t_left.pid))
+            if exist_right == 1:
+                print("RIGHT "  + str(t_right.pid))
             print ("BOTTOM " + str(t_bottom.pid) + " TOP "  + str(t_top.pid))
 
 
             # Trecho 2 - Atualizar a estrutura de busca
+            if exist_left == 0 and exist_right == 0:
+                c = SNode(None, None, 0, t_top)
+                d = SNode(None, None, 0, t_bottom)
+                id_c = self.add_node(c)
+                id_d = self.add_node(d)
+                s = SNode(id_c, id_d, 1, segment);
+                self.node_list[node.pid] = s
 
+            elif exist_left == 0 and exist_right == 1:
+                b = SNode(None, None, 0, t_right)
+                c = SNode(None, None, 0, t_top)
+                d = SNode(None, None, 0, t_bottom)
+                id_b = self.add_node(b)
+                id_c = self.add_node(c)
+                id_d = self.add_node(d)
+                s = SNode(id_c, id_d, 1, segment);
+                id_s = self.add_node(s)
+                q = SNode(id_s, id_b, 2, segment.p_right)
+                self.node_list[node.pid] = q                      
 
-            a = SNode(None, None, 0, t_left)
-            b = SNode(None, None, 0, t_right)
-            c = SNode(None, None, 0, t_top)
-            d = SNode(None, None, 0, t_bottom)
-            id_a = self.add_node(a)
-            id_b = self.add_node(b)
-            id_c = self.add_node(c)
-            id_d = self.add_node(d)
-            s = SNode(id_c, id_d, 1, segment);
-            id_s = self.add_node(s)
-            q = SNode(id_s, id_b, 2, segment.p_right)
-            id_q = self.add_node(q)
-            p = SNode(id_a, id_q, 2, segment.p_left)
-            self.node_list[node.pid] = p
+            elif exist_left == 1 and exist_right == 0:
+                a = SNode(None, None, 0, t_left)
+                c = SNode(None, None, 0, t_top)
+                d = SNode(None, None, 0, t_bottom)
+                id_a = self.add_node(a)
+                id_c = self.add_node(c)
+                id_d = self.add_node(d)
+                s = SNode(id_c, id_d, 1, segment);
+                id_s = self.add_node(s)
+                p = SNode(id_a, id_s, 2, segment.p_left)
+                self.node_list[node.pid] = p
+ 
+
+            elif exist_left == 1 and exist_right == 1:
+                a = SNode(None, None, 0, t_left)
+                b = SNode(None, None, 0, t_right)
+                c = SNode(None, None, 0, t_top)
+                d = SNode(None, None, 0, t_bottom)
+                id_a = self.add_node(a)
+                id_b = self.add_node(b)
+                id_c = self.add_node(c)
+                id_d = self.add_node(d)
+                s = SNode(id_c, id_d, 1, segment);
+                id_s = self.add_node(s)
+                q = SNode(id_s, id_b, 2, segment.p_right)
+                id_q = self.add_node(q)
+                p = SNode(id_a, id_q, 2, segment.p_left)
+                self.node_list[node.pid] = p
+            else:
+                assert(0)
+
 
             self.rmv_trapezoid(t)
 
@@ -1031,6 +1156,36 @@ class STrapezoidMap():
         for x in list_trap:
 
             self.rmv_trapezoid(x)
+    # Para debugar as relacoes dos trapezios
+    def relation_trap(self, trap):
+        print("Testando trapezio original")
+        trap.blink("green")
+        control.sleep()
+
+        print("Testando sua esquerda superior")
+        if trap.t_upper_left != None:
+            trap.t_upper_left.blink("green")
+            trap.t_upper_left.hide()
+            control.sleep()
+ 
+        print("Testando sua esquerda inferior")
+        if trap.t_lower_left != None:
+            trap.t_lower_left.blink("green")
+            trap.t_lower_left.hide()
+            control.sleep()
+
+        print("Testando sua direita superior")
+        if trap.t_upper_right != None:
+            trap.t_upper_right.blink("green")
+            trap.t_upper_right.hide()
+            control.sleep()
+ 
+        print("Testando sua direita inferior")
+        if trap.t_lower_right != None:
+            trap.t_lower_right.blink("green")
+            trap.t_lower_right.hide()
+            control.sleep()
+        trap.hide()
 
     # INVARIANTE ERRADA...
     def mergeDown(self, list_trap, seg):

@@ -4,6 +4,8 @@ from math import fabs
 from geocomp.common.polygon import Polygon
 from geocomp.common.point import Point
 from geocomp.common import control
+from geocomp.common.graph import Graph
+from geocomp.common.vertex import Vertex
 
 # SHALLOW COPY - orz
 
@@ -35,10 +37,11 @@ def ccw(p1, p2, p3):
 # Estrutura SSegment - Cada segmento tem seu ponto mais a esquerda e o ponto mais a direita
 
 class SSegment():
-    def __init__ (self, p_left = None, p_right = None):
+    def __init__ (self, p_left = None, p_right = None, belongs = -1):
         self.p_left = p_left
         self.p_right = p_right
-        self.swap = 0
+        self.belongs = belongs 
+
 
         self.linha = None
 
@@ -92,7 +95,13 @@ class STrapezoid():
 
         self.linha1 = None
         self.linha2 = None
+
+        # Saber se a varredura já passou por ele
+        self.visited = False
    
+    def center(self):
+        return self.get_point()[0]
+
     def get_point(self):
         trapezio = self
         s_top = trapezio.s_top
@@ -172,6 +181,18 @@ class STrapezoid():
         else:       
             lista.append(Point((P4X+P6X)/2.0,(P4Y+P6Y)/2.0))    
 
+        lista.append(P1X)
+        lista.append(P2X)
+        lista.append(P3X)
+        lista.append(P4X)
+        lista.append(P5X)
+        lista.append(P6X)
+        lista.append(P1Y)
+        lista.append(P2Y)
+        lista.append(P3Y)
+        lista.append(P4Y)
+        lista.append(P5Y)
+        lista.append(P6Y)
 
         return lista
 
@@ -233,6 +254,7 @@ class STrapezoid():
         linha1.append(Point(p_left.x, yt_left))     
 
         self.linha1 = Polygon(linha1)
+        self.linha1.hide()
         self.linha1.plot(color)
 
 
@@ -243,6 +265,7 @@ class STrapezoid():
         linha2.append(Point(p_right.x, yt_right))
 
         self.linha2 = Polygon(linha2)
+        self.linha2 .hide()
         self.linha2.plot(color)
 
 
@@ -292,7 +315,10 @@ class STrapezoid():
         print ("p_right")
         print(self.p_right.x, self.p_right.y)
 
-
+    def pdebug(self):
+        self.blink("green")
+        control.sleep()
+        self.hide()       
 
 
 
@@ -340,10 +366,10 @@ class STrapezoidMap():
             maxY = max(maxY, seg.p_left.y)
             maxY = max(maxY, seg.p_right.y)
 
-        minX = minX - 1
-        minY = minY - 1
-        maxX = maxX + 1
-        maxY = maxY + 1
+        minX = minX - 0.1
+        minY = minY - 0.1
+        maxX = maxX + 0.1
+        maxY = maxY + 0.1
 
         s_top = SSegment(SPoint(minX, maxY), SPoint(maxX, maxY))
         s_top.swap = 2
@@ -354,14 +380,14 @@ class STrapezoidMap():
 
 
         # Criando o trapezio
-        t_start = STrapezoid(p_left, p_right, s_top, s_bottom, 1)
+        t_start = STrapezoid(p_left, p_right, s_top, s_bottom, 0)
         t_start.blink()
 
         # A estrutura de busca
         self.node_list = [SNode(None, None, 0, t_start, 0)]
 
         # Posicao de guardar
-        self.trapezoid_list = [None, t_start]
+        self.trapezoid_list = [t_start]
 
         self.removed_node_list = []
         self.removed_trapezoid_list = []
@@ -380,6 +406,119 @@ class STrapezoidMap():
 
             val = val + 1
 
+    # Constrói no grafo uma edge entre o centro do trapézio e 
+    # a aresta que tem um trapézio como vizinho
+    def medium_grapher(self, cTrap, X1, Y1, X2, Y2, graph):
+        pM = Point((X1+X2)/2,(Y1+Y2)/2)
+        graph.newVertex(pM.x, pM.y)
+        graph.newEdge(cTrap.x, cTrap.y, pM.x, pM.y)
+        return pM
+
+    # Constrói o grafo resursivamente
+    def grapher(self, trap, graph):
+
+        trap.visited = True
+        trap.show('cyan')
+        trap.hide()
+
+        cTrap1 = trap.center()
+        
+        #check se existe vizinhos à direita
+        if (trap.t_upper_right != None): cTrap2 = trap.t_upper_right.center()
+        else: cTrap2 = None #vizinho de cima na direita
+        if (trap.t_lower_right != None): cTrap3 = trap.t_lower_right.center()
+        else: cTrap3 = None #vizinho de baixo na direita
+
+        #   Caso exista, pode-se ter 3 casos: os dois existem (1), logo precisa ver se não apontam
+        #para o mesmo trapezio (1.1) e os outros dois somente se um dos dois existirem (2) e (3)
+
+        #(1)
+        if (cTrap2 != None and cTrap3 != None):
+
+            #(1.1)
+            if (cTrap2.x != cTrap3.x and cTrap2.y != cTrap3.y):
+            
+                if (trap.t_upper_right != None):
+                    tX = trap.get_point() #pega os extremos do segmento vizinho
+                    tR = trap.p_right     #só pra diminuir tamanho rs
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[7], tX[13], graph)
+                    if (not trap.t_upper_right.visited):
+                        graph.newVertex(cTrap2.x, cTrap2.y)
+                        self.grapher(trap.t_upper_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap2.x, cTrap2.y)
+
+                if (trap.t_lower_right != None):
+                    tX = trap.get_point()
+                    tR = trap.p_right
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[8], tX[14], graph)
+                    if (not trap.t_lower_right.visited):
+                        graph.newVertex(cTrap3.x, cTrap3.y)
+                        self.grapher(trap.t_lower_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
+
+            else:
+                medX2 = trap.get_point()[8]
+                medY2 = trap.get_point()[14]
+
+                #TALVEZ TENHA UM ERRO NESSA CONDICAO
+                if (trap.p_right.y == medY2):
+                    tX = trap.get_point()
+                    tR = trap.p_right
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[7], tX[13], graph)
+                    if (not trap.t_upper_right.visited):
+                        graph.newVertex(cTrap2.x, cTrap2.y)
+                        self.grapher(trap.t_upper_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap2.x, cTrap2.y)
+
+                else:
+                    tX = trap.get_point()
+                    tR = trap.p_right
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[8], tX[14], graph)
+                    if (not trap.t_lower_right.visited):
+                        graph.newVertex(cTrap3.x, cTrap3.y)
+                        self.grapher(trap.t_lower_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
+        
+        #(2)
+        elif (cTrap2 != None and cTrap3 == None):
+
+            if (trap.t_upper_right != None):
+                    tX = trap.get_point()
+                    tR = trap.p_right
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[7], tX[13], graph)
+                    if (not trap.t_upper_right.visited):
+                        graph.newVertex(cTrap2.x, cTrap2.y)
+                        self.grapher(trap.t_upper_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap2.x, cTrap2.y)
+
+        #(3)
+        elif (cTrap2 == None and cTrap3 != None):
+
+            if (trap.t_lower_right != None):
+                    tX = trap.get_point()
+                    tR = trap.p_right
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[8], tX[14], graph)
+                    if (not trap.t_lower_right.visited):
+                        graph.newVertex(cTrap3.x, cTrap3.y)
+                        self.grapher(trap.t_lower_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)            
+     
+    # Cria o grafo
+    def make_graph(self):
+        base = self.trapezoid_list[0]
+        for i in self.trapezoid_list:
+            if i.p_left.x < base.p_left.x:
+                base = i
+            elif i.p_left.x == base.p_left.x:
+                if i.p_right.x < base.p_right.x:
+                    base = i
+
+        grafo = Graph()
+        grafo.newVertex(base.center().x, base.center().y)
+        self.grapher(base, grafo)
+
+        return grafo
+
     # Função que faz o incremento de um segmento
     def add(self, node, segment):
         t_list = self.follow_segment(node, segment)
@@ -392,11 +531,14 @@ class STrapezoidMap():
     # BUG?
     def follow_segment(self, node, segment):
         # Let p and q be the left and right endpoint of si.
-        p_p = segment.p_left
+        p_p = copy.deepcopy(segment.p_left)
+        p_q = copy.deepcopy(segment.p_right)
         # TESTANDO PROPER INTERSECTION
-        p_p.x = p_p.x + 1e-9
-        p_q = segment.p_right
-        p_q.x = p_q.x - 1e-9
+        p_p.x = p_p.x + (p_q.x - p_p.x)*1e-9 
+        p_p.y = p_p.y + (p_q.y - p_p.y)*1e-9 
+
+        p_q.x = p_q.x + (p_p.x - p_q.x)*1e-9 
+        p_q.y = p_q.y + (p_p.y - p_q.y)*1e-9
         # Search with p and q in the search structure D to find D0.
         t_d0 = self.query(node, p_p)
         print("is removed " + str(t_d0.info.remove))
@@ -413,9 +555,10 @@ class STrapezoidMap():
 
         while j != None and (j.p_right != None and p_q.is_left(j.p_right)):
             print("PID")
-            #print(j.t_upper_right.pid, j.t_lower_right.pid)
+            print(j.t_upper_right.pid, j.t_lower_right.pid)
             p_q.debug()
             j.p_right.debug()
+            segment.debug()
             if segment.is_above(j.p_right):
                 j = j.t_lower_right
             else:
@@ -552,20 +695,28 @@ class STrapezoidMap():
 
             # Trecho 1.3 - Adicionar a relação inversa
             if t.t_upper_left != None :
-                self.trapezoid_list[t.t_upper_left.pid].t_upper_right = t_left
-                self.trapezoid_list[t.t_upper_left.pid].t_lower_right = t_left
+                if t.t_upper_left.t_upper_right == t :
+                    t.t_upper_left.t_upper_right = t_left
+                if t.t_upper_left.t_lower_right == t :                  
+                    t.t_upper_left.t_lower_right = t_left
 
             if t.t_lower_left != None :
-                self.trapezoid_list[t.t_lower_left.pid].t_upper_right = t_left
-                self.trapezoid_list[t.t_lower_left.pid].t_lower_right = t_left
+                if t.t_lower_left.t_upper_right == t :
+                    t.t_lower_left.t_upper_right = t_left
+                if t.t_lower_left.t_lower_right == t :
+                    t.t_lower_left.t_lower_right = t_left
 
             if t.t_upper_right != None :
-                self.trapezoid_list[t.t_upper_right.pid].t_upper_left = t_right
-                self.trapezoid_list[t.t_upper_right.pid].t_lower_left = t_right
+                if t.t_upper_right.t_upper_left == t :
+                    t.t_upper_right.t_upper_left = t_right
+                if t.t_upper_right.t_lower_left == t :
+                    t.t_upper_right.t_lower_left = t_right
 
             if t.t_lower_right != None :
-                self.trapezoid_list[t.t_lower_right.pid].t_upper_left = t_right               
-                self.trapezoid_list[t.t_lower_right.pid].t_lower_left = t_right
+                if t.t_lower_right.t_upper_left == t:
+                    t.t_lower_right.t_upper_left = t_right               
+                if t.t_lower_right.t_lower_left == t:
+                    t.t_lower_right.t_lower_left = t_right
 
             self.trapezoid_list[t_left.pid] = t_left
             self.trapezoid_list[t_right.pid] = t_right
@@ -614,7 +765,7 @@ class STrapezoidMap():
         for xnode in l_node:
             if self.node_list[xnode].node_type == 0:
                 # NEED TO BE PROPER INTERSECTION
-                print("xnode " + str(xnode))
+                #print("xnode " + str(xnode))
                 
                 '''
                 if self.node_list[xnode].info.p_right == segment.p_left:
@@ -622,7 +773,7 @@ class STrapezoidMap():
                 if self.node_list[xnode].info.p_left ==  segment.p_right:
                     continue 
 
-                    '''            
+                    '''       
                 list_trap.append(self.node_list[xnode].info)
             else: 
                 print("Achamos um node que não é trapézio")
@@ -633,7 +784,13 @@ class STrapezoidMap():
         lower_trap, lower_id = self.mergeDown(list_trap, segment)
         upper_trap, upper_id = self.mergeUp(list_trap, segment)
 
-        '''
+        ''''
+        for x in list_trap:
+            x.blink("green")
+            control.sleep()
+            x.hide()       
+
+
         for x in lower_trap:
             x.blink()
             control.sleep()
@@ -644,8 +801,7 @@ class STrapezoidMap():
             x.blink()
             control.sleep()
             x.hide()
-
-            '''
+    '''
 
         l_top = None
         l_bottom = None
@@ -669,17 +825,23 @@ class STrapezoidMap():
                 t_left.t_upper_right = upper_trap[upper_id[i]]    #1
                 t_left.t_lower_right = lower_trap[lower_id[i]] #1
 
+
+
                 t_left.pid = self.get_trapezoid()
                 t_left.blink()
                 self.trapezoid_list[t_left.pid] = t_left
 
 
                 if at.t_upper_left != None:
-                    self.trapezoid_list[at.t_upper_left.pid].t_upper_right = t_left #1
-                    self.trapezoid_list[at.t_upper_left.pid].t_lower_right = t_left #1                
+                    if at.t_upper_left.t_upper_right == at:
+                        at.t_upper_left.t_upper_right = t_left #1
+                    if at.t_upper_left.t_lower_right == at:                   
+                        at.t_upper_left.t_lower_right = t_left #1                
                 if at.t_lower_left != None:
-                    self.trapezoid_list[at.t_lower_left.pid].t_upper_right = t_left #1
-                    self.trapezoid_list[at.t_lower_left.pid].t_lower_right = t_left #1
+                    if at.t_lower_left.t_upper_right == at:
+                        at.t_lower_left.t_upper_right = t_left #1
+                    if at.t_lower_left.t_lower_right == at:
+                        at.t_lower_left.t_lower_right = t_left #1
 
  
 
@@ -745,12 +907,16 @@ class STrapezoidMap():
 
 
                 if at.t_upper_right != None:
-                    self.trapezoid_list[at.t_upper_right.pid].t_upper_left = t_right #2
-                    self.trapezoid_list[at.t_upper_right.pid].t_lower_left = t_right #2                
+                    if at.t_upper_right.t_upper_left == at:
+                        at.t_upper_right.t_upper_left = t_right #2
+                    if at.t_upper_right.t_lower_left == at:   
+                        at.t_upper_right.t_lower_left = t_right #2                
 
                 if at.t_lower_right != None:
-                    self.trapezoid_list[at.t_lower_right.pid].t_upper_left = t_right #2                    
-                    self.trapezoid_list[at.t_lower_right.pid].t_lower_left = t_right #2
+                    if at.t_lower_right.t_upper_left == at:
+                        at.t_lower_right.t_upper_left = t_right #2  
+                    if at.t_lower_right.t_lower_left == at:                                         
+                        at.t_lower_right.t_lower_left = t_right #2
                 
 
                 upper_trap[upper_id[i]].t_upper_right = t_right #2
@@ -758,8 +924,8 @@ class STrapezoidMap():
 
                 if upper_trap[upper_id[i]] != l_top:
                      # VIZINHOS
-                    self.trapezoid_list[l_top.pid].t_upper_right = upper_trap[upper_id[i]] #2
-                    self.trapezoid_list[l_top.pid].t_lower_right = upper_trap[upper_id[i]] #2
+                    l_top.t_upper_right = upper_trap[upper_id[i]] #2
+                    l_top.t_lower_right = upper_trap[upper_id[i]] #2
                     upper_trap[upper_id[i]].t_upper_left = self.trapezoid_list[l_top.pid] #2
                     upper_trap[upper_id[i]].t_lower_left = self.trapezoid_list[l_top.pid] #2
 
@@ -776,13 +942,15 @@ class STrapezoidMap():
 
                     
             
-
+                lower_trap[lower_id[i]].t_upper_right = t_right #2
+                lower_trap[lower_id[i]].t_lower_right = t_right #2
                 if lower_trap[lower_id[i]] != l_bottom:
                     # VIZINHOS
                     self.trapezoid_list[l_bottom.pid].t_upper_right = lower_trap[lower_id[i]] #2
                     self.trapezoid_list[l_bottom.pid].t_lower_right = lower_trap[lower_id[i]] #2
                     lower_trap[lower_id[i]].t_upper_left = self.trapezoid_list[l_bottom.pid] #2
                     lower_trap[lower_id[i]].t_lower_left = self.trapezoid_list[l_bottom.pid] #2  
+
 
                     lower_trap[lower_id[i]].pid = self.get_trapezoid()
                     lower_trap[lower_id[i]].blink()
@@ -864,6 +1032,7 @@ class STrapezoidMap():
 
             self.rmv_trapezoid(x)
 
+    # INVARIANTE ERRADA...
     def mergeDown(self, list_trap, seg):
         new_traps = []
         new_traps_id = []
@@ -943,21 +1112,31 @@ class STrapezoidMap():
         cnt2 = cnt2 + 1
         print("cnt "+ str(cnt2))      
         return new_traps, new_traps_id
+    def checking(self):
+        for trap in self.trapezoid_list:
+            if trap.remove == 0:  
+                seg_top = trap.s_top
+                seg_bot = trap.s_bottom
+
+                if seg_top.belongs == seg_bot.belongs and seg_top.belongs != -1 :
+                    print(trap.linha1)
+                    print(trap.linha2)
+                    #trap.hide()
+                    trap.show("black")
+                    self.rmv_trapezoid(trap) 
 #FOR LATER
 '''
     def make_graph(self):
         
         par = []
         for trap in self.trapezoid_list:
- 
-
-
+    
             val = trap.get_point()
             
 
             if trap.remove == 0:
-                trap.blink("orange");
-                print("trap.remove == 0" + str(trap.pid))
+                #trap.blink("orange");
+                #print("trap.remove == 0" + str(trap.pid))
                 #par.append((Point(0,0), val[0]))
 
                 if (trap.t_lower_right != None and trap.t_upper_right != None):
@@ -995,47 +1174,7 @@ class STrapezoidMap():
                             par.append((val[0], val[2]))
                             par.append((val[2], trap.t_upper_left.get_point()[0]))                   
         return par
-
-    def checking(self):
-        for trap in self.trapezoid_list:
-
-            if trap.remove == 0:  
-                val = trap.get_point()
-                seg_top = trap.s_top
-                seg_bot = trap.s_bottom
-
-                skip = 0
-                if(seg_top.swap == 2):
-                    x1 = seg_top.p_right
-                    y1 = seg_top.p_left
-                    skip = 1
-                elif(seg_top.swap == 1):
-                    x1 = seg_top.p_right
-                    y1 = seg_top.p_left
-                else:
-                    x1 = seg_top.p_left
-                    y1 = seg_top.p_right           
-                n_seg_top = SSegment(x1, y1)
-
-                if(seg_bot.swap == 2):
-                    x2 = seg_top.p_right
-                    y2 = seg_top.p_left
-                    skip = 1
-                elif(seg_bot.swap == 1):
-                    x2 = seg_bot.p_right
-                    y2 = seg_bot.p_left
-                else:
-                    x2 = seg_top.p_left
-                    y2 = seg_top.p_right   
-                
-                n_seg_bot = SSegment(x2, y2)
-
-                n_p = SPoint(val[0].x, val[0].y)
-                # direction from x to y
-                if skip == 1:
-                    continue
-                trap.blink("white");
-                if(n_seg_top.is_above(n_p) == False or n_seg_bot.is_above(n_p) == False):
-                    self.rmv_trapezoid(trap) 
-
 '''
+
+
+
