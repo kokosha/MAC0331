@@ -130,8 +130,12 @@ def Brute (l):
 	# Achando o grafo de locomoção
 
 	# Parte 2.1 - Transformando em grafo
-	mapa.make_graph()
+	grafo = mapa.make_graph()
 
+	target = #para onde o robo quer ir
+	start = #de onde o robo sai
+
+	grafo.DFS(target, start)
 	'''
 	# TESTE DO GRAFO
 
