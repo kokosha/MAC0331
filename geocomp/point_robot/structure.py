@@ -1461,6 +1461,7 @@ class STrapezoidMap():
             self.rmv_trapezoid(x)
     # Para debugar as relacoes dos trapezios
     def relation_trap(self, trap):
+        '''
         print("Testando trapezio original")
         trap.blink("green")
         control.sleep()
@@ -1489,6 +1490,8 @@ class STrapezoidMap():
             trap.t_lower_right.hide()
             control.sleep()
         trap.hide()
+
+        '''
 
     # INVARIANTE ERRADA...
     def mergeDown(self, list_trap, seg):
@@ -1601,7 +1604,9 @@ class STrapezoidMap():
                     print(trap.linha2)
                     #trap.hide()
                     trap.show("black")
-                    self.rmv_trapezoid(trap) 
+                    self.rmv_trapezoid(trap)
+                if trap.remove == 0:
+                    trap.show("green")
 #FOR LATER
 '''
     def make_graph(self):
