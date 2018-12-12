@@ -404,7 +404,6 @@ class STrapezoidMap():
             trap.t_lower_right.hide()
             #(1.1)
             if (cTrap2.x == cTrap3.x and cTrap2.y == cTrap3.y):
-                print("1.1")
                 medX2 = trap.get_point()[8]
                 medY2 = trap.get_point()[14]
 
@@ -428,7 +427,6 @@ class STrapezoidMap():
                     graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
             
             else:
-                print("else 1.1")
                 if (trap.t_upper_right != None):
                     print("upper nao nulo")
                     tX = trap.get_point() #pega os extremos do segmento vizinho
@@ -452,7 +450,6 @@ class STrapezoidMap():
         
         #(2)
         elif (cTrap2 != None and cTrap3 == None):
-            print("2")
             if (trap.t_upper_right != None):
                     print("upper nao nulo")
                     tX = trap.get_point()
@@ -465,7 +462,6 @@ class STrapezoidMap():
 
         #(3)
         elif (cTrap2 == None and cTrap3 != None):
-            print("3")
             if (trap.t_lower_right != None):
                     print("lower nao nulo")
                     tX = trap.get_point()
