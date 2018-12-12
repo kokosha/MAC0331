@@ -31,7 +31,9 @@ class Graph:
 			return None
 
 	# Cria uma aresta no grafo
-	def newEdge(self, vertex1, vertex2):
+	def newEdge(self, x1, y1, x2, y2):
+		vertex1 = self.findVertex(x1, y1)
+		vertex2 = self.findVertex(x2, y2)
 		if (vertex1 != None) and (vertex2 != None):
 			self.allEdge.append(Edge(vertex1, vertex2))
 			point1 = Point(vertex1.getX(), vertex1.getY())

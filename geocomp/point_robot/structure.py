@@ -4,6 +4,8 @@ from math import fabs
 from geocomp.common.polygon import Polygon
 from geocomp.common.point import Point
 from geocomp.common import control
+from geocomp.common.graph import Graph
+from geocomp.common.vertex import Vertex
 
 # SHALLOW COPY - orz
 
@@ -97,8 +99,8 @@ class STrapezoid():
         # Saber se a varredura já passou por ele
         self.visited = False
    
-    #def center(self):
-
+    def center(self):
+        return self.get_point()[0]
 
     def get_point(self):
         trapezio = self
@@ -179,6 +181,18 @@ class STrapezoid():
         else:       
             lista.append(Point((P4X+P6X)/2.0,(P4Y+P6Y)/2.0))    
 
+        lista.append(P1X)
+        lista.append(P2X)
+        lista.append(P3X)
+        lista.append(P4X)
+        lista.append(P5X)
+        lista.append(P6X)
+        lista.append(P1Y)
+        lista.append(P2Y)
+        lista.append(P3Y)
+        lista.append(P4Y)
+        lista.append(P5Y)
+        lista.append(P6Y)
 
         return lista
 
@@ -392,25 +406,103 @@ class STrapezoidMap():
 
             val = val + 1
 
-    # Devolve os trapézios vizinhos da direita
-    def neigh(self, trap):
+    # Constrói no grafo uma edge entre o centro do trapézio e 
+    # a aresta que tem um trapézio como vizinho
+    def medium_grapher(self, cTrap, X1, Y1, X2, Y2, graph):
+        pM = Point((X1+X2)/2,(Y1+Y2)/2)
+        graph.newVertex(pM.x, pM.y)
+        graph.newEdge(cTrap.x, cTrap.y, pM.x, pM.y)
+        return pM
+
+    # Constrói o grafo resursivamente
+    def grapher(self, trap, graph):
+
         trap.visited = True
-        print("rola")
         trap.show('cyan')
         trap.hide()
-        if (trap.t_upper_right != None):
-            if (trap.t_upper_right.visited):
-                #faz no grafo
-                j = 5
-            else: 
-                self.neigh(trap.t_upper_right)
-        if (trap.t_lower_right != None):
-            if(trap.t_lower_right.visited):
-                #faz no grafo
-                j = 5
-            else:
-                self.neigh(trap.t_lower_right)
 
+        cTrap1 = trap.center()
+        
+        #check se existe vizinhos à direita
+        if (trap.t_upper_right != None): cTrap2 = trap.t_upper_right.center()
+        else: cTrap2 = None #vizinho de cima na direita
+        if (trap.t_lower_right != None): cTrap3 = trap.t_lower_right.center()
+        else: cTrap3 = None #vizinho de baixo na direita
+
+        #   Caso exista, pode-se ter 3 casos: os dois existem (1), logo precisa ver se não apontam
+        #para o mesmo trapezio (1.1) e os outros dois somente se um dos dois existirem (2) e (3)
+
+        #(1)
+        if (cTrap2 != None and cTrap3 != None):
+
+            #(1.1)
+            if (cTrap2.x != cTrap3.x and cTrap2.y != cTrap3.y):
+            
+                if (trap.t_upper_right != None):
+                    tX = trap.get_point() #pega os extremos do segmento vizinho
+                    tR = trap.p_right     #só pra diminuir tamanho rs
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[7], tX[13], graph)
+                    if (not trap.t_upper_right.visited):
+                        graph.newVertex(cTrap2.x, cTrap2.y)
+                        self.grapher(trap.t_upper_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap2.x, cTrap2.y)
+
+                if (trap.t_lower_right != None):
+                    tX = trap.get_point()
+                    tR = trap.p_right
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[8], tX[14], graph)
+                    if (not trap.t_lower_right.visited):
+                        graph.newVertex(cTrap3.x, cTrap3.y)
+                        self.grapher(trap.t_lower_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
+
+            else:
+                medX2 = trap.get_point()[8]
+                medY2 = trap.get_point()[14]
+
+                #TALVEZ TENHA UM ERRO NESSA CONDICAO
+                if (trap.p_right.y == medY2):
+                    tX = trap.get_point()
+                    tR = trap.p_right
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[7], tX[13], graph)
+                    if (not trap.t_upper_right.visited):
+                        graph.newVertex(cTrap2.x, cTrap2.y)
+                        self.grapher(trap.t_upper_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap2.x, cTrap2.y)
+
+                else:
+                    tX = trap.get_point()
+                    tR = trap.p_right
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[8], tX[14], graph)
+                    if (not trap.t_lower_right.visited):
+                        graph.newVertex(cTrap3.x, cTrap3.y)
+                        self.grapher(trap.t_lower_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
+        
+        #(2)
+        elif (cTrap2 != None and cTrap3 == None):
+
+            if (trap.t_upper_right != None):
+                    tX = trap.get_point()
+                    tR = trap.p_right
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[7], tX[13], graph)
+                    if (not trap.t_upper_right.visited):
+                        graph.newVertex(cTrap2.x, cTrap2.y)
+                        self.grapher(trap.t_upper_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap2.x, cTrap2.y)
+
+        #(3)
+        elif (cTrap2 == None and cTrap3 != None):
+
+            if (trap.t_lower_right != None):
+                    tX = trap.get_point()
+                    tR = trap.p_right
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[8], tX[14], graph)
+                    if (not trap.t_lower_right.visited):
+                        graph.newVertex(cTrap3.x, cTrap3.y)
+                        self.grapher(trap.t_lower_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)            
+     
     # Cria o grafo
     def make_graph(self):
         base = self.trapezoid_list[0]
@@ -421,14 +513,11 @@ class STrapezoidMap():
                 if i.p_right.x < base.p_right.x:
                     base = i
 
-        self.neigh(base)
+        grafo = Graph()
+        grafo.newVertex(base.center().x, base.center().y)
+        self.grapher(base, grafo)
 
-        '''
-        base.show('cyan')
-        base.hide()
-
-        base.t_upper_right.t_upper_right.show('cyan')
-        '''
+        return grafo
 
     # Função que faz o incremento de um segmento
     def add(self, node, segment):
