@@ -1488,6 +1488,7 @@ class STrapezoidMap():
             cnt = cnt - 1
         cnt2 = cnt2 + 1
         return new_traps, new_traps_id
+
     def checking(self):
         for trap in self.trapezoid_list:
             if trap.remove == 0:  
@@ -1495,8 +1496,7 @@ class STrapezoidMap():
                 seg_bot = trap.s_bottom
 
                 if seg_top.belongs == seg_bot.belongs and seg_top.belongs != -1 :
-                    #trap.hide()
-                    trap.show("black")
+                    trap.hide()
                     self.rmv_trapezoid(trap)
         #DEBUG
         '''
