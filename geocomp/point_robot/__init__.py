@@ -11,7 +11,7 @@ Algoritmos disponveis:
 from . import brute
 
 children = [
-	[ 'brute', 'Brute', 'Forca Bruta' ]
+	[ 'brute', 'Brute', 'Trapezoidação' ]
 ]
 
 __all__ = [a[0] for a in children]

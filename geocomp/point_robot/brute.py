@@ -125,7 +125,7 @@ def Brute (l):
 	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
 	mapa.checking()
 
-
+	control.thaw_update()
 	
 	# Achando o grafo de locomoção
 
@@ -135,7 +135,7 @@ def Brute (l):
 	#target = #para onde o robo quer ir
 	#start = #de onde o robo sai
 
-	grafo.DFS(target, start)
+	#grafo.DFS(target, start)
 	'''
 	# TESTE DO GRAFO
 
