@@ -382,7 +382,7 @@ class STrapezoidMap():
     def grapher(self, trap, graph):
 
         trap.visited = True
-        trap.show('cyan')
+        trap.show('yellow')
         trap.hide()
 
         cTrap1 = trap.center()
@@ -393,34 +393,18 @@ class STrapezoidMap():
         if (trap.t_lower_right != None): cTrap3 = trap.t_lower_right.center()
         else: cTrap3 = None #vizinho de baixo na direita
 
-        #   Caso exista, pode-se ter 3 casos: os dois existem (1), logo precisa ver se não apontam
+        #   Caso exista, pode-se ter 3 casos: os dois existem (1), logo precisa ver se apontam
         #para o mesmo trapezio (1.1) e os outros dois somente se um dos dois existirem (2) e (3)
 
         #(1)
         if (cTrap2 != None and cTrap3 != None):
-
+            trap.t_upper_right.show('light green')
+            trap.t_upper_right.hide()
+            trap.t_lower_right.show('orange')
+            trap.t_lower_right.hide()
             #(1.1)
-            if (cTrap2.x != cTrap3.x and cTrap2.y != cTrap3.y):
-            
-                if (trap.t_upper_right != None):
-                    tX = trap.get_point() #pega os extremos do segmento vizinho
-                    tR = trap.p_right     #só pra diminuir tamanho rs
-                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[7], tX[13], graph)
-                    if (not trap.t_upper_right.visited):
-                        graph.newVertex(cTrap2.x, cTrap2.y)
-                        self.grapher(trap.t_upper_right, graph)
-                    graph.newEdge(pM.x, pM.y, cTrap2.x, cTrap2.y)
-
-                if (trap.t_lower_right != None):
-                    tX = trap.get_point()
-                    tR = trap.p_right
-                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[8], tX[14], graph)
-                    if (not trap.t_lower_right.visited):
-                        graph.newVertex(cTrap3.x, cTrap3.y)
-                        self.grapher(trap.t_lower_right, graph)
-                    graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
-
-            else:
+            if (cTrap2.x == cTrap3.x and cTrap2.y == cTrap3.y):
+                print("1.1")
                 medX2 = trap.get_point()[8]
                 medY2 = trap.get_point()[14]
 
@@ -442,11 +426,35 @@ class STrapezoidMap():
                         graph.newVertex(cTrap3.x, cTrap3.y)
                         self.grapher(trap.t_lower_right, graph)
                     graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
+            
+            else:
+                print("else 1.1")
+                if (trap.t_upper_right != None):
+                    print("upper nao nulo")
+                    tX = trap.get_point() #pega os extremos do segmento vizinho
+                    tR = trap.p_right     #só pra diminuir tamanho rs
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[7], tX[13], graph)
+                    if (not trap.t_upper_right.visited):
+                        graph.newVertex(cTrap2.x, cTrap2.y)
+                        self.grapher(trap.t_upper_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap2.x, cTrap2.y)
+
+                if (trap.t_lower_right != None):
+                    print("lower nao nulo")
+                    tX = trap.get_point()
+                    tR = trap.p_right
+                    pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[8], tX[14], graph)
+                    if (not trap.t_lower_right.visited):
+                        graph.newVertex(cTrap3.x, cTrap3.y)
+                        self.grapher(trap.t_lower_right, graph)
+                    graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
+            
         
         #(2)
         elif (cTrap2 != None and cTrap3 == None):
-
+            print("2")
             if (trap.t_upper_right != None):
+                    print("upper nao nulo")
                     tX = trap.get_point()
                     tR = trap.p_right
                     pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[7], tX[13], graph)
@@ -457,8 +465,9 @@ class STrapezoidMap():
 
         #(3)
         elif (cTrap2 == None and cTrap3 != None):
-
+            print("3")
             if (trap.t_lower_right != None):
+                    print("lower nao nulo")
                     tX = trap.get_point()
                     tR = trap.p_right
                     pM = self.medium_grapher(cTrap1, tR.x, tR.y, tX[8], tX[14], graph)
@@ -477,11 +486,29 @@ class STrapezoidMap():
                 if i.p_right.x < base.p_right.x:
                     base = i
 
+        #self.debug_relations(base)
+
         grafo = Graph()
         grafo.newVertex(base.center().x, base.center().y)
         self.grapher(base, grafo)
 
         return grafo
+
+    def debug_relations(self, base):
+        base.visited = True
+        base.show('light blue')
+        base.hide()
+        base.show('orange')
+
+        if (base.t_upper_right != None):
+            if (not base.t_upper_right.visited):
+                self.debug_relations(base.t_upper_right)
+                base.t_upper_right.visited = True
+
+        if (base.t_lower_right != None):
+            if (not base.t_lower_right.visited):
+                self.debug_relations(base.t_lower_right)
+                base.t_lower_right.visited = True
 
     # Função que faz o incremento de um segmento
     def add(self, node, segment):
