@@ -972,8 +972,10 @@ class STrapezoidMap():
                     t_left.blink()
 
                     # DEBUG
+                    ''''
                     print("Case 1 - LEFT")
                     self.relation_trap(t_left)
+                    '''
                     self.trapezoid_list[t_left.pid] = t_left
                     exist_left = 1
                 else:
@@ -1023,8 +1025,10 @@ class STrapezoidMap():
                     t_top.pid = self.get_trapezoid()
                     t_top.blink()
                     # DEBUG
+                    '''
                     print("Case 1 - UPPER")
                     self.relation_trap(t_top)
+                    '''
                     self.trapezoid_list[t_top.pid] = t_top
 
 
@@ -1043,8 +1047,10 @@ class STrapezoidMap():
                     t_bottom.pid = self.get_trapezoid()
                     t_bottom.blink()
                     # DEBUG
+                    '''
                     print("Case 1 - LOWER")
                     self.relation_trap(t_bottom)
+                    '''
                     self.trapezoid_list[t_bottom.pid] = t_bottom
 
 
@@ -1096,9 +1102,10 @@ class STrapezoidMap():
                     t_right.blink()
 
                     # DEBUG
+                    '''
                     print("Case 2 - RIGHT")
                     self.relation_trap(t_right)
-
+                    '''
                     self.trapezoid_list[t_right.pid] = t_right
                     exist_right = 1 
                 else:
@@ -1194,9 +1201,10 @@ class STrapezoidMap():
                     t_top.blink()
 
                     # DEBUG
+                    '''
                     print("Case 2 - UPPER")
                     self.relation_trap(t_top)
-
+                    '''
                     self.trapezoid_list[t_top.pid] = t_top
 
                     b = SNode(None, None, 0, t_top)
@@ -1269,9 +1277,10 @@ class STrapezoidMap():
                     t_bottom.blink()
 
                     # DEBUG
+                    '''
                     print("Case 2 - LOWER")
                     self.relation_trap(t_bottom)
-
+                    '''
                     self.trapezoid_list[t_bottom.pid] = t_bottom
 
                     c = SNode(None, None, 0, t_bottom)
@@ -1359,9 +1368,10 @@ class STrapezoidMap():
                     t_top.pid = self.get_trapezoid()
                     t_top.blink()
                     # DEBUG
+                    '''
                     print("Case 3 - UPPER")
                     self.relation_trap(t_top)
-
+                    '''
                     self.trapezoid_list[t_top.pid] = t_top
 
                     b = SNode(None, None, 0, t_top)
@@ -1432,9 +1442,10 @@ class STrapezoidMap():
                     t_bottom.blink()
         
                     # DEBUG
+                    '''
                     print("Case 3 - LOWER")
                     self.relation_trap(t_bottom)
-
+                    '''
 
                     self.trapezoid_list[t_bottom.pid] = t_bottom
 
@@ -1461,7 +1472,7 @@ class STrapezoidMap():
             self.rmv_trapezoid(x)
     # Para debugar as relacoes dos trapezios
     def relation_trap(self, trap):
-        '''
+    
         print("Testando trapezio original")
         trap.blink("green")
         control.sleep()
@@ -1491,7 +1502,6 @@ class STrapezoidMap():
             control.sleep()
         trap.hide()
 
-        '''
 
     # INVARIANTE ERRADA...
     def mergeDown(self, list_trap, seg):
@@ -1605,8 +1615,11 @@ class STrapezoidMap():
                     #trap.hide()
                     trap.show("black")
                     self.rmv_trapezoid(trap)
-                if trap.remove == 0:
-                    trap.show("green")
+        #DEBU
+        for trap in self.trapezoid_list:
+            if trap.remove == 0:
+                trap.show("green")
+                self.relation_trap(trap)
 #FOR LATER
 '''
     def make_graph(self):
