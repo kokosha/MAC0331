@@ -373,8 +373,11 @@ class STrapezoidMap():
             self.add(self.node_list[0], seg)
             seg.hide()
             seg.show("white")
-
             val = val + 1
+        for trap in self.trapezoid_list:
+            if trap.remove == 0 and trap.p_left.x == trap.p_right.x:
+                trap.blink("white")
+                trap.hide()
 
 
     # Constrói no grafo uma edge entre o centro do trapézio e 
@@ -594,6 +597,10 @@ class STrapezoidMap():
 
     def rmv_trapezoid(self, trap):
         trap.remove = 1
+        trap.lower_right = None
+        trap.lower_left = None
+        trap.upper_right = None
+        trap.upper_left = None
 
     def get_trapezoid(self):
         v = -1
@@ -1615,15 +1622,34 @@ class STrapezoidMap():
 
                 if seg_top.belongs == seg_bot.belongs and seg_top.belongs != -1 :
                     trap.hide()
+                    if trap.t_lower_right != None:
+                        if trap.t_lower_right.t_lower_left == trap:
+                            trap.t_lower_right.t_lower_left = None
+                        if trap.t_lower_right.t_upper_left == trap:
+                            trap.t_lower_right.t_upper_left = None     
+                    if trap.t_lower_left != None:      
+                        if trap.t_lower_left.t_lower_right == trap:
+                            trap.t_lower_left.t_lower_right = None
+                        if trap.t_lower_left.t_upper_right == trap:
+                            trap.t_lower_left.t_upper_right = None      
+                    if trap.t_upper_right != None:            
+                        if trap.t_upper_right.t_lower_left == trap:
+                            trap.t_upper_right.t_lower_left = None
+                        if trap.t_upper_right.t_upper_left == trap:
+                            trap.t_upper_right.t_upper_left = None      
+                    if trap.t_upper_left != None:     
+                        if trap.t_upper_left.t_lower_right == trap:
+                            trap.t_upper_left.t_lower_right = None
+                        if trap.t_upper_left.t_upper_right == trap:
+                            trap.t_upper_left.t_upper_right = None  
                     self.rmv_trapezoid(trap)
+
+
         #DEBUG
-        '''
         for trap in self.trapezoid_list:
             if trap.remove == 0:
                 trap.show("green")
                 self.relation_trap(trap)
-
-        '''
 #FOR LATER
 '''
     def make_graph(self):
