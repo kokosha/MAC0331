@@ -44,14 +44,6 @@ def Generate(l):
 
 def Brute (list_polygon):
 
-	# JIANG TERMINA AQUI, tem que pegar a entrada e colocar nesses pontos
-	start = SPoint(0, 0);
-	target = SPoint(10, 10)
-
-	# isso aqui vc tem que procurar com o DAG, eu n sei procurar nele :(
-	startTrap = "vou redefinir la na frente depois de montar o mapa"
-	targetTrap = "idem"
-
 	# Criando e printando o retangulo externo
 	oeste = list_polygon[0].pts.x
 	leste = list_polygon[0].pts.x
@@ -104,6 +96,9 @@ def Brute (list_polygon):
 	mapa = STrapezoidMap(lsegments)
 	mapa.construct()
 
+	start = SPoint(0, 0)
+	target = SPoint(10, 10)
+
 	startTrap = mapa.query(mapa.node_list[0], start)
 	targetTrap = mapa.query(mapa.node_list[0], target)
 
@@ -114,7 +109,17 @@ def Brute (list_polygon):
 	# Parte 2.1 - Transformando em grafo
 	grafo = mapa.make_graph()
 
-	grafo.DFS(target, start)
+	#start = Point(0, 0)
+	grafo.newVertex(0, 0)
+	#target = Point(10, 10)
+	grafo.newVertex(10, 10)
+
+	grafo.newEdge(0, 0, startTrap.info.center().x, startTrap.info.center().y)
+
+	grafo.newEdge(10, 10, targetTrap.info.center().x, targetTrap.info.center().y)
+
+
+	grafo.DFS(grafo.findVertex(target.x, target.y), grafo.findVertex(start.x, start.y))
 	'''
 	# TESTE DO GRAFO
 
