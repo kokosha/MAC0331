@@ -753,30 +753,42 @@ class STrapezoidMap():
                         t.t_lower_left.t_lower_right = t_left
 
             else:
-                if t.t_upper_left != None :
-                    if t_top.s_top.p_left != segment.p_left or t_top.s_bottom.p_left != segment.p_left:
-                        if t.t_upper_left.t_upper_right == t :
-                            t.t_upper_left.t_upper_right = t_top                    
-                        if t.t_upper_left.t_lower_right == t :    
-                            t.t_upper_left.t_lower_right = t_top
-                    else:
-                        if t.t_upper_left.t_upper_right == t :
-                            t.t_upper_left.t_upper_right = None                  
-                        if t.t_upper_left.t_lower_right == t :    
-                            t.t_upper_left.t_lower_right = None
+                # Se os dois forem diferentes entao existe uma reta que separa os dois trapezios
+                if t.t_lower_left != t.t_upper_left:
+                    if t.t_upper_left != None :
+                        if t_top.s_top.p_left != segment.p_left or t_top.s_bottom.p_left != segment.p_left:
+                            if t.t_upper_left.t_upper_right == t :
+                                t.t_upper_left.t_upper_right = t_top                    
+                            if t.t_upper_left.t_lower_right == t :    
+                                t.t_upper_left.t_lower_right = t_top
+                        else:
+                            if t.t_upper_left.t_upper_right == t :
+                                t.t_upper_left.t_upper_right = None                  
+                            if t.t_upper_left.t_lower_right == t :    
+                                t.t_upper_left.t_lower_right = None
 
-                if t.t_lower_left != None :
-                    if t_bottom.s_bottom.p_left != segment.p_left or t_bottom.s_top.p_left != segment.p_left:
-                        if t.t_lower_left.t_upper_right == t :
-                            t.t_lower_left.t_upper_right = t_bottom
-                        if t.t_lower_left.t_lower_right == t :
-                            t.t_lower_left.t_lower_right = t_bottom 
-                    else:
-                        if t.t_lower_left.t_upper_right == t :
-                            t.t_lower_left.t_upper_right = None
-                        if t.t_lower_left.t_lower_right == t :
-                            t.t_lower_left.t_lower_right = None                             
-
+                    if t.t_lower_left != None :
+                        if t_bottom.s_bottom.p_left != segment.p_left or t_bottom.s_top.p_left != segment.p_left:
+                            if t.t_lower_left.t_upper_right == t :
+                                t.t_lower_left.t_upper_right = t_bottom
+                            if t.t_lower_left.t_lower_right == t :
+                                t.t_lower_left.t_lower_right = t_bottom 
+                        else:
+                            if t.t_lower_left.t_upper_right == t :
+                                t.t_lower_left.t_upper_right = None
+                            if t.t_lower_left.t_lower_right == t :
+                                t.t_lower_left.t_lower_right = None
+                else:
+                    # A 
+                    if t.t_upper_left != None and t.t_lower_left != None:
+                        if (t_top.s_top.p_left != segment.p_left or t_top.s_bottom.p_left != segment.p_left) == False:
+                            if t.t_lower_left.t_lower_right == t :
+                                t.t_lower_left.t_lower_right = t_bottom                    
+                        elif (t_bottom.s_bottom.p_left != segment.p_left or t_bottom.s_top.p_left != segment.p_left) == False:
+                            if t.t_upper_left.t_upper_right == t :
+                                t.t_upper_left.t_upper_right = t_top 
+                        else:
+                            assert(0)    
             if exist_right == 1:
                 if t.t_upper_right != None :
                     if t.t_upper_right.t_upper_left == t :
@@ -790,29 +802,41 @@ class STrapezoidMap():
                     if t.t_lower_right.t_lower_left == t:
                         t.t_lower_right.t_lower_left = t_right
             else:
-                if t.t_upper_right != None :
-                    if t_top.s_top.p_right != segment.p_right or t_top.s_bottom.p_right != segment.p_right:
-                        if t.t_upper_right.t_upper_left == t :
-                            t.t_upper_right.t_upper_left = t_top
-                        if t.t_upper_right.t_lower_left == t :
-                            t.t_upper_right.t_lower_left = t_top
-                    else:
-                        if t.t_upper_right.t_upper_left == t :
-                            t.t_upper_right.t_upper_left = None
-                        if t.t_upper_right.t_lower_left == t :
-                            t.t_upper_right.t_lower_left = None                     
+                if t.t_lower_right != t.t_upper_right:
+                    if t.t_upper_right != None :
+                        if t_top.s_top.p_right != segment.p_right or t_top.s_bottom.p_right != segment.p_right:
+                            if t.t_upper_right.t_upper_left == t :
+                                t.t_upper_right.t_upper_left = t_top
+                            if t.t_upper_right.t_lower_left == t :
+                                t.t_upper_right.t_lower_left = t_top
+                        else:
+                            if t.t_upper_right.t_upper_left == t :
+                                t.t_upper_right.t_upper_left = None
+                            if t.t_upper_right.t_lower_left == t :
+                                t.t_upper_right.t_lower_left = None                     
 
-                if t.t_lower_right != None :
-                    if t_bottom.s_bottom.p_right != segment.p_right or t_bottom.s_top.p_right != segment.p_right:
-                        if t.t_lower_right.t_upper_left == t:
-                            t.t_lower_right.t_upper_left = t_bottom      
-                        if t.t_lower_right.t_lower_left == t:
-                            t.t_lower_right.t_lower_left = t_bottom
-                    else:
-                        if t.t_lower_right.t_upper_left == t:
-                            t.t_lower_right.t_upper_left = None      
-                        if t.t_lower_right.t_lower_left == t:
-                            t.t_lower_right.t_lower_left = None                            
+                    if t.t_lower_right != None :
+                        if t_bottom.s_bottom.p_right != segment.p_right or t_bottom.s_top.p_right != segment.p_right:
+                            if t.t_lower_right.t_upper_left == t:
+                                t.t_lower_right.t_upper_left = t_bottom      
+                            if t.t_lower_right.t_lower_left == t:
+                                t.t_lower_right.t_lower_left = t_bottom
+                        else:
+                            if t.t_lower_right.t_upper_left == t:
+                                t.t_lower_right.t_upper_left = None      
+                            if t.t_lower_right.t_lower_left == t:
+                                t.t_lower_right.t_lower_left = None  
+                else:
+                    # A 
+                    if t.t_upper_left != None and t.t_lower_left != None:
+                        if (t_top.s_top.p_right != segment.p_right or t_top.s_bottom.p_right != segment.p_right) == False:
+                            if t.t_lower_right.t_lower_left == t :
+                                t.t_lower_right.t_lower_left = t_bottom                    
+                        elif (t_bottom.s_bottom.p_right != segment.p_right or t_bottom.s_top.p_right != segment.p_right) == False:
+                            if t.t_upper_right.t_upper_left == t :
+                                t.t_upper_right.t_upper_left = t_top
+                        else:
+                            assert(0)                          
 
             if exist_left == 1:
                 self.trapezoid_list[t_left.pid] = t_left
