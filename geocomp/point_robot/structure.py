@@ -700,8 +700,8 @@ class STrapezoidMap():
                     t_bottom.t_upper_left = t.t_lower_left
                     t_bottom.t_lower_left = t.t_lower_left
                 else:
-                    t_bottom.t_upper_right = None
-                    t_bottom.t_lower_right = None
+                    t_bottom.t_upper_left = None
+                    t_bottom.t_lower_left = None
 
 
             if exist_right == 1:
