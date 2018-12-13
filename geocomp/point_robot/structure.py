@@ -791,7 +791,7 @@ class STrapezoidMap():
                         t.t_lower_right.t_lower_left = t_right
             else:
                 if t.t_upper_right != None :
-                    if t_top.s_top.p_right != segment.p_right or t_top.s_bottom.p_right != segment.p_left:
+                    if t_top.s_top.p_right != segment.p_right or t_top.s_bottom.p_right != segment.p_right:
                         if t.t_upper_right.t_upper_left == t :
                             t.t_upper_right.t_upper_left = t_top
                         if t.t_upper_right.t_lower_left == t :
@@ -970,10 +970,10 @@ class STrapezoidMap():
                     t_left.blink()
 
                     # DEBUG
-                    '''
+                    
                     print("Case 1 - LEFT")
                     self.relation_trap(t_left)
-                    '''
+                    
 
 
                     self.trapezoid_list[t_left.pid] = t_left
@@ -1040,10 +1040,10 @@ class STrapezoidMap():
                     t_top.pid = self.get_trapezoid()
                     t_top.blink()
                     # DEBUG
-                    '''
+                    
                     print("Case 1 - UPPER")
                     self.relation_trap(t_top)
-                    '''
+                    
 
                     self.trapezoid_list[t_top.pid] = t_top
 
@@ -1067,10 +1067,10 @@ class STrapezoidMap():
                     t_bottom.pid = self.get_trapezoid()
                     t_bottom.blink()
                     # DEBUG
-                    '''
+                    
                     print("Case 1 - LOWER")
                     self.relation_trap(t_bottom)
-                    '''
+                    
 
 
                     self.trapezoid_list[t_bottom.pid] = t_bottom
@@ -1124,10 +1124,10 @@ class STrapezoidMap():
                     t_right.blink()
 
                     # DEBUG
-                    '''
+                    
                     print("Case 2 - RIGHT")
                     self.relation_trap(t_right)
-                    '''
+                    
 
                     self.trapezoid_list[t_right.pid] = t_right
                     exist_right = 1 
@@ -1231,11 +1231,11 @@ class STrapezoidMap():
                     t_top.blink()
 
                     # DEBUG
-                    '''
+                    
                     print("Case 2 - UPPER")
                     self.relation_trap(t_top)
 
-                    '''
+                    
 
                     self.trapezoid_list[t_top.pid] = t_top
 
@@ -1305,10 +1305,10 @@ class STrapezoidMap():
                     t_bottom.blink()
 
                     # DEBUG
-                    '''
+                    
                     print("Case 2 - LOWER")
                     self.relation_trap(t_bottom)
-                    '''
+                    
 
 
                     self.trapezoid_list[t_bottom.pid] = t_bottom
@@ -1388,10 +1388,10 @@ class STrapezoidMap():
                     t_top.pid = self.get_trapezoid()
                     t_top.blink()
                     # DEBUG
-                    '''
+                    
                     print("Case 3 - UPPER")
                     self.relation_trap(t_top)
-                    '''
+                    
                 
                     self.trapezoid_list[t_top.pid] = t_top
 
@@ -1455,10 +1455,10 @@ class STrapezoidMap():
                     t_bottom.blink()
         
                     # DEBUG
-                    '''
+                
                     print("Case 3 - LOWER")
                     self.relation_trap(t_bottom)
-                    '''
+                    
 
                     self.trapezoid_list[t_bottom.pid] = t_bottom
 
@@ -1644,11 +1644,12 @@ class STrapezoidMap():
 
 
         #DEBUG
-    
+        '''
         for trap in self.trapezoid_list:
             if trap.remove == 0:
                 trap.show("green")
                 self.relation_trap(trap)
+          '''      
         
 #FOR LATER
 '''
