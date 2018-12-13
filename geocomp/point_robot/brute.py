@@ -44,6 +44,16 @@ def Generate(l):
 
 def Brute (list_polygon):
 
+	#####################################################################################################
+
+	"Coloque aqui o ponto que o robô está e o ponto que o robô quer ir, respectivamente."
+	"O primeiro argumento é o x do ponto e o segundo é o y do ponto"
+
+	start = SPoint(0, 0)
+	target = SPoint(10, 10)
+
+	#####################################################################################################
+
 	# Criando e printando o retangulo externo
 	oeste = list_polygon[0].pts.x
 	leste = list_polygon[0].pts.x
@@ -96,9 +106,6 @@ def Brute (list_polygon):
 	mapa = STrapezoidMap(lsegments)
 	mapa.construct()
 
-	start = SPoint(0, 0)
-	target = SPoint(10, 10)
-
 	startTrap = mapa.query(mapa.node_list[0], start)
 	targetTrap = mapa.query(mapa.node_list[0], target)
 
@@ -110,13 +117,13 @@ def Brute (list_polygon):
 	grafo = mapa.make_graph()
 
 	#start = Point(0, 0)
-	grafo.newVertex(0, 0)
+	grafo.newVertex(start.x, start.y)
 	#target = Point(10, 10)
-	grafo.newVertex(10, 10)
+	grafo.newVertex(target.x, target.y)
 
-	grafo.newEdge(0, 0, startTrap.info.center().x, startTrap.info.center().y)
+	grafo.newEdge(start.x, start.y, startTrap.info.center().x, startTrap.info.center().y)
 
-	grafo.newEdge(10, 10, targetTrap.info.center().x, targetTrap.info.center().y)
+	grafo.newEdge(target.x, target.y, targetTrap.info.center().x, targetTrap.info.center().y)
 
 
 	grafo.DFS(grafo.findVertex(target.x, target.y), grafo.findVertex(start.x, start.y))
