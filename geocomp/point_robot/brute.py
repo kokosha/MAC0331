@@ -44,6 +44,14 @@ def Generate(l):
 
 def Brute (list_polygon):
 
+	# JIANG TERMINA AQUI, tem que pegar a entrada e colocar nesses pontos
+	start = "onde o robo vai começar"
+	target = "onde o robo quer terminar"
+
+	# isso aqui vc tem que procurar com o DAG, eu n sei procurar nele :(
+	startTrap = "trapezio em que o robo comecou"
+	targetTrap = "trapezio em que o robo quer terminar"
+
 	# Criando e printando o retangulo externo
 	oeste = list_polygon[0].pts.x
 	leste = list_polygon[0].pts.x
@@ -104,10 +112,7 @@ def Brute (list_polygon):
 	# Parte 2.1 - Transformando em grafo
 	grafo = mapa.make_graph()
 
-	#target = #para onde o robo quer ir
-	#start = #de onde o robo sai
-
-	#grafo.DFS(target, start)
+	grafo.DFS(target, start)
 	'''
 	# TESTE DO GRAFO
 
