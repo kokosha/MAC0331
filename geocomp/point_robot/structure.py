@@ -51,12 +51,10 @@ class SSegment():
 
     def is_above(self, point, point_2):
         # NEED TO RECHECK
-        return ccw(self.p_left, self.p_right, point) > 0  or (ccw(self.p_left, self.p_right, point) == 0  and ccw(self.p_left, self.p_right, point_2) > 0 )
-    def is_below(self, point):
-        # NEED TO RECHECK
-        return ccw(self.p_left, self.p_right, point) < 0  
-    def is_equal(self, point):
-        return ccw(self.p_left, self.p_right, point) == 0            
+        if point_2 == None:
+            return ccw(self.p_left, self.p_right, point) > 0
+        else:
+            return ccw(self.p_left, self.p_right, point) > 0  or (ccw(self.p_left, self.p_right, point) == 0  and ccw(self.p_left, self.p_right, point_2) > 0 )     
 
     def debug(self):
         print("SSegment")
