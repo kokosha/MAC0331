@@ -23,18 +23,18 @@ def Hide(pol):
 	pol.hide()
 
 # Código extra da Parte 1.1
-def Generate(l, id):
+def Generate(l):
 	# Dado a lista de pontos do poligono e gera todos os segmentos de retas
 	lsegments = []
 	n = len(l)
 	if (n == 2) :
-		lsegments.append(SSegment(SPoint(l[0].x, l[0].y), SPoint(l[1].x, l[1].y), id))
+		lsegments.append(SSegment(SPoint(l[0].x, l[0].y), SPoint(l[1].x, l[1].y)))
 		seg = Segment(Point(l[0].x, l[0].y), Point(l[1].x, l[1].y))
 		seg.plot('green')
 		control.sleep()
 	else:
 		for i in range(n):
-			lsegments.append(SSegment(SPoint(l[i%n].x, l[i%n].y), SPoint(l[(i+1)%n].x, l[(i+1)%n].y), id))
+			lsegments.append(SSegment(SPoint(l[i%n].x, l[i%n].y), SPoint(l[(i+1)%n].x, l[(i+1)%n].y)))
 			seg = Segment(Point(l[i%n].x, l[i%n].y), Point(l[(i+1)%n].x, l[(i+1)%n].y))
 			seg.plot('green')
 			control.sleep()
@@ -99,9 +99,8 @@ def Brute (l):
 
 
 	lsegments = []
-	contador = 0
 	for l in Lpolygon:
-		foo = Generate(l, contador)
+		foo = Generate(l)
 		for x in foo:
 			p1 = x.p_left
 			p2 = x.p_right
@@ -113,7 +112,6 @@ def Brute (l):
 				x.swap = 1
 
 			lsegments.append(x)
-		contador = contador + 1
 
 	# Parte 1.2 - Criando o mapa de trapezoidação
 
@@ -124,9 +122,6 @@ def Brute (l):
 
 	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
 	mapa.checking()
-
-	control.thaw_update()
-	
 	# Achando o grafo de locomoção
 
 	# Parte 2.1 - Transformando em grafo

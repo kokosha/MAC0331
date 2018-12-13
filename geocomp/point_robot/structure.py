@@ -42,11 +42,10 @@ def ccw(p1, p2, p3):
 # Estrutura SSegment - Cada segmento tem seu ponto mais a esquerda e o ponto mais a direita
 
 class SSegment():
-    def __init__ (self, p_left = None, p_right = None, belongs = -1):
+    def __init__ (self, p_left = None, p_right = None):
         self.p_left = p_left
         self.p_right = p_right
-        self.belongs = belongs 
-
+        self.swap = 0
 
         self.linha = None
 
@@ -537,6 +536,7 @@ class STrapezoidMap():
 
         p_q.x = p_q.x + (p_p.x - p_q.x)*1e-9 
         p_q.y = p_q.y + (p_p.y - p_q.y)*1e-9
+
         # Search with p and q in the search structure D to find D0.
         t_d0 = self.query(node, p_p)
         t_list = []
@@ -1014,7 +1014,6 @@ class STrapezoidMap():
                             if at.t_lower_left.t_lower_right == at:
                                 at.t_lower_left.t_lower_right = t_bottom #1
                         else:
-                            print("Entrou")
                             if at.t_lower_left.t_upper_right == at:
                                 at.t_lower_left.t_upper_right = None #1
                             if at.t_lower_left.t_lower_right == at:
@@ -1618,9 +1617,8 @@ class STrapezoidMap():
         for trap in self.trapezoid_list:
             if trap.remove == 0:  
                 seg_top = trap.s_top
-                seg_bot = trap.s_bottom
 
-                if seg_top.belongs == seg_bot.belongs and seg_top.belongs != -1 :
+                if seg_top.swap == 1:
                     trap.hide()
                     if trap.t_lower_right != None:
                         if trap.t_lower_right.t_lower_left == trap:
@@ -1646,10 +1644,12 @@ class STrapezoidMap():
 
 
         #DEBUG
+    
         for trap in self.trapezoid_list:
             if trap.remove == 0:
                 trap.show("green")
                 self.relation_trap(trap)
+        
 #FOR LATER
 '''
     def make_graph(self):
