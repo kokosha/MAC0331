@@ -828,7 +828,7 @@ class STrapezoidMap():
                                 t.t_lower_right.t_lower_left = None  
                 else:
                     # A 
-                    if t.t_upper_left != None and t.t_lower_left != None:
+                    if t.t_upper_right != None and t.t_lower_right != None:
                         if (t_top.s_top.p_right != segment.p_right or t_top.s_bottom.p_right != segment.p_right) == False:
                             if t.t_lower_right.t_lower_left == t :
                                 t.t_lower_right.t_lower_left = t_bottom                    
@@ -1019,29 +1019,40 @@ class STrapezoidMap():
                             at.t_lower_left.t_lower_right = t_left #1
 
                 else:
-                    if at.t_upper_left != None:
-                        if t_top.s_top.p_left != segment.p_left or t_top.s_bottom.p_left != segment.p_left:
-                            if at.t_upper_left.t_upper_right == at:
-                                    at.t_upper_left.t_upper_right = t_top #1                      
-                            if at.t_upper_left.t_lower_right == at:   
-                                    at.t_upper_left.t_lower_right = t_top #1  
-                        else:
-                            if at.t_upper_left.t_upper_right == at:
-                                    at.t_upper_left.t_upper_right = None #1                      
-                            if at.t_upper_left.t_lower_right == at:   
-                                    at.t_upper_left.t_lower_right = None #1                            
-                                                          
-                    if at.t_lower_left != None:
-                        if t_bottom.s_bottom.p_left != segment.p_left or t_bottom.s_top.p_left != segment.p_left:
-                            if at.t_lower_left.t_upper_right == at:
-                                at.t_lower_left.t_upper_right = t_bottom #1
-                            if at.t_lower_left.t_lower_right == at:
-                                at.t_lower_left.t_lower_right = t_bottom #1
-                        else:
-                            if at.t_lower_left.t_upper_right == at:
-                                at.t_lower_left.t_upper_right = None #1
-                            if at.t_lower_left.t_lower_right == at:
-                                at.t_lower_left.t_lower_right = None #1
+                    if at.t_lower_left != at.t_upper_left:
+                        if at.t_upper_left != None:
+                            if t_top.s_top.p_left != segment.p_left or t_top.s_bottom.p_left != segment.p_left:
+                                if at.t_upper_left.t_upper_right == at:
+                                        at.t_upper_left.t_upper_right = t_top #1                      
+                                if at.t_upper_left.t_lower_right == at:   
+                                        at.t_upper_left.t_lower_right = t_top #1  
+                            else:
+                                if at.t_upper_left.t_upper_right == at:
+                                        at.t_upper_left.t_upper_right = None #1                      
+                                if at.t_upper_left.t_lower_right == at:   
+                                        at.t_upper_left.t_lower_right = None #1                            
+                                                              
+                        if at.t_lower_left != None:
+                            if t_bottom.s_bottom.p_left != segment.p_left or t_bottom.s_top.p_left != segment.p_left:
+                                if at.t_lower_left.t_upper_right == at:
+                                    at.t_lower_left.t_upper_right = t_bottom #1
+                                if at.t_lower_left.t_lower_right == at:
+                                    at.t_lower_left.t_lower_right = t_bottom #1
+                            else:
+                                if at.t_lower_left.t_upper_right == at:
+                                    at.t_lower_left.t_upper_right = None #1
+                                if at.t_lower_left.t_lower_right == at:
+                                    at.t_lower_left.t_lower_right = None #1
+                    else:
+                        if at.t_upper_left != None and at.t_lower_left != None:
+                            if (t_top.s_top.p_left != segment.p_left or t_top.s_bottom.p_left != segment.p_left) == False:
+                                if at.t_lower_left.t_lower_right == at :
+                                    at.t_lower_left.t_lower_right = t_bottom                    
+                            elif (t_bottom.s_bottom.p_left != segment.p_left or t_bottom.s_top.p_left != segment.p_left) == False:
+                                if at.t_upper_left.t_upper_right == at :
+                                    at.t_upper_left.t_upper_right = t_top
+                            else:
+                                assert(0)                    
 
 
                 if t_top != l_top:
@@ -1172,30 +1183,41 @@ class STrapezoidMap():
                         if at.t_lower_right.t_lower_left == at:                                         
                             at.t_lower_right.t_lower_left = t_right #2
                 else:
-                    if at.t_upper_right != None:
-                        if t_top.s_top.p_right != segment.p_right or t_top.s_bottom.p_right != segment.p_right:
-                            if at.t_upper_right.t_upper_left == at:
-                                at.t_upper_right.t_upper_left = t_top #2
-       
-                            if at.t_upper_right.t_lower_left == at:   
-                                at.t_upper_right.t_lower_left = t_top #2      
-                        else:
-                            if at.t_upper_right.t_upper_left == at:
-                                at.t_upper_right.t_upper_left = None #2
-                            if at.t_upper_right.t_lower_left == at:   
-                                at.t_upper_right.t_lower_left = None #2 
+                    if at.t_upper_right != at.t_lower_right:
+                        if at.t_upper_right != None:
+                            if t_top.s_top.p_right != segment.p_right or t_top.s_bottom.p_right != segment.p_right:
+                                if at.t_upper_right.t_upper_left == at:
+                                    at.t_upper_right.t_upper_left = t_top #2
+           
+                                if at.t_upper_right.t_lower_left == at:   
+                                    at.t_upper_right.t_lower_left = t_top #2      
+                            else:
+                                if at.t_upper_right.t_upper_left == at:
+                                    at.t_upper_right.t_upper_left = None #2
+                                if at.t_upper_right.t_lower_left == at:   
+                                    at.t_upper_right.t_lower_left = None #2 
 
-                    if at.t_lower_right != None:
-                        if t_bottom.s_bottom.p_right != segment.p_right or t_bottom.s_top.p_right != segment.p_right:
-                            if at.t_lower_right.t_upper_left == at:
-                                at.t_lower_right.t_upper_left = t_bottom #2  
-                            if at.t_lower_right.t_lower_left == at:                                         
-                                at.t_lower_right.t_lower_left = t_bottom #2   
-                        else:
-                            if at.t_lower_right.t_upper_left == at:
-                                at.t_lower_right.t_upper_left = None #2  
-                            if at.t_lower_right.t_lower_left == at:                                         
-                                at.t_lower_right.t_lower_left = None #2                                          
+                        if at.t_lower_right != None:
+                            if t_bottom.s_bottom.p_right != segment.p_right or t_bottom.s_top.p_right != segment.p_right:
+                                if at.t_lower_right.t_upper_left == at:
+                                    at.t_lower_right.t_upper_left = t_bottom #2  
+                                if at.t_lower_right.t_lower_left == at:                                         
+                                    at.t_lower_right.t_lower_left = t_bottom #2   
+                            else:
+                                if at.t_lower_right.t_upper_left == at:
+                                    at.t_lower_right.t_upper_left = None #2  
+                                if at.t_lower_right.t_lower_left == at:                                         
+                                    at.t_lower_right.t_lower_left = None #2
+                    else:
+                        if at.t_upper_right != None and at.t_lower_right != None:
+                            if (t_top.s_top.p_right != segment.p_right or t_top.s_bottom.p_right != segment.p_right) == False:
+                                if at.t_lower_right.t_lower_left == at :
+                                    at.t_lower_right.t_lower_left = t_bottom                    
+                            elif (t_bottom.s_bottom.p_right != segment.p_right or t_bottom.s_top.p_right != segment.p_right) == False:
+                                if at.t_upper_right.t_upper_left == at :
+                                    at.t_upper_right.t_upper_left = t_top
+                            else:
+                                assert(0)                                           
                 
                 if exist_right == 1:
                     t_top.t_upper_right = t_right #2
