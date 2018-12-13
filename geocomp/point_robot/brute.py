@@ -106,11 +106,12 @@ def Brute (l):
 			p2 = x.p_right
 			x.swap = 0
 
-			if p1.x > p2.x:
+			if p1.x > p2.x or (p1.x == p2.x and p1.y > p2.y):
 				x.p_left = p2
 				x.p_right = p1
 				x.swap = 1
-
+			if len(l) == 2:
+				x.swap = 0
 			lsegments.append(x)
 
 	# Parte 1.2 - Criando o mapa de trapezoidação

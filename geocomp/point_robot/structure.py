@@ -49,9 +49,9 @@ class SSegment():
 
         self.linha = None
 
-    def is_above(self, point):
+    def is_above(self, point, point_2):
         # NEED TO RECHECK
-        return ccw(self.p_left, self.p_right, point) > 0    
+        return ccw(self.p_left, self.p_right, point) > 0  or (ccw(self.p_left, self.p_right, point) == 0  and ccw(self.p_left, self.p_right, point_2) > 0 )
     def is_below(self, point):
         # NEED TO RECHECK
         return ccw(self.p_left, self.p_right, point) < 0  
@@ -373,10 +373,6 @@ class STrapezoidMap():
             seg.hide()
             seg.show("white")
             val = val + 1
-        for trap in self.trapezoid_list:
-            if trap.remove == 0 and trap.p_left.x == trap.p_right.x:
-                trap.blink("white")
-                trap.hide()
 
 
     # Constrói no grafo uma edge entre o centro do trapézio e 
@@ -488,8 +484,13 @@ class STrapezoidMap():
             if i.p_left.x < base.p_left.x:
                 base = i
             elif i.p_left.x == base.p_left.x:
-                if i.p_right.x < base.p_right.x:
+                if i.p_left.y < base.p_left.y:
                     base = i
+                elif i.p_left.y == base.p_left.y:
+                    if i.p_right.x < base.p_right.x:
+                        base = i
+                    elif i.p_right.y < base.p_right.y:
+                        base = i
 
         #self.debug_relations(base)
 
@@ -530,15 +531,19 @@ class STrapezoidMap():
         p_p = copy.deepcopy(segment.p_left)
         p_q = copy.deepcopy(segment.p_right)
 
+        # SE FOR IGUAL NAO DA PARA SABER A POSICAO EM CIMA E EM BAIXO
         # TESTANDO PROPER INTERSECTION
+
+        '''
         p_p.x = p_p.x + (p_q.x - p_p.x)*1e-9 
         p_p.y = p_p.y + (p_q.y - p_p.y)*1e-9 
 
         p_q.x = p_q.x + (p_p.x - p_q.x)*1e-9 
         p_q.y = p_q.y + (p_p.y - p_q.y)*1e-9
+        '''
 
         # Search with p and q in the search structure D to find D0.
-        t_d0 = self.query(node, p_p)
+        t_d0 = self.query(node, p_p, p_q)
         t_list = []
         if t_d0 == None : 
             return t_list
@@ -550,7 +555,7 @@ class STrapezoidMap():
         j = t_d0.info
 
         while j != None and (j.p_right != None and p_q.is_left(j.p_right)):
-            if segment.is_above(j.p_right):
+            if segment.is_above(j.p_right, None):
                 j = j.t_lower_right
             else:
                 j = j.t_upper_right
@@ -561,11 +566,11 @@ class STrapezoidMap():
         return t_list
 
     # Procura na DAG de decisão
-    def query(self, at, p_p):
+    def query(self, at, p_p, p_q):
         while at.node_type != 0 :
             if at.node_type == 1:
                 # checar cima e embaixo
-                if(at.info.is_above(p_p)):
+                if(at.info.is_above(p_p, p_q)):
                     at = self.node_list[at.left]
                 else:
                     at = self.node_list[at.right]
@@ -846,7 +851,6 @@ class STrapezoidMap():
             self.trapezoid_list[t_top.pid] = t_top   
 
             # DEBUG
-            '''
             if exist_right == 1:
                 print("t_right simple_case")
                 self.relation_trap(t_right)
@@ -866,7 +870,6 @@ class STrapezoidMap():
             if exist_right == 1:
                 print("RIGHT "  + str(t_right.pid))
             print ("BOTTOM " + str(t_bottom.pid) + " TOP "  + str(t_top.pid))
-    '''
             # Trecho 2 - Atualizar a estrutura de busca
             if exist_left == 0 and exist_right == 0:
                 c = SNode(None, None, 0, t_top)
@@ -1006,6 +1009,7 @@ class STrapezoidMap():
                     exist_left = 0
 
                 if exist_left == 1:
+                    print("Entrei")
                     if at.t_upper_left != None:
                         if at.t_upper_left.t_upper_right == at:
                             at.t_upper_left.t_upper_right = t_left #1                       
@@ -1532,7 +1536,7 @@ class STrapezoidMap():
 
     # Para debugar as relacoes dos trapezios
     def relation_trap(self, trap):
-    
+        '''
         print("Testando trapezio original")
         trap.blink("green")
         control.sleep()
@@ -1561,6 +1565,7 @@ class STrapezoidMap():
             trap.t_lower_right.hide()
             control.sleep()
         trap.hide()
+        '''
 
     def mergeDown(self, list_trap, seg):
         new_traps = []
@@ -1688,14 +1693,12 @@ class STrapezoidMap():
                             trap.t_upper_left.t_upper_right = None  
                     self.rmv_trapezoid(trap)
 
-
-        #DEBUG
         '''
         for trap in self.trapezoid_list:
             if trap.remove == 0:
                 trap.show("green")
                 self.relation_trap(trap)
-          '''      
+                '''
         
 #FOR LATER
 '''
