@@ -925,11 +925,54 @@ class STrapezoidMap():
 
             self.rmv_trapezoid(t)
 
-    def hard_case(self, l_node, segment):
-        # Parte 4
-        # Trecho 1 - Atualizar o mapa trapezoidal
+    def update_relation(self, l_trap, t_trap):
+        # LAST TRAPEZOID LOWER RIGHT
+        if l_trap.right_comp.t_lower_right == t_trap.left_comp :
+            l_trap.t_lower_right = t_trap #3
+        else:
+            l_trap.t_lower_right = l_trap.right_comp.t_lower_right # 3
 
-        # Os cantos sao aqueles que mudam
+            if l_trap.right_comp.t_lower_right != None:
+                if l_trap.right_comp.t_lower_right.t_upper_left == l_trap.right_comp:
+                    l_trap.right_comp.t_lower_right.t_upper_left = l_trap
+                if l_trap.right_comp.t_lower_right.t_lower_left == l_trap.right_comp:
+                    l_trap.right_comp.t_lower_right.t_lower_left = l_trap                                  
+
+        # LAST TRAPEZOID UPPER RIGHT
+        if l_trap.right_comp.t_upper_right == t_trap.left_comp :
+            l_trap.t_upper_right = t_trap #3
+        else:
+            l_trap.t_upper_right = l_trap.right_comp.t_upper_right # 3 
+            if l_trap.right_comp.t_upper_right != None:
+                if l_trap.right_comp.t_upper_right.t_upper_left == l_trap.right_comp:
+                    l_trap.right_comp.t_upper_right.t_upper_left = l_trap
+                if l_trap.right_comp.t_upper_right.t_lower_left == l_trap.right_comp:
+                    l_trap.right_comp.t_upper_right.t_lower_left = l_trap
+        
+        # ATUAL TRAPEZOID LOWER LEFT
+        if t_trap.left_comp.t_lower_left == l_trap.right_comp:
+            t_trap.t_lower_left = l_trap
+        else:
+            t_trap.t_lower_left = t_trap.left_comp.t_lower_left  
+            if t_trap.left_comp.t_lower_left != None:
+                if t_trap.left_comp.t_lower_left.t_upper_right == t_trap.left_comp:
+                    t_trap.left_comp.t_lower_left.t_upper_right = t_trap
+                if t_trap.left_comp.t_lower_left.t_lower_right == t_trap.left_comp:
+                    t_trap.left_comp.t_lower_left.t_lower_right = t_trap
+
+        # ATUAL TRAPEZOID UPPER LEFT 
+        if t_trap.left_comp.t_upper_left == l_trap.right_comp:
+            t_trap.t_upper_left = l_trap
+        else:
+            t_trap.t_upper_left = t_trap.left_comp.t_upper_left
+            if t_trap.left_comp.t_upper_left != None:
+                if t_trap.left_comp.t_upper_left.t_upper_right == t_trap.left_comp:
+                    t_trap.left_comp.t_upper_left.t_upper_right = t_trap
+                if t_trap.left_comp.t_upper_left.t_lower_right == t_trap.left_comp:
+                    t_trap.left_comp.t_upper_left.t_lower_right = t_trap
+
+    def hard_case(self, l_node, segment):
+        # Parte do Hard Case
 
         print("Fazendo o Hard Case")
         tot = len(l_node)
@@ -960,7 +1003,6 @@ class STrapezoidMap():
             x.blink()
             control.sleep()
             x.hide()
-
 
         for x in upper_trap:
             x.blink()
@@ -1235,47 +1277,8 @@ class STrapezoidMap():
                         t_top.t_lower_right = None #2                
 
                 if t_top != l_top:
-                     # VIZINHOS
-                    if l_top.right_comp.t_lower_right == t_top.left_comp :
-                        l_top.t_lower_right = t_top #3
-                    else:
-                        l_top.t_lower_right = l_top.right_comp.t_lower_right # 3
-
-                        if l_top.right_comp.t_lower_right != None:
-                            if l_top.right_comp.t_lower_right.t_upper_left == l_top.right_comp:
-                                l_top.right_comp.t_lower_right.t_upper_left = l_top
-                            if l_top.right_comp.t_lower_right.t_lower_left == l_top.right_comp:
-                                l_top.right_comp.t_lower_right.t_lower_left = l_top                                  
-
-                    if l_top.right_comp.t_upper_right == t_top.left_comp :
-                        l_top.t_upper_right = t_top #3
-                    else:
-                        l_top.t_upper_right = l_top.right_comp.t_upper_right # 3 
-                        if l_top.right_comp.t_upper_right != None:
-                            if l_top.right_comp.t_upper_right.t_upper_left == l_top.right_comp:
-                                l_top.right_comp.t_upper_right.t_upper_left = l_top
-                            if l_top.right_comp.t_upper_right.t_lower_left == l_top.right_comp:
-                                l_top.right_comp.t_upper_right.t_lower_left = l_top
-                    
-                    if t_top.left_comp.t_lower_left == l_top.right_comp:
-                        t_top.t_lower_left = l_top
-                    else:
-                        t_top.t_lower_left = t_top.left_comp.t_lower_left  
-                        if t_top.left_comp.t_lower_left != None:
-                            if t_top.left_comp.t_lower_left.t_upper_right == t_top.left_comp:
-                                t_top.left_comp.t_lower_left.t_upper_right = t_top
-                            if t_top.left_comp.t_lower_left.t_lower_right == t_top.left_comp:
-                                t_top.left_comp.t_lower_left.t_lower_right = t_top
-
-                    if t_top.left_comp.t_upper_left == l_top.right_comp:
-                        t_top.t_upper_left = l_top
-                    else:
-                        t_top.t_upper_left = t_top.left_comp.t_upper_left
-                        if t_top.left_comp.t_upper_left != None:
-                            if t_top.left_comp.t_upper_left.t_upper_right == t_top.left_comp:
-                                t_top.left_comp.t_upper_left.t_upper_right = t_top
-                            if t_top.left_comp.t_upper_left.t_lower_right == t_top.left_comp:
-                                t_top.left_comp.t_upper_left.t_lower_right = t_top
+                    # VIZINHOS
+                    self.update_relation(l_top, t_top)
                         
                     t_top.pid = self.get_trapezoid()
                     t_top.blink()
@@ -1310,46 +1313,7 @@ class STrapezoidMap():
 
                 if t_bottom != l_bottom:
                     # VIZINHOS
-                    if l_bottom.right_comp.t_lower_right == t_bottom.left_comp :
-                        l_bottom.t_lower_right = t_bottom #3
-                    else:
-                        l_bottom.t_lower_right = l_bottom.right_comp.t_lower_right # 3
-                        if l_bottom.right_comp.t_lower_right != None:
-                            if l_bottom.right_comp.t_lower_right.t_upper_left == l_bottom.right_comp:
-                                l_bottom.right_comp.t_lower_right.t_upper_left = l_bottom
-                            if l_bottom.right_comp.t_lower_right.t_lower_left == l_bottom.right_comp:
-                                l_bottom.right_comp.t_lower_right.t_lower_left = l_bottom  
-
-                    if l_bottom.right_comp.t_upper_right == t_bottom.left_comp :
-                        l_bottom.t_upper_right = t_bottom #3
-                    else:
-                        l_bottom.t_upper_right = l_bottom.right_comp.t_upper_right # 3 
-                        if l_bottom.right_comp.t_upper_right != None:
-                            if l_bottom.right_comp.t_upper_right.t_upper_left == l_bottom.right_comp:
-                                l_bottom.right_comp.t_upper_right.t_upper_left = l_bottom
-                            if l_bottom.right_comp.t_upper_right.t_lower_left == l_bottom.right_comp:
-                                l_bottom.right_comp.t_upper_right.t_lower_left = l_bottom  
-
-                    if t_bottom.left_comp.t_lower_left == l_bottom.right_comp:
-                        t_bottom.t_lower_left = l_bottom
-                    else:
-                        t_bottom.t_lower_left = t_bottom.left_comp.t_lower_left  
-                        if t_bottom.left_comp.t_lower_left != None:
-                            if t_bottom.left_comp.t_lower_left.t_upper_right == t_bottom.left_comp:
-                                t_bottom.left_comp.t_lower_left.t_upper_right = t_bottom
-                            if t_bottom.left_comp.t_lower_left.t_lower_right == t_bottom.left_comp:
-                                t_bottom.left_comp.t_lower_left.t_lower_right = t_bottom
-
-                    if t_bottom.left_comp.t_upper_left == l_bottom.right_comp:
-                        t_bottom.t_upper_left = l_bottom
-                    else:
-                        t_bottom.t_upper_left = t_bottom.left_comp.t_upper_left
-                        if t_bottom.left_comp.t_upper_left != None:
-                            if t_bottom.left_comp.t_upper_left.t_upper_right == t_bottom.left_comp:
-                                t_bottom.left_comp.t_upper_left.t_upper_right = t_bottom
-                            if t_bottom.left_comp.t_upper_left.t_lower_right == t_bottom.left_comp:
-                                t_bottom.left_comp.t_upper_left.t_lower_right = t_bottom
-     
+                    self.update_relation(l_bottom, t_bottom)
 
                     t_bottom.pid = self.get_trapezoid()
                     t_bottom.blink()
@@ -1387,49 +1351,7 @@ class STrapezoidMap():
                 # PARTE INTERNA
                 if t_top != l_top:
                     # VIZINHOS
-                    
-                    if l_top.right_comp.t_lower_right == t_top.left_comp :
-                        l_top.t_lower_right = t_top #3
-                    else:
-                        l_top.t_lower_right = l_top.right_comp.t_lower_right # 3
-
-                        if l_top.right_comp.t_lower_right != None:
-                            if l_top.right_comp.t_lower_right.t_upper_left == l_top.right_comp:
-                                l_top.right_comp.t_lower_right.t_upper_left = l_top
-                            if l_top.right_comp.t_lower_right.t_lower_left == l_top.right_comp:
-                                l_top.right_comp.t_lower_right.t_lower_left = l_top  
-
-                    if l_top.right_comp.t_upper_right == t_top.left_comp :
-                        l_top.t_upper_right = t_top #3
-                    else:
-                        l_top.t_upper_right = l_top.right_comp.t_upper_right # 3 
-                        if l_top.right_comp.t_upper_right != None:
-                            if l_top.right_comp.t_upper_right.t_upper_left == l_top.right_comp:
-                                l_top.right_comp.t_upper_right.t_upper_left = l_top
-                            if l_top.right_comp.t_upper_right.t_lower_left == l_top.right_comp:
-                                l_top.right_comp.t_upper_right.t_lower_left = l_top  
-
-                    if t_top.left_comp.t_lower_left == l_top.right_comp:
-                        t_top.t_lower_left = l_top
-                    else:
-                        t_top.t_lower_left = t_top.left_comp.t_lower_left  
-                        if t_top.left_comp.t_lower_left != None:
-                            if t_top.left_comp.t_lower_left.t_upper_right == t_top.left_comp:
-                                t_top.left_comp.t_lower_left.t_upper_right = t_top
-                            if t_top.left_comp.t_lower_left.t_lower_right == t_top.left_comp:
-                                t_top.left_comp.t_lower_left.t_lower_right = t_top
-
-                    if t_top.left_comp.t_upper_left == l_top.right_comp:
-                        t_top.t_upper_left = l_top
-                    else:
-                        t_top.t_upper_left = t_top.left_comp.t_upper_left
-                        if t_top.left_comp.t_upper_left != None:
-                            if t_top.left_comp.t_upper_left.t_upper_right == t_top.left_comp:
-                                t_top.left_comp.t_upper_left.t_upper_right = t_top
-                            if t_top.left_comp.t_upper_left.t_lower_right == t_top.left_comp:
-                                t_top.left_comp.t_upper_left.t_lower_right = t_top
-                        
-
+                    self.update_relation(l_top, t_top)
 
                     t_top.t_upper_right = None #3
                     t_top.t_lower_right = None #3                                           
@@ -1454,8 +1376,9 @@ class STrapezoidMap():
                     id_b = b.pid
 
                 if t_bottom != l_bottom:
-                   # VIZINHOS
-                     # VIZINHOS
+                    # VIZINHOS
+                    self.update_relation(l_bottom, t_bottom)
+
                     if l_bottom.right_comp.t_lower_right == t_bottom.left_comp :
                         l_bottom.t_lower_right = t_bottom #3
                     else:
@@ -1505,10 +1428,8 @@ class STrapezoidMap():
                     t_bottom.blink()
         
                     # DEBUG
-                
                     print("Case 3 - LOWER")
                     self.relation_trap(t_bottom)
-                    
 
                     self.trapezoid_list[t_bottom.pid] = t_bottom
 
