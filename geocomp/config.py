@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+DEBUG = True
+
 # tamanho da area de desenho
 # WIDTH = 500
 WIDTH = 600
@@ -17,17 +19,17 @@ MAX_DELAY = 1000
 DATADIR = 'dados'
 
 # largura de uma linha
-LINEWIDTH = 0
+LINEWIDTH = 2
 # largura de uma linha vertical/horizontal (linha de varredura,
 #   linha que indica onde foi feita a divisao em um algoritmo
 #   de divisao e conquista, ...)
-LINEWIDTH_SPECIAL = 0
+LINEWIDTH_SPECIAL = 1
 
 # um ponto desenhado como um circulo
 # raio desse circulo para um ponto normal e em destaque
 #RADIUS = 2
 RADIUS = 3
-RADIUS_HILIGHT = 5
+RADIUS_HILIGHT = 4
 
 # cores usadas
 
@@ -35,7 +37,6 @@ RADIUS_HILIGHT = 5
 # COLOR_POINT = 'blue'
 COLOR_POINT = 'white'
 COLOR_HI_POINT = 'green'
-COLOR_BLACK = 'black'
 
 # cor padrao de uma linha
 COLOR_LINE = 'red'

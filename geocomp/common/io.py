@@ -1,45 +1,103 @@
 #!/usr/bin/env python
 """Modulo para leitura de um arquivo de dados"""
 
-from .point import Point
+from geocomp.common.point   import Point
+from geocomp.common.polygon import Polygon
+from geocomp.common.segment import Segment
 
-def open_file (name):
-	"""Le o arquivo passado, e retorna o seu conteudo
-	
-	Atualmente, ele espera que o arquivo contenha uma lista de pontos,
-	um ponto por linha, as duas coordenadas em cada linha. Exemplo:
-	
-	0 0
-	0 1
-	10 100
-	
-	"""
-	f = open (name, 'r')
-	#t = range (5000)
-	lista = []
-	cont = 0
 
-	for linha in f.readlines ():
-		if linha[0] == '#': continue
+def read(filename):
+    """Reads any type of geometric primitive data structures (Point,
+    Polygon, Segment) from a file and returns it as a list.
 
-		coord = linha.split()
+    This method reads geometric data from a file. Any empty line or
+    any line started by '#' (considered  a commentary) is ignored.
+    The input can be mixed, it can contains a set of Polygons, Points
+    and Segments and not necessarily only one type of data.
 
-		fields = len (coord)
-		if fields == 0: continue
-		if fields != 2: raise 'cada linha deve conter 2 coordenadas'
+    The following patterns are required during the input operation:
 
-		x = float (coord[0])
-		y = float (coord[1])
-		lista.append (Point (x, y))
+    Point: defined by two floating point coordinates, on a line,
+           separated by whitespaces. For example:
 
-	return lista
+               0 0
+               0.5 1.5
+               1.5 3
 
-if __name__ == '__main__':
-	import sys
+    Polygon: defined by a list of adjacent points, enclosed by '['
+             at the beginning and ']' at the end, in the order that
+             they appear in the polygon boundary, i.e., any pair of
+             consecutive points defines an edge on the polygon
+             boundary. For example, the following input defines a
+             square:
 
-	for i in sys.argv[1:]:
-		print((i,':'))
-		lista = open_file (i)
-		print(('  ',repr(len(lista)), 'pontos:'))
-		for p in lista:
-			print(p)
+             [
+             0 0
+             1 0
+             1 1
+             0 1
+             ]
+
+    Segment: defined by four floating point coordinates, on a line,
+             separated by whitespaces. Each pair of consecutive
+             coordinates defines a segment endpoint. For example,
+             the following input defines a segment from (0, 0) to
+             (0.5, 1.5):
+
+             0 0 0.5 1.5
+
+    :param filename: (str) The name of the file that will be read
+
+    :return: (list) A list of geometric primitive data structures
+             read from the file
+
+    Raises:
+        FileNotFoundError: if file could not be found
+
+        TypeError: if 'filename' is None
+
+        ValueError: if some input from the file does not follow the
+                    required patterns
+    """
+    with open(filename) as file:
+        i = 0
+        vertices = []
+        data = []
+        expecting_polygon = False
+        for line in file:
+            i += 1
+            line = line.split()
+            if len(line) == 0 or line[0] == "#":
+                continue
+            if line[0] == "[":
+                expecting_polygon = True
+            elif line[0] == "]":
+                expecting_polygon = False
+                data.append(Polygon(vertices))
+                vertices = []
+            elif len(line) == 4:
+                data.append(
+                    Segment(
+                        Point(float(line[0]), float(line[1])),
+                        Point(float(line[2]), float(line[3]))
+                    )
+                )
+            elif len(line) == 2:
+                if expecting_polygon:
+                    vertices.append(Point(float(line[0]), float(line[1])))
+                else:
+                    data.append(Point(float(line[0]), float(line[1])))
+            else:
+                raise ValueError(
+                    "Invalid input from file: {}: line: {}: {}".format(filename, i, line))
+        return data
+
+# if __name__ == '__main__':
+#     import sys
+#
+#     for i in sys.argv[1:]:
+#         print((i,':'))
+#         lista = read_points (i)
+#         print(('  ',repr(len(lista)), 'pontos:'))
+#         for p in lista:
+#             print(p)
