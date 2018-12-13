@@ -620,7 +620,7 @@ class STrapezoidMap():
         return t_list
 
     # Procura na DAG de decisão
-    def query(self, at, p_p, p_q):
+    def query(self, at, p_p, p_q = None):
         while at.node_type != 0 :
             if at.node_type == 1:
                 # checar cima e embaixo

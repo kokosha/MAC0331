@@ -45,12 +45,12 @@ def Generate(l):
 def Brute (list_polygon):
 
 	# JIANG TERMINA AQUI, tem que pegar a entrada e colocar nesses pontos
-	start = "onde o robo vai começar"
-	target = "onde o robo quer terminar"
+	start = SPoint(0, 0);
+	target = SPoint(10, 10)
 
 	# isso aqui vc tem que procurar com o DAG, eu n sei procurar nele :(
-	startTrap = "trapezio em que o robo comecou"
-	targetTrap = "trapezio em que o robo quer terminar"
+	startTrap = "vou redefinir la na frente depois de montar o mapa"
+	targetTrap = "idem"
 
 	# Criando e printando o retangulo externo
 	oeste = list_polygon[0].pts.x
@@ -104,6 +104,8 @@ def Brute (list_polygon):
 	mapa = STrapezoidMap(lsegments)
 	mapa.construct()
 
+	startTrap = mapa.query(mapa.node_list[0], start)
+	targetTrap = mapa.query(mapa.node_list[0], target)
 
 	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
 	mapa.checking()
