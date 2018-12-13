@@ -11,7 +11,67 @@ from geocomp.common import control
 from geocomp.common.guiprim import *
 import math
 
+import tkinter as tk
+
 from geocomp.point_robot.structure import *
+
+
+class Box_Box:
+
+	def __init__(self):
+		self.sx = None
+		self.sy = None
+		self.ex = None
+		self.ey = None
+		self.query_window = tk.Tk()
+		self.query_window.title("")
+		self.query_window.geometry('400x160')
+		self.query_window.resizable(0, 0)
+
+		message = tk.Label(self.query_window, text="Insira os pontos iniciais e finais")
+		message.grid(column = 0, row = 0)
+
+		m_sx = tk.Label(self.query_window, text="Coordenada X do ponto inicial")
+		m_sx.grid(column = 0, row = 1)
+
+		self.t_sx = tk.Entry(self.query_window, width = 10)
+		self.t_sx.grid(column = 1, row = 1)
+
+		m_sy = tk.Label(self.query_window, text="Coordenada Y do ponto inicial")
+		m_sy.grid(column = 0, row = 2)
+		
+		self.t_sy = tk.Entry(self.query_window, width = 10)
+		self.t_sy.grid(column = 1, row = 2)
+
+		m_ex = tk.Label(self.query_window, text="Coordenada X do ponto final")
+		m_ex.grid(column = 0, row = 3)
+
+		
+		self.t_ex = tk.Entry(self.query_window, width = 10)
+		self.t_ex.grid(column = 1, row = 3)
+
+		m_ey = tk.Label(self.query_window, text="Coordenada Y do ponto final")
+		m_ey.grid(column = 0, row = 4)
+
+		self.t_ey = tk.Entry(self.query_window, width = 10)
+		self.t_ey.grid(column = 1, row = 4)
+
+
+		button = tk.Button(self.query_window, text="OK", command = self.clicked)
+		button.grid(column = 0, row = 5)
+
+		print("Before")
+		self.query_window.wait_window()
+		print("After")
+
+
+	def clicked(self):
+		self.sx = self.t_sx.get()
+		self.sy = self.t_sy.get()
+		self.ex = self.t_ex.get()
+		self.ey = self.t_ey.get()
+		self.can = tk.IntVar()
+		self.query_window.destroy()
 
 # Código extra para printar
 def Print(polygon_1):
@@ -49,9 +109,13 @@ def Brute (list_polygon):
 	"Coloque aqui o ponto que o robô está e o ponto que o robô quer ir, respectivamente."
 	"O primeiro argumento é o x do ponto e o segundo é o y do ponto"
 
-	start = SPoint(0, 0)
-	target = SPoint(10, 10)
 
+	box = Box_Box()
+
+	print(box.sx, box.sy, box.ex, box.ey)
+
+	start = SPoint(int(box.sx), int(box.sy))
+	target = SPoint(int(box.ex), int(box.ey))
 	#####################################################################################################
 
 	# Criando e printando o retangulo externo
