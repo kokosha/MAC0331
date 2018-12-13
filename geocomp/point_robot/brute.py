@@ -14,10 +14,10 @@ import math
 from geocomp.point_robot.structure import *
 
 # Código extra para printar
-def Printo(pol):
-	pol.plot('green')
+def Print(polygon_1):
+	polygon_1.plot('green')
 	control.sleep()
-	pol.plot('magenta')
+	polygon_1.plot('magenta')
 
 def Hide(pol):
 	pol.hide()
@@ -42,19 +42,20 @@ def Generate(l):
 
 
 
-def Brute (l):
+def Brute (list_polygon):
 
 	# Criando e printando o retangulo externo
-	oeste = l[0].x
-	leste = l[0].x
-	norte = l[0].y
-	sul   = l[0].y
+	oeste = list_polygon[0].pts.x
+	leste = list_polygon[0].pts.x
+	norte = list_polygon[0].pts.y
+	sul   = list_polygon[0].pts.y
 
-	for i in l:
-		if i.x < oeste: oeste = i.x
-		if i.x > leste: leste = i.x
-		if i.y < sul  :   sul = i.y
-		if i.y > norte: norte = i.y
+	for polygon in list_polygon:
+		for point in polygon.vertices():
+			if point.x < oeste: oeste = point.x
+			if point.x > leste: leste = point.x
+			if point.y < sul  :   sul = point.y
+			if point.y > norte: norte = point.y
 
 	exterior = []
 
@@ -64,43 +65,18 @@ def Brute (l):
 	exterior.append(Point(oeste-1, norte+1))
 
 	ext = Polygon(exterior)
-	Printo(ext)
-
-
-	# Achando o conjunto de polígonos simples
-	Lpolygon = []
-	at = []
-	pt = 0
-	while pt < len(l):
-		while len(at) == 0 or (pt < len(l) and at[0] != l[pt]):
-			if len(at) != 0 and at[0].x == l[pt].x and at[0].y == l[pt].y:
-				break
-			at.append(l[pt])
-			pt = pt + 1
-		pt = pt + 1
-		Lpolygon.append(at)
-		at = []
-
+	Print(ext)
 
 
 	# Printando os polígonos simples
-	for x in Lpolygon:
-		blocked = Polygon(x)
-		Printo(blocked)
+	for polygon in list_polygon:
+		Print(polygon)
 
-
-	# Fazemos um achatamento dos dados
-
-
-
-	# Achando o espaço livre de locomoção em mapa de trapezoidação
 
 	# Parte 1.1 - Transformando os polígonos iniciais em arestas(segmentos de retas)
-
-
 	lsegments = []
-	for l in Lpolygon:
-		foo = Generate(l)
+	for polygon in list_polygon:
+		foo = Generate(polygon.vertices())
 		for x in foo:
 			p1 = x.p_left
 			p2 = x.p_right
@@ -110,7 +86,7 @@ def Brute (l):
 				x.p_left = p2
 				x.p_right = p1
 				x.swap = 1
-			if len(l) == 2:
+			if len(polygon.vertices()) == 2:
 				x.swap = 0
 			lsegments.append(x)
 
