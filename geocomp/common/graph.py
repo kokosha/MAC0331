@@ -57,12 +57,15 @@ class Graph:
 
 	# Algoritmo base do DFS
 	def DFS(self, target, start):
-		for v in self.allVertex:
-			v.setVisited(False)
-		if (self.visit(start, target) == 1):
+		if (target.x == start.x and target.y == start.y):
 			print("O robô chegou ao destino!")
 		else:
-			print("Falhou em visit -- não achou o caminho :(")
+			for v in self.allVertex:
+				v.setVisited(False)
+			if (self.visit(start, target) == 1):
+				print("O robô chegou ao destino!")
+			else:
+				print("Falhou em visit -- não achou o caminho :(")
 
 	# Funcao auxiliar do DFS
 	def visit(self, u, target):

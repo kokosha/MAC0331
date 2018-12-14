@@ -100,7 +100,11 @@ def Generate(l):
 			control.sleep()
 	return lsegments
 
-
+# Código extra para printar
+def Print_S_and_T(pol):
+	pol.hilight()
+	control.sleep()
+	pol.plot('yellow')
 
 def Brute (list_polygon):
 
@@ -180,15 +184,17 @@ def Brute (list_polygon):
 	# Parte 2.1 - Transformando em grafo
 	grafo = mapa.make_graph()
 
+
 	#start = Point(0, 0)
 	grafo.newVertex(start.x, start.y)
 	#target = Point(10, 10)
 	grafo.newVertex(target.x, target.y)
 
 	grafo.newEdge(start.x, start.y, startTrap.info.center().x, startTrap.info.center().y)
-
 	grafo.newEdge(target.x, target.y, targetTrap.info.center().x, targetTrap.info.center().y)
 
+	Print_S_and_T(Point(start.x, start.y))
+	Print_S_and_T(Point(target.x, target.y))
 
 	grafo.DFS(grafo.findVertex(target.x, target.y), grafo.findVertex(start.x, start.y))
 	'''
