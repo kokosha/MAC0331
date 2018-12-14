@@ -240,8 +240,11 @@ class STrapezoid():
         if(P4X == P6X and P4Y == P6Y):
             lista.append(Point(1e9, 1e9))
         else:       
-            lista.append(Point((P4X+P6X)/2.0,(P4Y+P6Y)/2.0))    
+            lista.append(Point((P4X+P6X)/2.0, (P4Y+P6Y)/2.0)) 
 
+        lista.append(Point((P3X+P4X)/2.0,(P3Y+P4Y)/2.0)) 
+
+        '''
         lista.append(P1X)
         lista.append(P2X)
         lista.append(P3X)
@@ -254,6 +257,7 @@ class STrapezoid():
         lista.append(P4Y)
         lista.append(P5Y)
         lista.append(P6Y)
+        '''
 
         return lista
     def show(self, color):
@@ -682,6 +686,7 @@ class STrapezoidMap():
                     self.grapher(trap.t_lower_left, graph, prev)   
      
     # Cria o grafo
+    '''
     def make_graph(self):
         base = self.trapezoid_list[0]
         for i in self.trapezoid_list:
@@ -706,7 +711,7 @@ class STrapezoidMap():
             self.grapher(i, grafo, i)
 
         return grafo
-
+    '''
     def debug_relations(self, base):
         base.visited = True
         base.show('light blue')
@@ -1829,7 +1834,7 @@ class STrapezoidMap():
                 '''
         
 #FOR LATER
-'''
+
     def make_graph(self):
         
         par = []
@@ -1849,36 +1854,14 @@ class STrapezoidMap():
                         #trap.t_lower_right.debug()
                         #trap.t_upper_right.debug()
                         if (trap.t_lower_right == trap.t_upper_right):
-                            if(val[3] != Point(1e9, 1e9)):
-                                par.append((val[0], val[3]))
-                                par.append((val[3], trap.t_lower_right.get_point()[0]))
-                            else:
-                                par.append((val[0], val[4]))
-                                par.append((val[4], trap.t_lower_right.get_point()[0]))
+                            par.append((val[0], val[5]))
+                            par.append((val[5], trap.t_lower_right.get_point()[0]))
                         else:
-                            par.append((val[0], val[3]))
-                            par.append((val[3], trap.t_lower_right.get_point()[0]))
                             par.append((val[0], val[4]))
-                            par.append((val[4], trap.t_upper_right.get_point()[0]))
-
-                if (trap.t_lower_left != None and trap.t_upper_left != None):
-                    if trap.t_lower_left.remove == 0 and trap.t_upper_left.remove == 0:
-                        #trap.t_lower_left.debug()
-                        #trap.t_upper_left.debug()
-                        if (trap.t_lower_left == trap.t_upper_left):
-                            if(val[1] != Point(1e9, 1e9)):
-                                par.append((val[0], val[1]))
-                                par.append((val[1], trap.t_lower_left.get_point()[0]))
-                            else:
-                                par.append((val[0], val[2]))
-                                par.append((val[2], trap.t_lower_left.get_point()[0]))
-                        else:
-                            par.append((val[0], val[1]))
-                            par.append((val[1], trap.t_lower_left.get_point()[0]))
-                            par.append((val[0], val[2]))
-                            par.append((val[2], trap.t_upper_left.get_point()[0]))                   
+                            par.append((val[4], trap.t_lower_right.get_point()[0]))
+                            par.append((val[0], val[3]))
+                            par.append((val[3], trap.t_upper_right.get_point()[0]))
         return par
-'''
 
 
 
