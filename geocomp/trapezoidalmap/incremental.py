@@ -11,7 +11,7 @@ from geocomp.common import control
 from geocomp.common.guiprim import *
 import math
 
-from geocomp.pointrobot.structure import *
+from geocomp.trapezoidalmap.structure import *
 
 
 # Código extra para printar
