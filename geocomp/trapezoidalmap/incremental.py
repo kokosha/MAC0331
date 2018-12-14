@@ -96,7 +96,6 @@ def Incremental(list_polygon):
 	mapa = STrapezoidMap(lsegments)
 	mapa.construct()
 
-	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
-	mapa.checking()
+
 
 	return mapa
