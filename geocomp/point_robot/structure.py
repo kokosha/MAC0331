@@ -441,7 +441,8 @@ class STrapezoidMap():
         trap.visited = True
         trap.show('yellow')
         trap.hide()
-
+        if trap.remove == 1:
+            return
 
         if (trap.center().x == prev.center().x and trap.center().y == prev.center().y):
             cTrap1 = trap.center()
@@ -449,9 +450,9 @@ class STrapezoidMap():
             cTrap1 = prev.center()
 
         #check se existe vizinhos à direita
-        if (trap.t_upper_right != None): cTrap2 = trap.t_upper_right.center()
+        if (trap.t_upper_right != None and trap.t_upper_right.remove == 0): cTrap2 = trap.t_upper_right.center()
         else: cTrap2 = None #vizinho de cima na direita
-        if (trap.t_lower_right != None): cTrap3 = trap.t_lower_right.center()
+        if (trap.t_lower_right != None and trap.t_upper_right.remove == 0): cTrap3 = trap.t_lower_right.center()
         else: cTrap3 = None #vizinho de baixo na direita
 
         #   Caso exista, pode-se ter 3 casos: os dois existem (1), logo precisa ver se apontam
@@ -1662,37 +1663,38 @@ class STrapezoidMap():
             self.rmv_trapezoid(x)
 
     # Para debugar as relacoes dos trapezios
-    def relation_trap(self, trap):
-        '''
-        print("Testando trapezio original")
-        trap.blink("green")
-        control.sleep()
+    def relation_trap(self, trap, ok = False):
+        if ok == True:
 
-        print("Testando sua esquerda superior")
-        if trap.t_upper_left != None:
-            trap.t_upper_left.blink("green")
-            trap.t_upper_left.hide()
-            control.sleep()
- 
-        print("Testando sua esquerda inferior")
-        if trap.t_lower_left != None:
-            trap.t_lower_left.blink("green")
-            trap.t_lower_left.hide()
+            print("Testando trapezio original")
+            trap.blink("green")
             control.sleep()
 
-        print("Testando sua direita superior")
-        if trap.t_upper_right != None:
-            trap.t_upper_right.blink("green")
-            trap.t_upper_right.hide()
-            control.sleep()
- 
-        print("Testando sua direita inferior")
-        if trap.t_lower_right != None:
-            trap.t_lower_right.blink("green")
-            trap.t_lower_right.hide()
-            control.sleep()
-        trap.hide()
-        '''
+            print("Testando sua esquerda superior")
+            if trap.t_upper_left != None:
+                trap.t_upper_left.blink("green")
+                trap.t_upper_left.hide()
+                control.sleep()
+     
+            print("Testando sua esquerda inferior")
+            if trap.t_lower_left != None:
+                trap.t_lower_left.blink("green")
+                trap.t_lower_left.hide()
+                control.sleep()
+
+            print("Testando sua direita superior")
+            if trap.t_upper_right != None:
+                trap.t_upper_right.blink("green")
+                trap.t_upper_right.hide()
+                control.sleep()
+     
+            print("Testando sua direita inferior")
+            if trap.t_lower_right != None:
+                trap.t_lower_right.blink("green")
+                trap.t_lower_right.hide()
+                control.sleep()
+            trap.hide()
+        
 
     def mergeDown(self, list_trap, seg):
         new_traps = []
@@ -1819,7 +1821,6 @@ class STrapezoidMap():
                         if trap.t_upper_left.t_upper_right == trap:
                             trap.t_upper_left.t_upper_right = None  
                     self.rmv_trapezoid(trap)
-
         '''
         for trap in self.trapezoid_list:
             if trap.remove == 0:
