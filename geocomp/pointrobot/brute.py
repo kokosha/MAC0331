@@ -137,9 +137,9 @@ def Brute (list_polygon):
 
 
 	# Parte 2.1 - Transformando em grafo
-	grafo = mapa.make_graph()
+	#grafo = mapa.make_graph()
 
-
+	'''
 	#start = Point(0, 0)
 	grafo.newVertex(start.x, start.y)
 	#target = Point(10, 10)
@@ -158,18 +158,20 @@ def Brute (list_polygon):
 	grafo = Graph()
 	condition = 0
 
+	val = mapa.make_graph()
+
 	for x in val:
 		grafo.newVertex(x[0].x, x[0].y)
 		grafo.newVertex(x[1].x, x[1].y)
-		grafo.newEdge(grafo.findVertex(x[0].x, x[0].y), grafo.findVertex(x[1].x, x[1].y))		
+		grafo.newEdge(x[0].x, x[0].y, x[1].x, x[1].y)		
 		seg = Segment(Point(x[0].x, x[0].y), Point(x[1].x, x[1].y))
 		seg.plot('cyan')
 		control.sleep()
 
 
 	# Parte 2.2 - Achando o caminho	
-	s = SPoint(1, 2)
-	e = SPoint(2, 2)
+	s = SPoint(int(box.sx), int(box.sy))
+	e = SPoint(int(box.ex), int(box.ey))
 
 
 
@@ -186,7 +188,7 @@ def Brute (list_polygon):
 	if sn.info == en.info:
 		grafo.newVertex(e.x, e.y)
 		grafo.newVertex(s.x, s.y)
-		grafo.newEdge(grafo.findVertex(s.x, s.y), grafo.findVertex(e.x, e.y))
+		grafo.newEdge(s.x, s.y, e.x, e.y)
 		seg = Segment(Point(s.x, s.y), Point(e.x, e.y))
 		seg.plot('red')
 		control.sleep()
@@ -195,7 +197,7 @@ def Brute (list_polygon):
 			x = sn.info.get_point()
 			grafo.newVertex(x[0].x, x[0].y)
 			grafo.newVertex(s.x, s.y)
-			grafo.newEdge(grafo.findVertex(s.x, s.y), grafo.findVertex(x[0].x, x[0].y))
+			grafo.newEdge(s.x, s.y, x[0].x, x[0].y)
 
 			seg = Segment(Point(s.x, s.y), Point(x[0].x, x[0].y))
 			seg.plot('red')
@@ -206,7 +208,7 @@ def Brute (list_polygon):
 			x = en.info.get_point()
 			grafo.newVertex(x[0].x, x[0].y)
 			grafo.newVertex(e.x, e.y)
-			grafo.newEdge(grafo.findVertex(x[0].x, x[0].y), grafo.findVertex(e.x, e.y))
+			grafo.newEdge(x[0].x, x[0].y, e.x, e.y)
 			seg = Segment(Point(x[0].x, x[0].y), Point(e.x, e.y))
 			seg.plot('red')
 			control.sleep()
@@ -214,8 +216,7 @@ def Brute (list_polygon):
 			print("WRONG TYPE")
 
 	grafo.DFS(grafo.findVertex(s.x, s.y), grafo.findVertex(e.x, e.y))
-    #
-
+	'''
 	grafo.newVertex(3, 4)
 	grafo.newVertex(4, 3)
 	grafo.newVertex(3, 3)
