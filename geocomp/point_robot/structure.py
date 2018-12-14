@@ -117,14 +117,21 @@ class STrapezoid():
             #Ponto superior
             p1up = self.s_top.p_left
             p2up = self.s_top.p_right
-            mup = (p2up.y - p1up.y)/(p2up.x - p1up.x)
-            yup = mup*(self.p_left.x - p2up.x) + p2up.y
+            if p2up.x != p1up.x:
+                mup = (p2up.y - p1up.y)/(p2up.x - p1up.x)
+                yup = mup*(self.p_left.x - p2up.x) + p2up.y
+            else:
+                yup = self.s_top.p_left.y
+
 
             #Ponto inferior
             p1down = self.s_bottom.p_left
             p2down = self.s_bottom.p_right
-            mdown = (p2down.y - p1down.y)/(p2down.x - p1down.x)
-            ydown = mdown*(self.p_left.x - p2down.x) + p2down.y
+            if p2down.x != p1down.x:      
+                mdown = (p2down.y - p1down.y)/(p2down.x - p1down.x)
+                ydown = mdown*(self.p_left.x - p2down.x) + p2down.y
+            else:
+                ydown = self.s_bottom.p_left.y
 
             return self.p_left.x, yup, ydown
 
@@ -134,14 +141,21 @@ class STrapezoid():
             #Ponto superior
             p1up = self.s_top.p_left
             p2up = self.s_top.p_right
-            mup = (p2up.y - p1up.y)/(p2up.x - p1up.x)
-            yup = mup*(self.p_right.x - p2up.x) + p2up.y
+            if p2up.x != p1up.x:           
+                mup = (p2up.y - p1up.y)/(p2up.x - p1up.x)
+                yup = mup*(self.p_right.x - p2up.x) + p2up.y
+            else:
+                yup = self.s_top.p_right.y
+
 
             #Ponto inferior
             p1down = self.s_bottom.p_left
             p2down = self.s_bottom.p_right
-            mdown = (p2down.y - p1down.y)/(p2down.x - p1down.x)
-            ydown = mdown*(self.p_right.x - p2down.x) + p2down.y
+            if p2down.x != p1down.x:
+                mdown = (p2down.y - p1down.y)/(p2down.x - p1down.x)
+                ydown = mdown*(self.p_right.x - p2down.x) + p2down.y
+            else:
+                ydown = self.s_bottom.p_right.y
 
             return self.p_right.x, yup, ydown
 
