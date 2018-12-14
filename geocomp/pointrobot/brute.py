@@ -13,7 +13,8 @@ import math
 
 import tkinter as tk
 
-from geocomp.point_robot.structure import *
+from geocomp.trapezoidalmap.structure import *
+from geocomp.trapezoidalmap.incremental import *
 
 
 class Box_Box:
@@ -122,64 +123,18 @@ def Brute (list_polygon):
 	target = SPoint(int(box.ex), int(box.ey))
 	#####################################################################################################
 
-	# Criando e printando o retangulo externo
-	oeste = list_polygon[0].pts.x
-	leste = list_polygon[0].pts.x
-	norte = list_polygon[0].pts.y
-	sul   = list_polygon[0].pts.y
-
-	for polygon in list_polygon:
-		for point in polygon.vertices():
-			if point.x < oeste: oeste = point.x
-			if point.x > leste: leste = point.x
-			if point.y < sul  :   sul = point.y
-			if point.y > norte: norte = point.y
-
-	exterior = []
-
-	exterior.append(Point(oeste-1, sul-1))
-	exterior.append(Point(leste+1, sul-1))
-	exterior.append(Point(leste+1, norte+1))
-	exterior.append(Point(oeste-1, norte+1))
-
-	ext = Polygon(exterior)
-	Print(ext)
+	mapa = Incremental(list_polygon)
 
 
-	# Printando os polígonos simples
-	for polygon in list_polygon:
-		Print(polygon)
+	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
+	mapa.checking()
 
+	# Achando o grafo de locomoção
 
-	# Parte 1.1 - Transformando os polígonos iniciais em arestas(segmentos de retas)
-	lsegments = []
-	for polygon in list_polygon:
-		foo = Generate(polygon.vertices())
-		for x in foo:
-			p1 = x.p_left
-			p2 = x.p_right
-			x.swap = 0
-
-			if p1.x > p2.x or (p1.x == p2.x and p1.y > p2.y):
-				x.p_left = p2
-				x.p_right = p1
-				x.swap = 1
-			if len(polygon.vertices()) == 2:
-				x.swap = 0
-			lsegments.append(x)
-
-	# Parte 1.2 - Criando o mapa de trapezoidação
-
-	print("lsegments size is " + str(len(lsegments)))
-	mapa = STrapezoidMap(lsegments)
-	mapa.construct()
 
 	startTrap = mapa.query(mapa.node_list[0], start)
 	targetTrap = mapa.query(mapa.node_list[0], target)
 
-	# Parte 1.3 - Removendo as extensões vérticais dentro dos polígonos
-	mapa.checking()
-	# Achando o grafo de locomoção
 
 	# Parte 2.1 - Transformando em grafo
 	grafo = mapa.make_graph()

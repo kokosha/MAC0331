@@ -8,10 +8,10 @@ robo
 Algoritmos disponveis:
 - Forca Bruta
 """
-from . import brute
+from . import incremental
 
 children = [
-	[ 'brute', 'Brute', 'Trapezoidação' ]
+	[ 'incremental', 'Incremental', 'Incremental' ]
 ]
 
 __all__ = [a[0] for a in children]
