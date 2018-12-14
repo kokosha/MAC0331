@@ -185,37 +185,38 @@ def Brute (list_polygon):
 		print("Outside boundary");
 	elif en.info.remove == 1:
 		print("Outside boundary");
-	if sn.info == en.info:
-		grafo.newVertex(e.x, e.y)
-		grafo.newVertex(s.x, s.y)
-		grafo.newEdge(s.x, s.y, e.x, e.y)
-		seg = Segment(Point(s.x, s.y), Point(e.x, e.y))
-		seg.plot('red')
-		control.sleep()
-	else:		
-		if sn.node_type == 0 :
-			x = sn.info.get_point()
-			grafo.newVertex(x[0].x, x[0].y)
-			grafo.newVertex(s.x, s.y)
-			grafo.newEdge(s.x, s.y, x[0].x, x[0].y)
-
-			seg = Segment(Point(s.x, s.y), Point(x[0].x, x[0].y))
-			seg.plot('red')
-			control.sleep()
-		else:
-			print("WRONG TYPE")
-		if en.node_type == 0 :
-			x = en.info.get_point()
-			grafo.newVertex(x[0].x, x[0].y)
+	else:
+		if sn.info == en.info:
 			grafo.newVertex(e.x, e.y)
-			grafo.newEdge(x[0].x, x[0].y, e.x, e.y)
-			seg = Segment(Point(x[0].x, x[0].y), Point(e.x, e.y))
+			grafo.newVertex(s.x, s.y)
+			grafo.newEdge(s.x, s.y, e.x, e.y)
+			seg = Segment(Point(s.x, s.y), Point(e.x, e.y))
 			seg.plot('red')
 			control.sleep()
-		else:
-			print("WRONG TYPE")
+		else:		
+			if sn.node_type == 0 :
+				x = sn.info.get_point()
+				grafo.newVertex(x[0].x, x[0].y)
+				grafo.newVertex(s.x, s.y)
+				grafo.newEdge(s.x, s.y, x[0].x, x[0].y)
 
-	grafo.DFS(grafo.findVertex(s.x, s.y), grafo.findVertex(e.x, e.y))
+				seg = Segment(Point(s.x, s.y), Point(x[0].x, x[0].y))
+				seg.plot('red')
+				control.sleep()
+			else:
+				print("WRONG TYPE")
+			if en.node_type == 0 :
+				x = en.info.get_point()
+				grafo.newVertex(x[0].x, x[0].y)
+				grafo.newVertex(e.x, e.y)
+				grafo.newEdge(x[0].x, x[0].y, e.x, e.y)
+				seg = Segment(Point(x[0].x, x[0].y), Point(e.x, e.y))
+				seg.plot('red')
+				control.sleep()
+			else:
+				print("WRONG TYPE")
+
+		grafo.DFS(grafo.findVertex(s.x, s.y), grafo.findVertex(e.x, e.y))
 	'''
 	grafo.newVertex(3, 4)
 	grafo.newVertex(4, 3)
