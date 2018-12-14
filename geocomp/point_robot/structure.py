@@ -473,7 +473,6 @@ class STrapezoidMap():
                 a, b, c = prev.extPoints("right")
                 #TALVEZ TENHA UM ERRO NESSA CONDICAO
                 if ((b+c)/2 < tURby):
-                    print("to aqui porra")
                     if (b > pM2.y):
                         if ((trap.t_upper_right.p_right.x - trap.t_upper_right.p_left.x) > 0):
                             pM = self.medium_grapher(cTrap1, tURx, tURty, tURx, tURby, graph)
@@ -563,7 +562,123 @@ class STrapezoidMap():
                         self.grapher(trap.t_lower_right, graph, trap.t_lower_right)
                     graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
                 else:
-                    self.grapher(trap.t_lower_right, graph, prev)         
+                    self.grapher(trap.t_lower_right, graph, prev)
+
+         #check se existe vizinhos à direita
+        if (trap.t_upper_left != None): cTrap2 = trap.t_upper_left.center()
+        else: cTrap2 = None #vizinho de cima na direita
+        if (trap.t_lower_left != None): cTrap3 = trap.t_lower_left.center()
+        else: cTrap3 = None #vizinho de baixo na direita
+
+        #   Caso exista, pode-se ter 3 casos: os dois existem (1), logo precisa ver se apontam
+        #para o mesmo trapezio (1.1) e os outros dois somente se um dos dois existirem (2) e (3)
+
+        #(1)
+        if (cTrap2 != None and cTrap3 != None and (not trap.t_upper_left.visited) and (not trap.t_lower_left.visited)):
+            trap.t_upper_left.show('light green')
+            trap.t_upper_left.hide()
+            trap.t_lower_left.show('orange')
+            trap.t_lower_left.hide()
+
+            tURx, tURty, tURby = trap.t_upper_left.extPoints("right")
+            tLRx, tLRty, tLRby = trap.t_lower_left.extPoints("right")
+
+            #(1.1)
+            if (cTrap2.x == cTrap3.x and cTrap2.y == cTrap3.y):
+                pM2 = Point((tURx+trap.t_upper_left.p_right.x)/2,(tURty+trap.t_upper_left.p_right.y)/2)
+                a, b, c = prev.extPoints("left")
+                #TALVEZ TENHA UM ERRO NESSA CONDICAO
+                if ((b+c)/2 < tURby):
+                    if (b > pM2.y):
+                        if ((trap.t_upper_left.p_left.x - trap.t_upper_left.p_right.x) > 0):
+                            pM = self.medium_grapher(cTrap1, tURx, tURty, tURx, tURby, graph)
+                            if (not trap.t_upper_left.visited):
+                                graph.newVertex(cTrap2.x, cTrap2.y)
+                                self.grapher(trap.t_upper_left, graph, trap.t_upper_left)
+                            graph.newEdge(pM.x, pM.y, cTrap2.x, cTrap2.y)
+                        else:
+                            self.grapher(trap.t_upper_left, graph, prev)
+
+                    else:
+                        if ((trap.t_lower_left.p_left.x - trap.t_lower_left.p_right.x) > 0):
+                            pM = self.medium_grapher(cTrap1, tLRx, tLRby, tLRx, tLRby, graph)
+                            if (not trap.t_lower_left.visited):
+                                graph.newVertex(cTrap3.x, cTrap3.y)
+                                self.grapher(trap.t_lower_left, graph, trap.t_lower_left)
+                            graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
+                        else:
+                            self.grapher(trap.t_lower_left, graph, prev)
+                else:
+                    if (b > pM2.y):
+                        if ((trap.t_upper_left.p_left.x - trap.t_upper_left.p_right.x) > 0):
+                            pM = self.medium_grapher(cTrap1, a, b, a, c, graph)
+                            if (not trap.t_upper_left.visited):
+                                graph.newVertex(cTrap2.x, cTrap2.y)
+                                self.grapher(trap.t_upper_left, graph, trap.t_upper_left)
+                            graph.newEdge(pM.x, pM.y, cTrap2.x, cTrap2.y)
+                        else:
+                            self.grapher(trap.t_upper_left, graph, prev)
+
+                    else:
+                        if ((trap.t_lower_left.p_left.x - trap.t_lower_left.p_right.x) > 0):
+                            pM = self.medium_grapher(cTrap1, a, c, a, b, graph)
+                            if (not trap.t_lower_left.visited):
+                                graph.newVertex(cTrap3.x, cTrap3.y)
+                                self.grapher(trap.t_lower_left, graph, trap.t_lower_left)
+                            graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
+                        else:
+                            self.grapher(trap.t_lower_left, graph, prev)
+            
+            else:
+                if (trap.t_upper_left != None):
+                    if ((trap.t_upper_left.p_left.x - trap.t_upper_left.p_right.x) > 0):
+                        pM = self.medium_grapher(cTrap1, tURx, tURty, trap.t_upper_left.p_right.x, trap.t_upper_left.p_right.y, graph)
+                        if (not trap.t_upper_left.visited):
+                            graph.newVertex(cTrap2.x, cTrap2.y)
+                            self.grapher(trap.t_upper_left, graph, trap.t_upper_left)
+                        graph.newEdge(pM.x, pM.y, cTrap2.x, cTrap2.y)
+                    else:
+                        self.grapher(trap.t_upper_left, graph, prev)
+
+                if (trap.t_lower_left != None):
+                    if ((trap.t_lower_left.p_left.x - trap.t_lower_left.p_right.x) > 0):
+                        pM = self.medium_grapher(cTrap1, tLRx, tLRby, trap.t_lower_left.p_right.x, trap.t_lower_left.p_right.y, graph)
+                        if (not trap.t_lower_left.visited):
+                            graph.newVertex(cTrap3.x, cTrap3.y)
+                            self.grapher(trap.t_lower_left, graph, trap.t_lower_left)
+                        graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
+                    else:
+                        self.grapher(trap.t_lower_left, graph, prev) 
+            
+        
+        #(2)
+        elif (cTrap2 != None and cTrap3 == None and (not trap.t_upper_left.visited)):
+            tURx, tURty, tURby = trap.t_upper_left.extPoints("right")
+
+            if (trap.t_upper_left != None):
+                if ((trap.t_upper_left.p_left.x - trap.t_upper_left.p_right.x) > 0):
+                    pM = self.medium_grapher(cTrap1, tURx, tURty, trap.t_upper_left.p_right.x, trap.t_upper_left.p_right.y, graph)
+                    if (not trap.t_upper_left.visited):
+                        graph.newVertex(cTrap2.x, cTrap2.y)
+                        self.grapher(trap.t_upper_left, graph, trap.t_upper_left)
+                    graph.newEdge(pM.x, pM.y, cTrap2.x, cTrap2.y)
+                else:
+                    self.grapher(trap.t_upper_left, graph, prev)
+
+
+        #(3)
+        elif (cTrap2 == None and cTrap3 != None and (not trap.t_lower_left.visited)):
+            tLRx, tLRty, tLRby = trap.t_lower_left.extPoints("right")
+
+            if (trap.t_lower_left != None):
+                if ((trap.t_lower_left.p_left.x - trap.t_lower_left.p_right.x) > 0):
+                    pM = self.medium_grapher(cTrap1, tLRx, tLRby, trap.t_lower_left.p_right.x, trap.t_lower_left.p_right.y, graph)
+                    if (not trap.t_lower_left.visited):
+                        graph.newVertex(cTrap3.x, cTrap3.y)
+                        self.grapher(trap.t_lower_left, graph, trap.t_lower_left)
+                    graph.newEdge(pM.x, pM.y, cTrap3.x, cTrap3.y)
+                else:
+                    self.grapher(trap.t_lower_left, graph, prev)   
      
     # Cria o grafo
     def make_graph(self):
@@ -585,6 +700,9 @@ class STrapezoidMap():
         grafo = Graph()
         grafo.newVertex(base.center().x, base.center().y)
         self.grapher(base, grafo, base)
+
+        for i in self.trapezoid_list:
+            self.grapher(i, grafo, i)
 
         return grafo
 
