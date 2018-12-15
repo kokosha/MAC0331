@@ -47,7 +47,8 @@ class SSegment():
         self.p_right = p_right
         self.swap = 0
 
-        self.linha = None
+        self.p1 = None
+        self.p2 = None
 
     def is_above(self, point, point_2):
         # NEED TO RECHECK
@@ -60,21 +61,18 @@ class SSegment():
         print("SSegment")
         print(self.p_left.x, self.p_left.y, self.p_right.x, self.p_right.y)
 
-    def show(self, color):
+    def show(self, color = None):
         p_left = self.p_left
         p_right = self.p_right
         linha = []
-        linha.append(Point(p_left.x, p_left.y))
-        linha.append(Point(p_right.x, p_right.y))
-        linha.append(Point(p_left.x, p_left.y)) 
+        self.p1 = (Point(p_left.x, p_left.y))
+        self.p2 = (Point(p_right.x, p_right.y))
 
-        self.linha = Polygon(linha)
-        self.linha.plot(color)
-        control.sleep()
+        self.p1.lineto (self.p2, color)
 
 
     def hide(self):
-        self.linha.hide()
+        self.p1.remove_lineto (self.p2)
 
 # Estrutura STrapezoid - Guarda o trapezio baseado em quatro informacoes 
 # O ponto mais a esquerda e o ponto mais a direita
@@ -102,6 +100,8 @@ class STrapezoid():
 
         self.linha1 = None
         self.linha2 = None
+        self.linha3 = None
+        self.linha4 = None
 
         # Saber se a varredura já passou por ele
         self.visited = False
@@ -256,7 +256,7 @@ class STrapezoid():
         lista.append(P6Y)
 
         return lista
-    def show(self, color):
+    def show(self, color, val = 0):
         trapezio = self
         s_top = trapezio.s_top
         s_bottom = trapezio.s_bottom
@@ -302,31 +302,37 @@ class STrapezoid():
             yb_left = p_left.y;
             yb_right = p_left.y;
 
-        linha1 = []
-        linha1.append(Point(p_left.x, yt_left))
-        linha1.append(Point(p_left.x, yb_left))
-        linha1.append(Point(p_left.x, yt_left))     
+        linha1 = SSegment(Point(p_left.x, yt_left),Point(p_left.x, yb_left))  
 
-        self.linha1 = Polygon(linha1)
-        self.linha1.hide()
-        self.linha1.plot(color)
+        self.linha1 = linha1
+        self.linha1.show(color)
 
-        linha2 = []
-        linha2.append(Point(p_right.x, yt_right))
-        linha2.append(Point(p_right.x, yb_right))   
-        linha2.append(Point(p_right.x, yt_right))
+        linha2 = SSegment(Point(p_right.x, yt_right),Point(p_right.x, yb_right))   
 
-        self.linha2 = Polygon(linha2)
-        self.linha2 .hide()
-        self.linha2.plot(color)
+        self.linha2 = linha2
+        self.linha2.show(color)
+
+        if val == 2:
+            linha3 = SSegment(Point(p_left.x, yt_left),Point(p_right.x, yt_right))  
+
+            self.linha3 = linha3
+            self.linha3.show(color)
+
+            linha4 = SSegment(Point(p_left.x, yb_left),Point(p_right.x, yb_right))   
+
+            self.linha4 = linha4
+            self.linha4.show(color)
+
         control.sleep()
 
     def hide(self):
         self.linha1.hide()
         self.linha2.hide()
+        self.linha3.hide()
+        self.linha4.hide()
 
     def blink(self, color = None):
-        self.show("red")
+        self.show("red", 2)
         self.hide()
         if color == None :
             self.show("blue")
@@ -1289,13 +1295,6 @@ class STrapezoidMap():
                     t_right.t_lower_left = t_bottom #2
                     t_right.t_upper_right = at.t_upper_right #2
                     t_right.t_lower_right = at.t_lower_right #2
-
-                    t_right.blink()
-
-                    # DEBUG
-                    
-                    print("Case 2 - RIGHT")
-                    self.relation_trap(t_right)
                     
 
                     self.trapezoid_list[t_right.pid] = t_right
@@ -1420,7 +1419,14 @@ class STrapezoidMap():
 
                 else:
                     c = last_c       
-                    id_c = c.pid     
+                    id_c = c.pid   
+                if exist_right == 1:
+                    t_right.blink()
+
+                    # DEBUG
+                    
+                    print("Case 2 - RIGHT")
+                    self.relation_trap(t_right)  
 
                 if exist_right == 0:
 
@@ -1434,6 +1440,7 @@ class STrapezoidMap():
                     id_s = self.add_node(s)
                     q = SNode(id_s, id_a, 2, segment.p_right)
                     self.node_list[node.pid] = q
+
 
             else:
                 # PARTE INTERNA
